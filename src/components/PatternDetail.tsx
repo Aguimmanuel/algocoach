@@ -50,7 +50,7 @@ export default function PatternDetail({ pattern, learned, onToggleLearned, onOpe
           onClick={onToggleLearned}
           className={cn(
             "rounded-full px-4 py-2 text-sm font-semibold transition",
-            learned ? "bg-emerald-600 text-white hover:bg-emerald-700" : "bg-slate-900 text-white hover:bg-slate-700",
+            learned ? "bg-slate-900 text-white hover:bg-slate-700" : "bg-slate-900 text-white hover:bg-slate-700",
           )}
         >
           {learned ? "✓ Learned" : "Mark as learned"}
@@ -123,10 +123,10 @@ export default function PatternDetail({ pattern, learned, onToggleLearned, onOpe
               {shownHints === 0 ? "Give me the first question" : "Next question"}
             </button>
           ) : (
-            <span className="text-sm font-medium text-emerald-700">That's all the guiding questions. Now write your plan!</span>
+            <span className="text-sm font-medium text-slate-700">That's all the guiding questions. Now write your plan!</span>
           )}
           {shownHints > 0 && (
-            <button onClick={() => setShownHints(0)} className="rounded-full px-3 py-2 text-sm text-slate-500 hover:bg-slate-200">
+            <button onClick={() => setShownHints(0)} className="rounded-full px-3 py-2 text-sm text-slate-600 hover:bg-slate-200">
               Reset
             </button>
           )}
@@ -151,7 +151,7 @@ export default function PatternDetail({ pattern, learned, onToggleLearned, onOpe
           <ul className="space-y-2">
             {pattern.pitfalls.map((s) => (
               <li key={s} className="flex gap-2 text-slate-700">
-                <span className="text-amber-500">▲</span>
+                <span className="text-slate-600">▲</span>
                 <span>{s}</span>
               </li>
             ))}
@@ -168,7 +168,7 @@ export default function PatternDetail({ pattern, learned, onToggleLearned, onOpe
           <span className="text-slate-400">{showSkeleton ? "Hide" : "Peek"}</span>
         </button>
         {showSkeleton && (
-          <pre className="mt-3 overflow-x-auto rounded-2xl bg-slate-900 p-4 font-mono text-[13px] leading-relaxed text-emerald-200">
+          <pre className="mt-3 overflow-x-auto rounded-2xl bg-slate-900 p-4 font-mono text-[13px] leading-relaxed text-slate-200">
             {pattern.skeleton}
           </pre>
         )}

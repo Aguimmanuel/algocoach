@@ -183,15 +183,21 @@ function bfsFrames(): BfsFrame[] {
 
 /* ------------------------------- Visuals ------------------------------- */
 
+// Monochrome language for the animations: fill, outline and halo carry the
+// meaning that hue used to. Nothing here is an error, so nothing here is red.
+//   filled black  = the thing being acted on right now
+//   outlined black = the other pointer
+//   faded grey    = ruled out / out of range
+//   halo ring     = the answer
 const CELL: Record<string, string> = {
   in: "bg-white border-slate-300 text-slate-800",
-  out: "bg-slate-100 border-slate-200 text-slate-300",
-  mid: "bg-amber-300 border-amber-500 text-amber-950 scale-110 shadow-md",
-  found: "bg-emerald-400 border-emerald-600 text-emerald-950 scale-110 shadow-md",
-  "found-dim": "bg-emerald-100 border-emerald-300 text-emerald-800",
-  a: "bg-sky-300 border-sky-500 text-sky-950 scale-110 shadow-md",
-  b: "bg-fuchsia-300 border-fuchsia-500 text-fuchsia-950 scale-110 shadow-md",
-  window: "bg-teal-200 border-teal-500 text-teal-950 shadow-sm",
+  out: "bg-slate-100 border-slate-200 text-slate-500",
+  mid: "bg-slate-900 border-slate-900 text-white scale-110 shadow-md",
+  found: "bg-slate-900 border-slate-900 text-white scale-110 shadow-md ring-4 ring-slate-400",
+  "found-dim": "bg-slate-200 border-slate-400 text-slate-900",
+  a: "bg-slate-900 border-slate-900 text-white scale-110 shadow-md",
+  b: "bg-white border-slate-900 text-slate-900 scale-110 shadow-md",
+  window: "bg-slate-200 border-slate-400 text-slate-900 shadow-sm",
 };
 
 function ArrayView({ arr, frame }: { arr: number[]; frame: ArrFrame }) {
@@ -233,14 +239,14 @@ function BfsView({ frame }: { frame: BfsFrame }) {
             return (
               <div
                 key={key}
-                style={!wall && d !== null && !onPath ? { backgroundColor: `hsl(213 85% ${Math.max(40, 94 - d * 3.5)}%)` } : undefined}
+                style={!wall && d !== null && !onPath ? { backgroundColor: `hsl(0 0% ${Math.max(40, 94 - d * 3.5)}%)` } : undefined}
                 className={cn(
                   "relative flex h-8 w-8 items-center justify-center rounded-md text-[11px] font-bold transition-colors duration-300 sm:h-11 sm:w-11 sm:text-sm",
                   wall ? "bg-slate-800" : "border border-slate-200 bg-white text-slate-700",
                   !wall && d !== null && d > 12 && !onPath && "text-white",
-                  onPath && "border-emerald-600 bg-emerald-400 text-emerald-950",
-                  inQueue.has(key) && !onPath && "ring-2 ring-amber-400",
-                  isCur && "z-10 scale-110 ring-4 ring-indigo-500",
+                  onPath && "border-slate-900 bg-slate-900 text-white",
+                  inQueue.has(key) && !onPath && "ring-2 ring-slate-400",
+                  isCur && "z-10 scale-110 ring-4 ring-slate-900",
                 )}
               >
                 {ch === "S" ? "S" : ch === "T" ? "🏁" : d !== null ? d : ""}
@@ -250,9 +256,9 @@ function BfsView({ frame }: { frame: BfsFrame }) {
         )}
       </div>
       <div className="mx-auto flex max-w-xl flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-slate-500">
-        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-blue-300" /> visited (number = distance)</span>
-        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded ring-2 ring-amber-400" /> waiting in queue</span>
-        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded ring-2 ring-indigo-500" /> being processed</span>
+        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-slate-400" /> visited (number = distance)</span>
+        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded ring-2 ring-slate-400" /> waiting in queue</span>
+        <span className="flex items-center gap-1"><span className="h-3 w-3 rounded ring-2 ring-slate-900" /> being processed</span>
       </div>
       <p className="text-center text-sm text-slate-500">
         Queue size: <strong className="text-slate-800">{frame.queue.length}</strong>
@@ -317,7 +323,7 @@ export default function Visualizer({ onOpenPattern }: Props) {
   const chip = (active: boolean) =>
     cn(
       "rounded-full border px-3 py-1.5 text-sm font-medium transition",
-      active ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50",
+      active ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50",
     );
 
   return (
@@ -334,7 +340,7 @@ export default function Visualizer({ onOpenPattern }: Props) {
             onClick={() => setDemo(d.id)}
             className={cn(
               "rounded-2xl border p-4 text-left transition hover:shadow-md",
-              demo === d.id ? "border-indigo-400 bg-indigo-50 ring-2 ring-indigo-200" : "border-slate-200 bg-white",
+              demo === d.id ? "border-slate-400 bg-slate-50 ring-2 ring-slate-200" : "border-slate-200 bg-white",
             )}
           >
             <div className="text-2xl">{d.emoji}</div>
@@ -349,7 +355,7 @@ export default function Visualizer({ onOpenPattern }: Props) {
           <h3 className="text-lg font-bold text-slate-900">
             {meta.emoji} {meta.title}
           </h3>
-          <button onClick={() => onOpenPattern(meta.lesson)} className="text-sm font-semibold text-indigo-600 hover:underline">
+          <button onClick={() => onOpenPattern(meta.lesson)} className="text-sm font-semibold text-slate-900 hover:underline">
             Open the lesson →
           </button>
         </div>
@@ -396,12 +402,12 @@ export default function Visualizer({ onOpenPattern }: Props) {
         </div>
 
         {/* explanation */}
-        <div className="mt-5 min-h-[88px] rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-indigo-500">
+        <div className="mt-5 min-h-[88px] rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-700">
             Step {safeStep + 1} of {total}
           </p>
           <p className="mt-1 text-slate-800">{msg}</p>
-          {demo !== "bfs" && frame?.note && <p className="mt-1 text-sm font-semibold text-indigo-700">{frame.note}</p>}
+          {demo !== "bfs" && frame?.note && <p className="mt-1 text-sm font-semibold text-slate-900">{frame.note}</p>}
         </div>
 
         {/* controls */}
@@ -440,12 +446,12 @@ export default function Visualizer({ onOpenPattern }: Props) {
               if (safeStep >= total - 1) setStep(0);
               setPlaying((p) => !p);
             }}
-            className="rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-slate-900"
           >
             {playing ? "⏸ Pause" : "▶ Play"}
           </button>
           <div className="ml-auto hidden h-2 w-40 overflow-hidden rounded-full bg-slate-100 sm:block">
-            <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${((safeStep + 1) / total) * 100}%` }} />
+            <div className="h-full rounded-full bg-slate-700 transition-all" style={{ width: `${((safeStep + 1) / total) * 100}%` }} />
           </div>
         </div>
       </div>

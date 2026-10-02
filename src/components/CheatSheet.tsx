@@ -24,14 +24,17 @@ const CLUES: [string, string[]][] = [
   ["“Maximum non-conflicting picks”", ["greedy"]],
 ];
 
+// Weight = how the cost grows. Rendered as a monotonic grey ramp: the darker
+// the bar, the more expensive the approach. No red here — a slow algorithm is
+// a trade-off, not an error.
 const GROWTH = [
-  { name: "O(1)", w: 3, note: "Constant — a lookup", color: "bg-emerald-500" },
-  { name: "O(log n)", w: 8, note: "Halving — binary search", color: "bg-emerald-400" },
-  { name: "O(n)", w: 25, note: "One pass", color: "bg-lime-400" },
-  { name: "O(n log n)", w: 40, note: "Sorting", color: "bg-yellow-400" },
-  { name: "O(n²)", w: 65, note: "Nested loops", color: "bg-orange-400" },
-  { name: "O(2ⁿ)", w: 85, note: "All subsets", color: "bg-red-400" },
-  { name: "O(n!)", w: 100, note: "All orderings", color: "bg-red-600" },
+  { name: "O(1)", w: 3, note: "Constant — a lookup", color: "bg-slate-200" },
+  { name: "O(log n)", w: 8, note: "Halving — binary search", color: "bg-slate-300" },
+  { name: "O(n)", w: 25, note: "One pass", color: "bg-slate-400" },
+  { name: "O(n log n)", w: 40, note: "Sorting", color: "bg-slate-500" },
+  { name: "O(n²)", w: 65, note: "Nested loops", color: "bg-slate-600" },
+  { name: "O(2ⁿ)", w: 85, note: "All subsets", color: "bg-slate-700" },
+  { name: "O(n!)", w: 100, note: "All orderings", color: "bg-slate-900" },
 ];
 
 export default function CheatSheet({ onOpenPattern }: Props) {
@@ -56,7 +59,7 @@ export default function CheatSheet({ onOpenPattern }: Props) {
               {SIZE_BUCKETS.map((b) => (
                 <tr key={b.id} className="border-b border-slate-100 align-top">
                   <td className="py-3 pr-4 font-mono font-semibold text-slate-800">{b.label}</td>
-                  <td className="py-3 pr-4 font-bold text-indigo-700">{b.complexity}</td>
+                  <td className="py-3 pr-4 font-bold text-slate-900">{b.complexity}</td>
                   <td className="py-3 pr-4 text-slate-600">{b.meaning}</td>
                   <td className="py-3">
                     <div className="flex flex-wrap gap-1.5">
@@ -138,7 +141,7 @@ export default function CheatSheet({ onOpenPattern }: Props) {
                 "Draw it. Arrays, trees and grids are easier on paper.",
               ].map((t) => (
                 <li key={t} className="flex gap-2">
-                  <span className="text-indigo-500">→</span>
+                  <span className="text-slate-700">→</span>
                   {t}
                 </li>
               ))}

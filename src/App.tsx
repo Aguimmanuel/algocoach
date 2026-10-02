@@ -33,11 +33,11 @@ export default function App() {
   const pct = Math.round((learned.length / PATTERNS.length) * 100);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-indigo-50/40 text-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/40 text-slate-800">
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-lg shadow-sm shadow-indigo-200">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-lg">
               🧭
             </div>
             <div className="leading-tight">
@@ -53,7 +53,7 @@ export default function App() {
                 onClick={() => setTab(t.id)}
                 className={cn(
                   "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition",
-                  tab === t.id ? "bg-indigo-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100",
+                  tab === t.id ? "bg-slate-900 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100",
                 )}
               >
                 <span aria-hidden>{t.emoji}</span>
@@ -64,7 +64,7 @@ export default function App() {
 
           <button
             onClick={() => setTab("library")}
-            className="ml-auto flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-left transition hover:border-indigo-300"
+            className="ml-auto flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-left transition hover:border-slate-300"
             title="Your progress through the patterns"
           >
             <div className="relative h-8 w-8">
@@ -75,7 +75,7 @@ export default function App() {
                   cy="18"
                   r="15"
                   fill="none"
-                  className="stroke-emerald-500 transition-all duration-500"
+                  className="stroke-slate-900 transition-all duration-500"
                   strokeWidth="4"
                   strokeLinecap="round"
                   strokeDasharray={`${(pct / 100) * 94.2} 94.2`}

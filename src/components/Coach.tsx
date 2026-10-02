@@ -6,6 +6,7 @@ import { COLORS } from "../lib/colors";
 import { cn } from "../utils/cn";
 import PatternDetail from "./PatternDetail";
 import Wizard from "./Wizard";
+import AICoach from "./AICoach";
 
 interface Props {
   learned: string[];
@@ -14,6 +15,9 @@ interface Props {
 
 export default function Coach({ learned, onToggleLearned }: Props) {
   const [text, setText] = useState("");
+  // Snapshot of the text that produced `result`, so the AI coach always works
+  // from the analysed problem even if the user keeps editing the textarea.
+  const [analyzedText, setAnalyzedText] = useState("");
   const [result, setResult] = useState<Analysis | null>(null);
   const [nOverride, setNOverride] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -32,6 +36,7 @@ export default function Coach({ learned, onToggleLearned }: Props) {
     if (!text.trim()) return;
     const a = analyze(text);
     setResult(a);
+    setAnalyzedText(text);
     setNOverride(null);
     setSelectedId(a.candidates[0]?.pattern.id ?? null);
   };
@@ -39,6 +44,7 @@ export default function Coach({ learned, onToggleLearned }: Props) {
   const clear = () => {
     setText("");
     setResult(null);
+    setAnalyzedText("");
     setSelectedId(null);
     setNOverride(null);
   };
@@ -56,11 +62,11 @@ export default function Coach({ learned, onToggleLearned }: Props) {
   return (
     <div className="space-y-8">
       {/* Intro */}
-      <div className="rounded-3xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-6 text-white shadow-lg sm:p-9">
-        <p className="text-sm font-semibold uppercase tracking-widest text-indigo-100">How this works</p>
+      <div className="rounded-3xl bg-slate-900 p-6 text-white shadow-lg sm:p-9">
+        <p className="text-sm font-semibold uppercase tracking-widest text-slate-100">How this works</p>
         <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-4xl">
           I won't give you the answer.
-          <br className="hidden sm:block" /> I'll teach you how to <span className="underline decoration-fuchsia-300 decoration-4 underline-offset-4">find</span> it.
+          <br className="hidden sm:block" /> I'll teach you how to <span className="underline decoration-slate-300 decoration-4 underline-offset-4">find</span> it.
         </h2>
         <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
           {[
@@ -70,10 +76,10 @@ export default function Coach({ learned, onToggleLearned }: Props) {
           ].map(([n, t, d]) => (
             <div key={n} className="rounded-2xl bg-white/10 p-4 backdrop-blur">
               <div className="flex items-center gap-2 font-semibold">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-indigo-700">{n}</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-slate-900">{n}</span>
                 {t}
               </div>
-              <p className="mt-1.5 text-indigo-100">{d}</p>
+              <p className="mt-1.5 text-slate-100">{d}</p>
             </div>
           ))}
         </div>
@@ -94,13 +100,13 @@ export default function Coach({ learned, onToggleLearned }: Props) {
           }}
           rows={5}
           placeholder="e.g. Given an array of integers and a target, return the indices of the two numbers that add up to the target. 2 <= n <= 10^4"
-          className="mt-3 w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 p-4 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+          className="mt-3 w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 p-4 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
         />
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <button
             onClick={run}
             disabled={!text.trim()}
-            className="rounded-full bg-indigo-600 px-6 py-2.5 font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-full bg-slate-900 px-6 py-2.5 font-semibold text-white shadow-sm transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Coach me →
           </button>
@@ -122,7 +128,7 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                   setResult(null);
                   setSelectedId(null);
                 }}
-                className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+                className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
               >
                 {s.title}
               </button>
@@ -151,8 +157,8 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                     className={cn(
                       "rounded-full border px-3 py-1.5 text-sm font-medium transition",
                       bucket?.id === b.id
-                        ? "border-indigo-600 bg-indigo-600 text-white"
-                        : "border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50",
+                        ? "border-slate-900 bg-slate-900 text-white"
+                        : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50",
                     )}
                   >
                     {b.label}
@@ -160,9 +166,9 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                 ))}
               </div>
               {bucket ? (
-                <div className="mt-4 rounded-2xl bg-indigo-50 p-4">
+                <div className="mt-4 rounded-2xl bg-slate-50 p-4">
                   <p className="text-sm text-slate-600">Your target speed</p>
-                  <p className="text-2xl font-extrabold text-indigo-700">{bucket.complexity}</p>
+                  <p className="text-2xl font-extrabold text-slate-900">{bucket.complexity}</p>
                   <p className="mt-1 text-sm text-slate-700">{bucket.meaning}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {bucket.patterns.map((id) => {
@@ -243,12 +249,18 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                 })}
               </div>
             ) : (
-              <div className="mt-4 rounded-2xl bg-amber-50 p-4 text-sm text-amber-800">
+              <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-800">
                 I didn't spot any clue words. No problem — that's what the wizard below is for. Answer its questions and it will guide you.
               </div>
             )}
           </div>
         </div>
+      )}
+
+      {/* The bridge: an LLM reads the problem and explains how to think about it.
+          Renders nothing when the Python backend isn't running. */}
+      {result && (
+        <AICoach key={analyzedText} problem={analyzedText} analysis={result} onOpenPattern={openPattern} />
       )}
 
       {selected && (
@@ -291,7 +303,7 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                           type="checkbox"
                           checked={!!checks[key]}
                           onChange={() => setChecks((c) => ({ ...c, [key]: !c[key] }))}
-                          className="mt-1 h-4 w-4 accent-indigo-600"
+                          className="mt-1 h-4 w-4 accent-slate-900"
                         />
                         <span className={cn(checks[key] && "text-slate-400 line-through")}>{p}</span>
                       </label>

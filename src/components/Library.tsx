@@ -52,7 +52,7 @@ export default function Library({ learned, onToggleLearned, initialId }: Props) 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search patterns, clues, drills…"
-            className="w-full rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+            className="w-full rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
           />
         </div>
         <div className="mt-4 space-y-5">
@@ -78,7 +78,7 @@ export default function Library({ learned, onToggleLearned, initialId }: Props) 
                       >
                         <span className="text-lg">{p.emoji}</span>
                         <span className="flex-1 leading-tight">{p.name}</span>
-                        {learned.includes(p.id) && <span className="text-emerald-600">✓</span>}
+                        {learned.includes(p.id) && <span className="text-slate-900">✓</span>}
                       </button>
                     );
                   })}

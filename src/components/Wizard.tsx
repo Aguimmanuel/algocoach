@@ -152,10 +152,10 @@ export default function Wizard({ onOpenPattern }: Props) {
               <button
                 key={o.label}
                 onClick={() => pick(o)}
-                className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50"
+                className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
               >
                 <span>{o.label}</span>
-                <span className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-500">→</span>
+                <span className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-700">→</span>
               </button>
             ))}
           </div>
