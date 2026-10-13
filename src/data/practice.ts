@@ -22,9 +22,9 @@ export interface Problem {
 }
 
 export const DIFFICULTY_STYLE: Record<Difficulty, string> = {
-  Easy: "bg-slate-100 text-slate-700 ring-slate-200",
-  Medium: "bg-slate-200 text-slate-800 ring-slate-300",
-  Hard: "bg-slate-900 text-white ring-slate-900",
+  Easy: "bg-muted text-muted-foreground ring-border",
+  Medium: "bg-border text-foreground ring-border",
+  Hard: "bg-primary text-primary-foreground ring-border",
 };
 
 /** Problems are listed easiest-first, so the list itself is a study order. */

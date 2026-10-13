@@ -3,17 +3,24 @@ import { analyze, SAMPLE_QUESTIONS, type Analysis } from "../lib/analyze";
 import { bucketForN, FRAMEWORK, SIZE_BUCKETS } from "../data/constraints";
 import { PATTERN_MAP } from "../data/patterns";
 import { COLORS } from "../lib/colors";
-import { cn } from "../utils/cn";
+import { cn } from "@/lib/utils";
+import { useRevealStagger } from "../hooks/useReveal";
 import PatternDetail from "./PatternDetail";
 import Wizard from "./Wizard";
 import AICoach from "./AICoach";
+import { ArrowRight } from "lucide-react";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
+import { Checkbox } from "./ui/checkbox";
 
 interface Props {
   learned: string[];
   onToggleLearned: (id: string) => void;
+  /** open a pattern's animation in the Visualize tab */
+  onVisualize?: (id: string) => void;
 }
 
-export default function Coach({ learned, onToggleLearned }: Props) {
+export default function Coach({ learned, onToggleLearned, onVisualize }: Props) {
   const [text, setText] = useState("");
   // Snapshot of the text that produced `result`, so the AI coach always works
   // from the analysed problem even if the user keeps editing the textarea.
@@ -58,40 +65,41 @@ export default function Coach({ learned, onToggleLearned }: Props) {
   const bucket = effectiveN !== null ? bucketForN(effectiveN) : null;
   const selected = selectedId ? PATTERN_MAP[selectedId] : null;
   const selectedClues = result?.candidates.find((c) => c.pattern.id === selectedId)?.matched;
+  const pageRef = useRevealStagger<HTMLDivElement>(60);
+  const tileRef = useRevealStagger<HTMLDivElement>(70);
 
   return (
-    <div className="space-y-8">
+    <div ref={pageRef} className="space-y-8">
       {/* Intro */}
-      <div className="rounded-3xl bg-slate-900 p-6 text-white shadow-lg sm:p-9">
-        <p className="text-sm font-semibold uppercase tracking-widest text-slate-100">How this works</p>
+      <div className="reveal slab rounded-xl p-6 text-strong-foreground sm:p-9">
+        <p className="text-sm font-semibold tracking-widest text-strong-foreground/85 uppercase">How this works</p>
         <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-4xl">
-          I won't give you the answer.
-          <br className="hidden sm:block" /> I'll teach you how to <span className="underline decoration-slate-300 decoration-4 underline-offset-4">find</span> it.
+          Paste a problem, get guided questions
         </h2>
-        <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
+        <div ref={tileRef} className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
           {[
             ["1", "Paste a question", "Any coding / algorithm problem statement."],
             ["2", "Spot the signals", "Clue words and input size point to the right pattern."],
             ["3", "Think it through", "Guided questions, not solutions. You write the plan."],
           ].map(([n, t, d]) => (
-            <div key={n} className="rounded-2xl bg-white/10 p-4 backdrop-blur">
+            <div key={n} className="reveal rounded-lg bg-strong-foreground/10 p-4 backdrop-blur">
               <div className="flex items-center gap-2 font-semibold">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-slate-900">{n}</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-strong-foreground text-xs font-bold text-strong">{n}</span>
                 {t}
               </div>
-              <p className="mt-1.5 text-slate-100">{d}</p>
+              <p className="mt-1.5 text-strong-foreground/85">{d}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Input */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-        <label htmlFor="q" className="text-lg font-bold text-slate-900">
+      <div className="reveal surface rounded-xl p-6">
+        <label htmlFor="q" className="text-lg font-bold text-foreground">
           📥 Paste your question
         </label>
-        <p className="text-sm text-slate-500">Include the constraints (like "1 ≤ n ≤ 10^5") — they're the biggest clue.</p>
-        <textarea
+        <p className="text-sm text-muted-foreground">Include the constraints (like "1 ≤ n ≤ 10^5") — they're the biggest clue.</p>
+        <Textarea
           id="q"
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -100,25 +108,22 @@ export default function Coach({ learned, onToggleLearned }: Props) {
           }}
           rows={5}
           placeholder="e.g. Given an array of integers and a target, return the indices of the two numbers that add up to the target. 2 <= n <= 10^4"
-          className="mt-3 w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 p-4 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
+          className="mt-3 resize-y"
         />
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <button
-            onClick={run}
-            disabled={!text.trim()}
-            className="rounded-full bg-slate-900 px-6 py-2.5 font-semibold text-white shadow-sm transition hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Coach me →
-          </button>
+          <Button onClick={run} disabled={!text.trim()} size="lg">
+            Coach me
+            <ArrowRight />
+          </Button>
           {(text || result) && (
-            <button onClick={clear} className="rounded-full px-4 py-2.5 text-sm text-slate-500 hover:bg-slate-100">
+            <button onClick={clear} className="rounded-full px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted">
               Clear
             </button>
           )}
-          <span className="hidden text-xs text-slate-400 sm:inline">Ctrl / ⌘ + Enter</span>
+          <span className="hidden text-xs text-muted-foreground sm:inline">Ctrl / ⌘ + Enter</span>
         </div>
         <div className="mt-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Or try a sample question</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Or try a sample question</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {SAMPLE_QUESTIONS.map((s) => (
               <button
@@ -128,7 +133,7 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                   setResult(null);
                   setSelectedId(null);
                 }}
-                className="rounded-full border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                className="rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:border-border hover:bg-muted hover:text-foreground"
               >
                 {s.title}
               </button>
@@ -142,9 +147,9 @@ export default function Coach({ learned, onToggleLearned }: Props) {
         <div className="space-y-6">
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Constraints */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-              <h3 className="text-lg font-bold text-slate-900">📏 Step 1 · What do the constraints allow?</h3>
-              <p className="mt-1 text-sm text-slate-500">
+            <div className="surface rounded-xl p-6">
+              <h3 className="text-lg font-bold text-foreground">📏 Step 1 · What do the constraints allow?</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {result.detectedN !== null
                   ? `I found a size limit of about ${result.detectedN.toLocaleString()} in your text. Wrong? Pick the right one:`
                   : "I couldn't find the input size. Pick the maximum n from the question:"}
@@ -157,8 +162,8 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                     className={cn(
                       "rounded-full border px-3 py-1.5 text-sm font-medium transition",
                       bucket?.id === b.id
-                        ? "border-slate-900 bg-slate-900 text-white"
-                        : "border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50",
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border text-muted-foreground hover:border-border hover:bg-muted",
                     )}
                   >
                     {b.label}
@@ -166,10 +171,10 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                 ))}
               </div>
               {bucket ? (
-                <div className="mt-4 rounded-2xl bg-slate-50 p-4">
-                  <p className="text-sm text-slate-600">Your target speed</p>
-                  <p className="text-2xl font-extrabold text-slate-900">{bucket.complexity}</p>
-                  <p className="mt-1 text-sm text-slate-700">{bucket.meaning}</p>
+                <div className="mt-4 rounded-lg bg-muted p-4">
+                  <p className="text-sm text-muted-foreground">Your target speed</p>
+                  <p className="text-2xl font-extrabold text-foreground">{bucket.complexity}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{bucket.meaning}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {bucket.patterns.map((id) => {
                       const p = PATTERN_MAP[id];
@@ -187,27 +192,27 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                   </div>
                 </div>
               ) : (
-                <p className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">Choose a size above to see the speed you should aim for.</p>
+                <p className="mt-4 rounded-lg bg-muted p-4 text-sm text-muted-foreground">Choose a size above to see the speed you should aim for.</p>
               )}
             </div>
 
             {/* Kind */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-              <h3 className="text-lg font-bold text-slate-900">🔎 Step 2 · What kind of question is it?</h3>
+            <div className="surface rounded-xl p-6">
+              <h3 className="text-lg font-bold text-foreground">🔎 Step 2 · What kind of question is it?</h3>
               {result.kinds.length > 0 ? (
                 <ul className="mt-3 space-y-2.5">
                   {result.kinds.slice(0, 4).map((k) => (
-                    <li key={k.label} className="flex gap-3 rounded-2xl bg-slate-50 p-3">
+                    <li key={k.label} className="flex gap-3 rounded-lg bg-muted p-3">
                       <span className="text-xl">{k.emoji}</span>
                       <div>
-                        <p className="font-semibold text-slate-800">{k.label}</p>
-                        <p className="text-sm text-slate-600">{k.hint}</p>
+                        <p className="font-semibold text-foreground">{k.label}</p>
+                        <p className="text-sm text-muted-foreground">{k.hint}</p>
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="mt-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-500">
+                <p className="mt-3 rounded-lg bg-muted p-4 text-sm text-muted-foreground">
                   No strong wording detected. Re-read the last sentence of the question and use the guided wizard below.
                 </p>
               )}
@@ -215,9 +220,9 @@ export default function Coach({ learned, onToggleLearned }: Props) {
           </div>
 
           {/* Candidates */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            <h3 className="text-lg font-bold text-slate-900">🧩 Step 3 · Patterns worth considering</h3>
-            <p className="text-sm text-slate-500">
+          <div className="surface rounded-xl p-6">
+            <h3 className="text-lg font-bold text-foreground">🧩 Step 3 · Patterns worth considering</h3>
+            <p className="text-sm text-muted-foreground">
               These are <strong>candidates</strong>, not verdicts. Open each lesson and check whether its signals really fit your problem.
             </p>
             {result.candidates.length > 0 ? (
@@ -230,26 +235,26 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                       key={c.pattern.id}
                       onClick={() => openPattern(c.pattern.id)}
                       className={cn(
-                        "rounded-2xl border p-4 text-left transition hover:shadow-md",
-                        active ? cn("ring-2", col.border, col.soft, col.ring) : "border-slate-200 bg-white",
+                        "rounded-lg border p-4 text-left transition hover:shadow-md",
+                        active ? cn("ring-2", col.border, col.soft, col.ring) : "border-border bg-card",
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-slate-900">
+                        <span className="font-semibold text-foreground">
                           {c.pattern.emoji} {c.pattern.name}
                         </span>
-                        {i === 0 && <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[10px] font-bold uppercase text-white">Best fit</span>}
+                        {i === 0 && <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">Best fit</span>}
                       </div>
-                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
                         <div className={cn("h-full rounded-full", col.bar)} style={{ width: `${Math.max(c.strength, 8)}%` }} />
                       </div>
-                      <p className="mt-2 text-xs text-slate-500">Clues: {c.matched.join(", ")}</p>
+                      <p className="mt-2 text-xs text-muted-foreground">Clues: {c.matched.join(", ")}</p>
                     </button>
                   );
                 })}
               </div>
             ) : (
-              <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-800">
+              <div className="mt-4 rounded-lg bg-muted p-4 text-sm text-foreground">
                 I didn't spot any clue words. No problem — that's what the wizard below is for. Answer its questions and it will guide you.
               </div>
             )}
@@ -265,10 +270,10 @@ export default function Coach({ learned, onToggleLearned }: Props) {
 
       {selected && (
         <div ref={detailRef} className="scroll-mt-24">
-          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-500">
-            <span className="h-px flex-1 bg-slate-200" />
+          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
             📖 Lesson
-            <span className="h-px flex-1 bg-slate-200" />
+            <span className="h-px flex-1 bg-border" />
           </div>
           <PatternDetail
             key={selected.id}
@@ -277,6 +282,7 @@ export default function Coach({ learned, onToggleLearned }: Props) {
             learned={learned.includes(selected.id)}
             onToggleLearned={() => onToggleLearned(selected.id)}
             onOpenPattern={openPattern}
+            onVisualize={onVisualize ? () => onVisualize(selected.id) : undefined}
           />
         </div>
       )}
@@ -284,13 +290,13 @@ export default function Coach({ learned, onToggleLearned }: Props) {
       <Wizard onOpenPattern={openPattern} />
 
       {/* Routine */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-        <h3 className="text-lg font-bold text-slate-900">✅ Your 5-step routine for every problem</h3>
-        <p className="text-sm text-slate-500">Tick things off as you do them. Good habits beat clever tricks.</p>
+      <div className="surface rounded-xl p-6">
+        <h3 className="text-lg font-bold text-foreground">✅ Your 5-step routine for every problem</h3>
+        <p className="text-sm text-muted-foreground">Tick things off as you do them. Good habits beat clever tricks.</p>
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {FRAMEWORK.map((f, i) => (
-            <div key={f.title} className="rounded-2xl bg-slate-50 p-4">
-              <p className="font-semibold text-slate-800">
+            <div key={f.title} className="rounded-lg bg-muted p-4">
+              <p className="font-semibold text-foreground">
                 {f.emoji} {i + 1}. {f.title}
               </p>
               <ul className="mt-2 space-y-1.5">
@@ -298,14 +304,13 @@ export default function Coach({ learned, onToggleLearned }: Props) {
                   const key = f.title + p;
                   return (
                     <li key={key}>
-                      <label className="flex cursor-pointer items-start gap-2 text-sm text-slate-600">
-                        <input
-                          type="checkbox"
+                      <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground">
+                        <Checkbox
                           checked={!!checks[key]}
-                          onChange={() => setChecks((c) => ({ ...c, [key]: !c[key] }))}
-                          className="mt-1 h-4 w-4 accent-slate-900"
+                          onCheckedChange={() => setChecks((c) => ({ ...c, [key]: !c[key] }))}
+                          className="mt-1"
                         />
-                        <span className={cn(checks[key] && "text-slate-400 line-through")}>{p}</span>
+                        <span className={cn(checks[key] && "text-muted-foreground line-through")}>{p}</span>
                       </label>
                     </li>
                   );

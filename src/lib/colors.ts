@@ -44,12 +44,12 @@ export interface ColorSet {
 
 // Full class names are written out so Tailwind can detect them.
 const MONO: ColorSet = {
-  soft: "bg-slate-100",
-  text: "text-slate-800",
-  ring: "ring-slate-300",
-  bar: "bg-slate-900",
-  border: "border-slate-300",
-  solid: "bg-slate-900",
+  soft: "bg-muted",
+  text: "text-foreground",
+  ring: "ring-border",
+  bar: "bg-primary",
+  border: "border-border",
+  solid: "bg-primary",
 };
 
 export const COLORS: Record<ColorName, ColorSet> = {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PATTERN_MAP } from "../data/patterns";
 import { COLORS } from "../lib/colors";
-import { cn } from "../utils/cn";
+import { cn } from "@/lib/utils";
 
 interface Option {
   label: string;
@@ -113,21 +113,21 @@ export default function Wizard({ onOpenPattern }: Props) {
   const pattern = leaf ? PATTERN_MAP[leaf.id] : null;
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <div className="surface rounded-xl p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">🧭 Not sure? Let's reason it out</h3>
-          <p className="text-sm text-slate-500">Answer a few questions about your problem and I'll point to a pattern.</p>
+          <h3 className="text-lg font-bold text-foreground">🧭 Not sure? Let's reason it out</h3>
+          <p className="text-sm text-muted-foreground">Answer a few questions about your problem and I'll point to a pattern.</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={back}
             disabled={path.length === 0}
-            className="rounded-full px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+            className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted disabled:opacity-30"
           >
             ← Back
           </button>
-          <button onClick={restart} className="rounded-full px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100">
+          <button onClick={restart} className="rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted">
             Restart
           </button>
         </div>
@@ -136,7 +136,7 @@ export default function Wizard({ onOpenPattern }: Props) {
       {path.length > 0 && (
         <ol className="mt-4 flex flex-wrap gap-2">
           {path.map((p, i) => (
-            <li key={i} className="max-w-full truncate rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+            <li key={i} className="max-w-full truncate rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
               {i + 1}. {p.label}
             </li>
           ))}
@@ -145,34 +145,34 @@ export default function Wizard({ onOpenPattern }: Props) {
 
       {!pattern ? (
         <div className="mt-5">
-          <p className="text-lg font-semibold text-slate-900">{node.q}</p>
-          {node.sub && <p className="mt-1 text-sm text-slate-500">{node.sub}</p>}
+          <p className="text-lg font-semibold text-foreground">{node.q}</p>
+          {node.sub && <p className="mt-1 text-sm text-muted-foreground">{node.sub}</p>}
           <div className="mt-4 grid gap-2.5">
             {node.options.map((o) => (
               <button
                 key={o.label}
                 onClick={() => pick(o)}
-                className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                className="group flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3 text-left text-muted-foreground transition hover:border-border hover:bg-muted"
               >
                 <span>{o.label}</span>
-                <span className="text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-700">→</span>
+                <span className="text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-muted-foreground">→</span>
               </button>
             ))}
           </div>
         </div>
       ) : (
-        <div className={cn("mt-5 rounded-2xl p-5 ring-1", COLORS[pattern.color].soft, COLORS[pattern.color].ring)}>
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Your best candidate</p>
+        <div className={cn("mt-5 rounded-lg p-5 ring-1", COLORS[pattern.color].soft, COLORS[pattern.color].ring)}>
+          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Your best candidate</p>
           <p className={cn("mt-1 text-2xl font-bold", COLORS[pattern.color].text)}>
             {pattern.emoji} {pattern.name}
           </p>
-          <p className="mt-2 text-slate-700">{leaf?.why}</p>
-          <p className="mt-3 text-sm text-slate-600">
+          <p className="mt-2 text-muted-foreground">{leaf?.why}</p>
+          <p className="mt-3 text-sm text-muted-foreground">
             Before you trust this: does the pattern's list of signals match your problem? If not, press Back and pick a different answer.
           </p>
           <button
             onClick={() => onOpenPattern(pattern.id)}
-            className={cn("mt-4 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90", COLORS[pattern.color].solid)}
+            className={cn("mt-4 rounded-full px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90", COLORS[pattern.color].solid)}
           >
             Teach me this pattern →
           </button>

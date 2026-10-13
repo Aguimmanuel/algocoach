@@ -1,7 +1,10 @@
 import { SIZE_BUCKETS } from "../data/constraints";
 import { PATTERN_MAP } from "../data/patterns";
 import { COLORS } from "../lib/colors";
-import { cn } from "../utils/cn";
+import { useRevealStagger } from "../hooks/useReveal";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { cn } from "@/lib/utils";
 
 interface Props {
   onOpenPattern: (id: string) => void;
@@ -28,70 +31,77 @@ const CLUES: [string, string[]][] = [
 // the bar, the more expensive the approach. No red here — a slow algorithm is
 // a trade-off, not an error.
 const GROWTH = [
-  { name: "O(1)", w: 3, note: "Constant — a lookup", color: "bg-slate-200" },
-  { name: "O(log n)", w: 8, note: "Halving — binary search", color: "bg-slate-300" },
-  { name: "O(n)", w: 25, note: "One pass", color: "bg-slate-400" },
-  { name: "O(n log n)", w: 40, note: "Sorting", color: "bg-slate-500" },
-  { name: "O(n²)", w: 65, note: "Nested loops", color: "bg-slate-600" },
-  { name: "O(2ⁿ)", w: 85, note: "All subsets", color: "bg-slate-700" },
-  { name: "O(n!)", w: 100, note: "All orderings", color: "bg-slate-900" },
+  { name: "O(1)", w: 3, note: "Constant — a lookup", color: "bg-border" },
+  { name: "O(log n)", w: 8, note: "Halving — binary search", color: "bg-border" },
+  { name: "O(n)", w: 25, note: "One pass", color: "bg-muted" },
+  { name: "O(n log n)", w: 40, note: "Sorting", color: "bg-muted" },
+  { name: "O(n²)", w: 65, note: "Nested loops", color: "bg-muted-foreground" },
+  { name: "O(2ⁿ)", w: 85, note: "All subsets", color: "bg-primary" },
+  { name: "O(n!)", w: 100, note: "All orderings", color: "bg-primary" },
 ];
 
 export default function CheatSheet({ onOpenPattern }: Props) {
+  // Same arrival as the learning path: sections and rows come in as you reach
+  // them, so a long reference page reads as a sequence instead of a slab.
+  const pageRef = useRevealStagger<HTMLDivElement>(45);
+  const clueRef = useRevealStagger<HTMLUListElement>(28);
+  const growthRef = useRevealStagger<HTMLDivElement>(55);
+
   return (
-    <div className="space-y-8">
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-        <h2 className="text-xl font-bold text-slate-900">📏 Constraint → complexity decoder</h2>
-        <p className="mt-1 text-slate-600">
+    <div ref={pageRef} className="space-y-8">
+      <section className="reveal surface rounded-xl p-6">
+        <h2 className="text-xl font-bold text-foreground">📏 Constraint → complexity decoder</h2>
+        <p className="mt-1 text-muted-foreground">
           A computer does roughly <strong>10⁸ simple operations per second</strong>. Read the maximum n in the question, and you instantly know what speed is allowed.
         </p>
-        <div className="mt-5 overflow-x-auto">
-          <table className="w-full min-w-[560px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-400">
-                <th className="py-2 pr-4">If max n is…</th>
-                <th className="py-2 pr-4">Aim for</th>
-                <th className="py-2 pr-4">What it means</th>
-                <th className="py-2">Think about</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="mt-5 rounded-xl border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>If max n is…</TableHead>
+                <TableHead>Aim for</TableHead>
+                <TableHead>What it means</TableHead>
+                <TableHead>Think about</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {SIZE_BUCKETS.map((b) => (
-                <tr key={b.id} className="border-b border-slate-100 align-top">
-                  <td className="py-3 pr-4 font-mono font-semibold text-slate-800">{b.label}</td>
-                  <td className="py-3 pr-4 font-bold text-slate-900">{b.complexity}</td>
-                  <td className="py-3 pr-4 text-slate-600">{b.meaning}</td>
-                  <td className="py-3">
+                <TableRow key={b.id} className="reveal align-top">
+                  <TableCell className="font-mono font-semibold">{b.label}</TableCell>
+                  <TableCell className="font-bold">{b.complexity}</TableCell>
+                  <TableCell className="text-muted-foreground">{b.meaning}</TableCell>
+                  <TableCell>
                     <div className="flex flex-wrap gap-1.5">
                       {b.patterns.map((id) => {
                         const p = PATTERN_MAP[id];
                         return (
-                          <button
+                          <Button
                             key={id}
+                            variant="outline"
+                            size="xs"
                             onClick={() => onOpenPattern(id)}
-                            className={cn("rounded-full px-2 py-0.5 text-xs font-medium ring-1 hover:opacity-80", COLORS[p.color].soft, COLORS[p.color].text, COLORS[p.color].ring)}
                           >
                             {p.name.split(" (")[0]}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </section>
 
-      <section className="grid gap-8 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-          <h2 className="text-xl font-bold text-slate-900">🗣️ Clue phrase → pattern</h2>
-          <p className="mt-1 text-sm text-slate-500">Train your eyes: certain words almost always point to certain tools.</p>
-          <ul className="mt-4 divide-y divide-slate-100">
+      <section className="reveal grid gap-8 lg:grid-cols-2">
+        <div className="surface rounded-xl p-6">
+          <h2 className="text-xl font-bold text-foreground">🗣️ Clue phrase → pattern</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Train your eyes: certain words almost always point to certain tools.</p>
+          <ul ref={clueRef} className="mt-4 divide-y divide-border">
             {CLUES.map(([phrase, ids]) => (
-              <li key={phrase} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
-                <span className="font-medium text-slate-800">{phrase}</span>
+              <li key={phrase} className="reveal flex flex-wrap items-center justify-between gap-2 py-2.5">
+                <span className="font-medium text-foreground">{phrase}</span>
                 <span className="flex flex-wrap gap-1.5">
                   {ids.map((id) => {
                     const p = PATTERN_MAP[id];
@@ -112,25 +122,25 @@ export default function CheatSheet({ onOpenPattern }: Props) {
         </div>
 
         <div className="space-y-8">
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            <h2 className="text-xl font-bold text-slate-900">📊 How fast do they grow?</h2>
-            <p className="mt-1 text-sm text-slate-500">Bar length = how quickly the work explodes as n grows.</p>
-            <div className="mt-4 space-y-3">
+          <div className="surface rounded-xl p-6">
+            <h2 className="text-xl font-bold text-foreground">📊 How fast do they grow?</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Bar length = how quickly the work explodes as n grows.</p>
+            <div ref={growthRef} className="mt-4 space-y-3">
               {GROWTH.map((g) => (
-                <div key={g.name} className="flex items-center gap-3">
-                  <span className="w-24 shrink-0 font-mono text-sm font-semibold text-slate-700">{g.name}</span>
-                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-100">
+                <div key={g.name} className="reveal flex items-center gap-3">
+                  <span className="w-24 shrink-0 font-mono text-sm font-semibold text-muted-foreground">{g.name}</span>
+                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
                     <div className={cn("h-full rounded-full", g.color)} style={{ width: `${g.w}%` }} />
                   </div>
-                  <span className="hidden w-36 shrink-0 text-xs text-slate-500 sm:block">{g.note}</span>
+                  <span className="hidden w-36 shrink-0 text-xs text-muted-foreground sm:block">{g.note}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            <h2 className="text-xl font-bold text-slate-900">🧠 Getting stuck? Try this</h2>
-            <ul className="mt-3 space-y-2.5 text-slate-700">
+          <div className="surface rounded-xl p-6">
+            <h2 className="text-xl font-bold text-foreground">🧠 Getting stuck? Try this</h2>
+            <ul className="mt-3 space-y-2.5 text-muted-foreground">
               {[
                 "Solve a tiny example by hand and notice what YOU do.",
                 "Write the brute force. Name the repeated work.",
@@ -141,7 +151,7 @@ export default function CheatSheet({ onOpenPattern }: Props) {
                 "Draw it. Arrays, trees and grids are easier on paper.",
               ].map((t) => (
                 <li key={t} className="flex gap-2">
-                  <span className="text-slate-700">→</span>
+                  <span className="text-muted-foreground">→</span>
                   {t}
                 </li>
               ))}

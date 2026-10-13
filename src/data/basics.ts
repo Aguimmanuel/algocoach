@@ -78,10 +78,10 @@ export const SPEED_TABLE: SpeedRow[] = [
 ];
 
 export const VERDICT_STYLE: Record<SpeedRow["verdict"], { label: string; className: string }> = {
-  great: { label: "Scales forever", className: "bg-slate-900 text-white" },
-  fine: { label: "Fine in practice", className: "bg-slate-200 text-slate-800" },
-  careful: { label: "Only for small n", className: "bg-slate-100 text-slate-700" },
-  "too slow": { label: "Very small n only", className: "bg-slate-100 text-slate-500" },
+  great: { label: "Scales forever", className: "bg-primary text-primary-foreground" },
+  fine: { label: "Fine in practice", className: "bg-border text-foreground" },
+  careful: { label: "Only for small n", className: "bg-muted text-muted-foreground" },
+  "too slow": { label: "Very small n only", className: "bg-muted text-muted-foreground" },
 };
 
 /** The three-step habit that makes constraints useful. */
