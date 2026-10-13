@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Coach from "./components/Coach";
 import Library from "./components/Library";
 import Visualizer from "./components/Visualizer";
 import CheatSheet from "./components/CheatSheet";
 import StartHere from "./components/StartHere";
+import ProgressHome from "./components/ProgressHome";
 import { PATTERNS } from "./data/patterns";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { useAccount } from "./hooks/useAccount";
 import { cn } from "./utils/cn";
 
 type Tab = "start" | "coach" | "library" | "visualize" | "cheat";
@@ -21,22 +23,50 @@ const TABS: { id: Tab; label: string; emoji: string }[] = [
 export default function App() {
   const [tab, setTab] = useState<Tab>("start");
   const [libraryId, setLibraryId] = useState<string | undefined>();
+
   const [learned, setLearned] = useLocalStorage<string[]>("algocoach-learned", []);
+  // Solved is written by the lesson page's own tracker; useLocalStorage keeps the
+  // two in sync, so here we only read it (to push upstream and count progress).
   const [solved] = useLocalStorage<string[]>("algocoach-solved", []);
+  const [shaky, setShaky] = useLocalStorage<string[]>("algocoach-shaky", []);
 
-  const toggleLearned = (id: string) =>
-    setLearned((l) => (l.includes(id) ? l.filter((x) => x !== id) : [...l, id]));
+  // One object, so the account hook has a single stable thing to push upstream.
+  const progress = useMemo(() => ({ learned, solved, shaky }), [learned, solved, shaky]);
+  const account = useAccount(progress);
 
-  const openInLibrary = (id: string) => {
+  const toggleLearned = useCallback(
+    (id: string) => {
+      setLearned((l) => {
+        const adding = !l.includes(id);
+        account.track(adding ? "learned" : "unlearned", { pattern: id });
+        return adding ? [...l, id] : l.filter((x) => x !== id);
+      });
+    },
+    [setLearned, account],
+  );
+
+  const markShaky = useCallback(
+    (key: string) => setShaky((s) => (s.includes(key) ? s : [...s, key])),
+    [setShaky],
+  );
+
+  const onAnswered = useCallback(
+    (correct: boolean, patternId: string) => {
+      account.track("quiz", { pattern: patternId, correct });
+    },
+    [account],
+  );
+
+  const openInLibrary = useCallback((id: string) => {
     setLibraryId(id);
     setTab("library");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, []);
 
   const pct = Math.round((learned.length / PATTERNS.length) * 100);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50/40 text-slate-800">
+    <div className="min-h-screen bg-white text-slate-800">
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
           <div className="flex items-center gap-2.5">
@@ -56,7 +86,8 @@ export default function App() {
                 onClick={() => setTab(t.id)}
                 className={cn(
                   "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition",
-                  tab === t.id ? "bg-slate-900 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100",
+                  "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300",
+                  tab === t.id ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100",
                 )}
               >
                 <span aria-hidden>{t.emoji}</span>
@@ -66,9 +97,9 @@ export default function App() {
           </nav>
 
           <button
-            onClick={() => setTab("library")}
-            className="ml-auto flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-left transition hover:border-slate-300"
-            title="Your progress through the patterns"
+            onClick={() => setTab("start")}
+            className="ml-auto flex items-center gap-2.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-left transition hover:border-slate-400"
+            title="Your progress"
           >
             <div className="relative h-8 w-8">
               <svg viewBox="0 0 36 36" className="h-8 w-8 -rotate-90">
@@ -84,13 +115,16 @@ export default function App() {
                   strokeDasharray={`${(pct / 100) * 94.2} 94.2`}
                 />
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-slate-700">{pct}%</span>
+              <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-slate-700">
+                {pct}%
+              </span>
             </div>
             <div className="hidden leading-tight sm:block">
               <p className="text-xs font-semibold text-slate-700">
                 {learned.length}/{PATTERNS.length} patterns
               </p>
               <p className="text-[11px] text-slate-400">
+                {account.streak.current > 0 && <>🔥 {account.streak.current} · </>}
                 learned{solved.length > 0 && <> · {solved.length} solved</>}
               </p>
             </div>
@@ -99,7 +133,28 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        {tab === "start" && <StartHere onOpenPattern={openInLibrary} learned={learned} onToggleLearned={toggleLearned} />}
+        {tab === "start" && (
+          <div className="space-y-10">
+            <ProgressHome
+              learned={learned}
+              solved={solved}
+              shaky={shaky}
+              user={account.user}
+              streak={account.streak}
+              today={account.today}
+              busy={account.busy}
+              error={account.error}
+              onSignUp={account.signUp}
+              onSignIn={account.signIn}
+              onSignOut={account.signOut}
+              onClearError={account.clearError}
+              onOpenPattern={openInLibrary}
+              onShaky={markShaky}
+              onAnswered={onAnswered}
+            />
+            <StartHere onOpenPattern={openInLibrary} learned={learned} onToggleLearned={toggleLearned} />
+          </div>
+        )}
         {tab === "coach" && <Coach learned={learned} onToggleLearned={toggleLearned} />}
         {tab === "library" && <Library learned={learned} onToggleLearned={toggleLearned} initialId={libraryId} />}
         {tab === "visualize" && <Visualizer onOpenPattern={openInLibrary} />}

@@ -11,6 +11,10 @@ __pycache__/
 venv/
 env/
 
+# local database (created at runtime when DATABASE_URL is unset)
+*.db
+*.sqlite3
+
 # secrets — never commit an API key
 .env
 .env.local

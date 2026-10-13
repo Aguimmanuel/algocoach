@@ -16,11 +16,14 @@ AlgoCoach attacks that gap directly:
 
 | | |
 | --- | --- |
-| **Start Here** | For complete beginners: what an algorithm is, what `O(n)` means, every jargon word in plain English, and the order to learn the 19 patterns in |
+| **Start Here** | Where you are, what to do next, **today's review**, and the beginner course: what an algorithm is, `O(n)` in plain English, a jargon buster, and the order to learn in |
 | **Coach** | Paste any problem. Get a constraint analysis, a question-type breakdown, ranked pattern candidates, and an AI thinking plan |
 | **Patterns** | 19 curated patterns from brute force to Dijkstra — signals, recipes, Socratic hints, pitfalls, and **100 practice problems** graded easy → hard and tracked |
 | **Visualize** | Animated binary search, two pointers, sliding window and BFS — **with the code beside the picture**, highlighting the line that is running |
 | **Cheat Sheet** | Constraint → complexity decoder, clue → pattern table, complexity growth chart |
+| **Accounts** | Optional. Sign in and progress follows you between devices. Signed out, everything still works on localStorage |
+| **Streaks & daily review** | A five-question set generated from the pattern library, tracking what you keep getting wrong |
+
 
 ### Two layers that back each other up
 
@@ -135,6 +138,10 @@ Everything lives in `backend/.env`:
 | --- | --- | --- |
 | `GEMINI_API_KEY` | *(empty)* | Empty → offline mode. **Never commit this file.** |
 | `GEMINI_MODEL` | `gemini-2.5-flash` | `gemini-2.5-pro` reasons deeper but is slower |
+| `DATABASE_URL` | *(empty)* | Empty → local SQLite file. Set to a Postgres URL in production |
+| `SECRET_KEY` | *(random)* | Signs session tokens. **Set this in production** or every deploy signs everyone out |
+
+**Shipping? See [DEPLOY.md](DEPLOY.md)** for the Aiven + Render walkthrough.
 
 Point the frontend at a non-default backend:
 

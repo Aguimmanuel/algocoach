@@ -138,3 +138,134 @@ export async function getSolution(
 }
 
 export { ApiError };
+
+/* ------------------------------------------------------------------ accounts
+ *
+ * Everything here is optional. The app is fully usable signed out, and every
+ * call below fails soft: a learner must never see an error because tracking or
+ * sync was unavailable.
+ */
+
+export interface AccountUser {
+  id: number;
+  email: string;
+  display_name: string;
+}
+
+export interface StreakInfo {
+  current: number;
+  longest: number;
+}
+
+export interface TodayInfo {
+  count: number;
+  goal: number;
+  met: boolean;
+}
+
+export interface MeResponse {
+  user: AccountUser;
+  progress: { learned: string[]; solved: string[]; shaky: string[] };
+  streak: StreakInfo;
+  today: TodayInfo;
+}
+
+export interface ProgressState {
+  learned: string[];
+  solved: string[];
+  shaky: string[];
+}
+
+const TOKEN_KEY = "algocoach-token";
+
+export function getToken(): string | null {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setToken(token: string | null) {
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* private mode — session simply won't persist */
+  }
+}
+
+function authHeaders(): Record<string, string> {
+  const t = getToken();
+  return t ? { authorization: `Bearer ${t}` } : {};
+}
+
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const res = await fetch(path, {
+    ...init,
+    headers: {
+      "content-type": "application/json",
+      ...authHeaders(),
+      ...(init.headers ?? {}),
+    },
+  });
+  if (!res.ok) {
+    let detail = `Request failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (typeof data?.detail === "string") detail = data.detail;
+    } catch {
+      /* keep the default */
+    }
+    throw new ApiError(detail);
+  }
+  return (await res.json()) as T;
+}
+
+export function signUp(body: {
+  email: string;
+  password: string;
+  display_name?: string;
+  learned: string[];
+  solved: string[];
+  shaky: string[];
+}): Promise<{ token: string; user: AccountUser }> {
+  return request("/api/auth/signup", { method: "POST", body: JSON.stringify(body) });
+}
+
+export function signIn(body: { email: string; password: string }): Promise<{ token: string; user: AccountUser }> {
+  return request("/api/auth/login", { method: "POST", body: JSON.stringify(body) });
+}
+
+export function getMe(): Promise<MeResponse> {
+  return request("/api/me");
+}
+
+export function putProgress(progress: ProgressState): Promise<ProgressState> {
+  return request("/api/progress", { method: "PUT", body: JSON.stringify(progress) });
+}
+
+/**
+ * Fire-and-forget activity logging.
+ *
+ * Never awaited by callers and never surfaced to the learner: if this fails we
+ * lose a data point, not a lesson. `keepalive` lets the final event of a
+ * session still land while the tab is closing.
+ */
+export function logEvent(kind: string, detail: Record<string, unknown> = {}): void {
+  if (!getToken()) return; // nothing to attribute it to
+  try {
+    void fetch("/api/events", {
+      method: "POST",
+      headers: { "content-type": "application/json", ...authHeaders() },
+      body: JSON.stringify({ kind, detail }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* ignore */
+  }
+}
+
+export function sendFeedback(message: string, context: Record<string, unknown> = {}): Promise<{ status: string }> {
+  return request("/api/feedback", { method: "POST", body: JSON.stringify({ message, context }) });
+}
