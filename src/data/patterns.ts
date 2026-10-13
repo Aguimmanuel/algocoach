@@ -9,6 +9,8 @@ export interface Pattern {
   color: ColorName;
   level: Level;
   tagline: string;
+  /** the same idea with no jargon at all — the first thing a beginner should read */
+  plain: string;
   analogy: string;
   signals: string[];
   /** [phrase, weight] — used by the question analyzer */
@@ -33,6 +35,8 @@ export const PATTERNS: Pattern[] = [
     color: "slate",
     level: "Beginner",
     tagline: "Try everything, or act out the rules exactly as written.",
+    /** the same idea with no jargon at all */
+    plain: "Try every possibility and keep the answer. Slow, but always correct — and always your first move.",
     analogy:
       "Checking every key on a keyring until one opens the door. Slow, but always correct — and the best starting point for every problem.",
     signals: [
@@ -86,6 +90,8 @@ return answer`,
     color: "amber",
     level: "Beginner",
     tagline: "Trade memory for instant lookups.",
+    /** the same idea with no jargon at all */
+    plain: "Keep a lookup box of things you've already seen, so you never search the list twice.",
     analogy:
       "A coat-check desk. Instead of searching every coat on the rack, you hand over a ticket and get yours in one move.",
     signals: [
@@ -150,6 +156,8 @@ for each item in data:
     color: "sky",
     level: "Beginner",
     tagline: "Two fingers moving through the data instead of two nested loops.",
+    /** the same idea with no jargon at all */
+    plain: "Put one finger at each end and walk them toward each other, instead of checking every pair.",
     analogy:
       "Two people walking toward each other along a corridor, meeting in the middle — each step eliminates part of the corridor.",
     signals: [
@@ -214,6 +222,8 @@ while left < right:
     color: "teal",
     level: "Beginner",
     tagline: "Slide a window across a sequence, updating instead of recomputing.",
+    /** the same idea with no jargon at all */
+    plain: "Look at a moving block of items instead of every possible block, and only nudge the edges.",
     analogy:
       "Looking through a train window: as the train moves, one new thing enters on the right and one old thing leaves on the left — you don't re-look at the whole landscape.",
     signals: [
@@ -276,6 +286,8 @@ for right from 0 to last index:
     color: "indigo",
     level: "Beginner",
     tagline: "Cut the search space in half with every question.",
+    /** the same idea with no jargon at all */
+    plain: "Guess the middle, throw away the half that can't hold the answer, repeat.",
     analogy:
       "Guessing a number between 1 and 100 with 'higher / lower' feedback. Seven questions are always enough.",
     signals: [
@@ -342,6 +354,8 @@ return the right boundary`,
     color: "cyan",
     level: "Beginner",
     tagline: "Precompute running totals to answer range questions instantly.",
+    /** the same idea with no jargon at all */
+    plain: "Add everything up once into running totals, so any range total is a single subtraction.",
     analogy:
       "A bank statement: to know how much you spent between March and June, subtract the balance in March from June instead of adding every receipt.",
     signals: [
@@ -401,6 +415,8 @@ answer = prefix[j+1] - prefix[i]`,
     color: "lime",
     level: "Beginner",
     tagline: "Put things in order so that the problem becomes easy.",
+    /** the same idea with no jargon at all */
+    plain: "Put the items in order first, then whatever you're looking for sits right next to its answer.",
     analogy:
       "Alphabetizing a stack of papers before looking for duplicates — neighbours now tell you everything.",
     signals: [
@@ -458,6 +474,8 @@ for each next item in data (after the first):
     color: "orange",
     level: "Intermediate",
     tagline: "Last in, first out — perfect for nested and 'most recent' things.",
+    /** the same idea with no jargon at all */
+    plain: "Keep a pile. The last thing you put down is the first thing you pick up.",
     analogy:
       "A stack of plates: you can only touch the top one. Great whenever the thing you handle next is the thing you saw most recently.",
     signals: [
@@ -521,6 +539,8 @@ for each item in data:
     color: "blue",
     level: "Intermediate",
     tagline: "Explore level by level — the shortest path in an unweighted graph.",
+    /** the same idea with no jargon at all */
+    plain: "Explore outward in rings — one step away, then two, then three. The first time you arrive is the shortest way.",
     analogy:
       "A ripple spreading in a pond. Everything 1 step away gets touched first, then everything 2 steps away, and so on.",
     signals: [
@@ -590,6 +610,8 @@ return "unreachable"`,
     color: "emerald",
     level: "Intermediate",
     tagline: "Go as deep as possible, then come back.",
+    /** the same idea with no jargon at all */
+    plain: "Pick a direction, go as far as you can, then back up and try the next one.",
     analogy:
       "Exploring a cave system by always taking the next tunnel until you hit a dead end, then backing up to the last fork.",
     signals: [
@@ -656,6 +678,8 @@ return "unreachable"`,
     color: "rose",
     level: "Intermediate",
     tagline: "Build answers piece by piece; undo when stuck.",
+    /** the same idea with no jargon at all */
+    plain: "Build an answer one choice at a time. When a choice leads nowhere, undo it and try another.",
     analogy:
       "Solving a maze with chalk: choose a path, mark it, and if you reach a dead end, erase your marks and try the next turn.",
     signals: [
@@ -721,6 +745,8 @@ return "unreachable"`,
     color: "violet",
     level: "Advanced",
     tagline: "Solve small versions first, remember them, build up to the big one.",
+    /** the same idea with no jargon at all */
+    plain: "Solve the small versions once, write them down, and reuse them to build the big answer.",
     analogy:
       "Climbing stairs: the number of ways to reach step 10 is built from the ways to reach steps 9 and 8. You write each result in a notebook so you never recompute it.",
     signals: [
@@ -793,6 +819,8 @@ function solve(state):
     color: "pink",
     level: "Intermediate",
     tagline: "Make the locally best choice each time — when you can prove it's safe.",
+    /** the same idea with no jargon at all */
+    plain: "Always take the best-looking option right now, and trust that it works out.",
     analogy:
       "Making change with the fewest coins: always take the biggest coin that fits. Easy and fast — but only works when the situation is shaped right.",
     signals: [
@@ -854,6 +882,8 @@ return chosen (or its size / total)`,
     color: "fuchsia",
     level: "Intermediate",
     tagline: "Always know the smallest or largest item in O(log n).",
+    /** the same idea with no jargon at all */
+    plain: "A pile that always hands you its smallest (or biggest) item instantly.",
     analogy:
       "A hospital emergency room: the most urgent patient is always seen next, no matter when they arrived.",
     signals: [
@@ -914,6 +944,8 @@ for each item in data:
     color: "red",
     level: "Advanced",
     tagline: "Track which items belong to the same group, super quickly.",
+    /** the same idea with no jargon at all */
+    plain: "Track which items belong to the same group, and merge groups as new links arrive.",
     analogy:
       "Friend circles at a party: when two people become friends, their two entire circles merge into one.",
     signals: [
@@ -975,6 +1007,8 @@ function union(a, b):
     color: "teal",
     level: "Advanced",
     tagline: "BFS's big brother for roads with different lengths.",
+    /** the same idea with no jargon at all */
+    plain: "Explore like BFS, but always continue from the cheapest route found so far.",
     analogy:
       "A GPS: always extend the route that is currently the cheapest, and the first time you pop a place from the list you've found its cheapest route.",
     signals: [

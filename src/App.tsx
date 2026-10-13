@@ -3,13 +3,15 @@ import Coach from "./components/Coach";
 import Library from "./components/Library";
 import Visualizer from "./components/Visualizer";
 import CheatSheet from "./components/CheatSheet";
+import StartHere from "./components/StartHere";
 import { PATTERNS } from "./data/patterns";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { cn } from "./utils/cn";
 
-type Tab = "coach" | "library" | "visualize" | "cheat";
+type Tab = "start" | "coach" | "library" | "visualize" | "cheat";
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
+  { id: "start", label: "Start Here", emoji: "🌱" },
   { id: "coach", label: "Coach", emoji: "🎓" },
   { id: "library", label: "Patterns", emoji: "📚" },
   { id: "visualize", label: "Visualize", emoji: "🎬" },
@@ -17,7 +19,7 @@ const TABS: { id: Tab; label: string; emoji: string }[] = [
 ];
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>("coach");
+  const [tab, setTab] = useState<Tab>("start");
   const [libraryId, setLibraryId] = useState<string | undefined>();
   const [learned, setLearned] = useLocalStorage<string[]>("algocoach-learned", []);
 
@@ -94,6 +96,7 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">
+        {tab === "start" && <StartHere onOpenPattern={openInLibrary} learned={learned} onToggleLearned={toggleLearned} />}
         {tab === "coach" && <Coach learned={learned} onToggleLearned={toggleLearned} />}
         {tab === "library" && <Library learned={learned} onToggleLearned={toggleLearned} initialId={libraryId} />}
         {tab === "visualize" && <Visualizer onOpenPattern={openInLibrary} />}

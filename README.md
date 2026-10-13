@@ -16,6 +16,7 @@ AlgoCoach attacks that gap directly:
 
 | | |
 | --- | --- |
+| **Start Here** | For complete beginners: what an algorithm is, what `O(n)` means, every jargon word in plain English, and the order to learn the 16 patterns in |
 | **Coach** | Paste any problem. Get a constraint analysis, a question-type breakdown, ranked pattern candidates, and an AI thinking plan |
 | **Patterns** | 16 curated patterns from brute force to Dijkstra — signals, recipes, Socratic hints, pitfalls, drills |
 | **Visualize** | Animated binary search, two pointers, sliding window and BFS |
@@ -172,6 +173,7 @@ Serving both from one origin is also what keeps `/api` working with no proxy and
 ```
 src/
   components/
+    StartHere.tsx      # beginner onboarding: basics, glossary, learning path
     Coach.tsx          # the main flow: paste → analyse → AI plan → lesson
     AICoach.tsx        # AI coaching panel + staged solution reveal
     Library.tsx        # browse all 16 patterns
@@ -182,6 +184,8 @@ src/
   data/
     patterns.ts        # the 16 patterns: signals, steps, hints, pitfalls, drills
     constraints.ts     # size buckets + the 5-step solving routine
+    basics.ts          # Big-O in plain English + the recommended learning order
+    glossary.ts        # every term the app uses, defined without jargon
   lib/
     analyze.ts         # deterministic analyzer (n detection, keyword scoring)
     api.ts             # client for the Python backend

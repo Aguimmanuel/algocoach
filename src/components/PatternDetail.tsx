@@ -73,6 +73,12 @@ export default function PatternDetail({ pattern, learned, onToggleLearned, onOpe
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Section title="The big idea" icon="💡">
+          <p className="rounded-xl bg-slate-900 p-4 text-base font-medium leading-relaxed text-white">
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+              In plain words
+            </span>
+            {pattern.plain}
+          </p>
           <p className="leading-relaxed text-slate-700">{pattern.idea}</p>
           <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-sm italic text-slate-600">
             Think of it like this: {pattern.analogy}
