@@ -16,10 +16,10 @@ AlgoCoach attacks that gap directly:
 
 | | |
 | --- | --- |
-| **Start Here** | For complete beginners: what an algorithm is, what `O(n)` means, every jargon word in plain English, and the order to learn the 16 patterns in |
+| **Start Here** | For complete beginners: what an algorithm is, what `O(n)` means, every jargon word in plain English, and the order to learn the 19 patterns in |
 | **Coach** | Paste any problem. Get a constraint analysis, a question-type breakdown, ranked pattern candidates, and an AI thinking plan |
-| **Patterns** | 16 curated patterns from brute force to Dijkstra — signals, recipes, Socratic hints, pitfalls, drills |
-| **Visualize** | Animated binary search, two pointers, sliding window and BFS |
+| **Patterns** | 19 curated patterns from brute force to Dijkstra — signals, recipes, Socratic hints, pitfalls, and **100 practice problems** graded easy → hard and tracked |
+| **Visualize** | Animated binary search, two pointers, sliding window and BFS — **with the code beside the picture**, highlighting the line that is running |
 | **Cheat Sheet** | Constraint → complexity decoder, clue → pattern table, complexity growth chart |
 
 ### Two layers that back each other up
@@ -182,10 +182,11 @@ src/
     Visualizer.tsx     # animated binary search / two pointers / window / BFS
     CheatSheet.tsx     # constraint → complexity decoder
   data/
-    patterns.ts        # the 16 patterns: signals, steps, hints, pitfalls, drills
+    patterns.ts        # the 19 patterns: signals, steps, hints, pitfalls, drills
     constraints.ts     # size buckets + the 5-step solving routine
     basics.ts          # Big-O in plain English + the recommended learning order
     glossary.ts        # every term the app uses, defined without jargon
+    practice.ts        # 100 real problems, graded easy / medium / hard
   lib/
     analyze.ts         # deterministic analyzer (n detection, keyword scoring)
     api.ts             # client for the Python backend
@@ -197,6 +198,21 @@ backend/
 ```
 
 ---
+
+## What we learned from, and what we took
+
+AlgoCoach borrows deliberately rather than inventing. The sources below shaped three decisions, and each borrow is visible in the UI:
+
+| Source | What it does well | What we took |
+| --- | --- | --- |
+| **Algorithm Visualizer** | Pairs animation with the code that produced it | The code panel beside every animation, with the running line highlighted |
+| **VisuAlgo** | Structured lessons, and a "training" component with questions graded easy → medium → hard | The learning path, and difficulty tiers on every practice problem |
+| **NeetCode Roadmap** | Groups problems by pattern in dependency order, with a solved counter | One practice list per pattern, plus overall progress in the header |
+| **Grokking Algorithms** | Explains ideas with pictures and everyday comparisons, no maths | The `plain` line on every pattern — the idea with no jargon at all |
+| **Algorithmic Thinking / The Algorithm Design Manual** | Emphasise judgement: when to use a technique, and when not to | The pitfalls and "when not to use this" framing |
+| **LeetCode Explore** | Progressive tracks with checkpoints | The "Ready when:" check on every step of the learning path |
+
+One thing we deliberately did **not** copy: external links to problems. Names are stable and searchable on any judge, and keeping them as text means the whole app still works with no internet.
 
 ## Design notes
 

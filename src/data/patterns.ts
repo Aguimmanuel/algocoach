@@ -468,6 +468,71 @@ for each next item in data (after the first):
     drills: ["Merge Intervals", "Meeting Rooms", "Minimum Absolute Difference", "Largest Number"],
   },
   {
+    id: "linked-list",
+    name: "Linked List & Pointer Rewiring",
+    emoji: "🔗",
+    color: "slate",
+    level: "Beginner",
+    tagline: "Boxes that know who comes next.",
+    plain: "Instead of numbering the items, give each one a hand on the shoulder of the next. To change the order you only re-point the hands.",
+    analogy:
+      "A treasure hunt: each clue tells you where the next clue is. You cannot jump straight to clue 7 — you have to walk the chain. That is the price, and it is also why slipping a new clue into the middle takes one move instead of shifting everything along.",
+    signals: [
+      "The problem says 'insert' or 'delete' and also cares about doing it in O(1)",
+      "You need a cache that evicts the least recently used item (LRU)",
+      "The question mentions a cycle, the middle node, or 'is this list a palindrome'",
+      "You cannot jump to an index — there is no arr[i] available",
+    ],
+    keywords: [
+      ["linked list", 3],
+      ["lru", 3],
+      ["least recently used", 3],
+      ["next pointer", 2.5],
+      ["node", 1],
+      ["cycle", 2],
+      ["reverse the", 1.5],
+    ],
+    idea:
+      "A node holds a value and a reference to the next node. You never move data around; you only change which node points at which. The classic trick is the dummy head — a fake node in front, so that inserting or deleting the very first item stops being a special case.",
+    steps: [
+      "Draw the nodes as boxes and the links as arrows before writing any code.",
+      "Say out loud which arrows must change, and in what order, so you never lose the rest of the list.",
+      "Save 'next' in a temporary variable BEFORE overwriting a link. This is the mistake everyone makes once.",
+      "For cycles or the middle element, use two walkers at different speeds: slow moves one, fast moves two.",
+      "Treat the empty list and the single-node list as separate cases.",
+    ],
+    skeleton: `# the two-speed trick — finds cycles and the middle
+slow = head
+fast = head
+while fast and fast.next:
+    slow = slow.next          # one step
+    fast = fast.next.next     # two steps
+    if slow == fast: ...      # they met, so there is a cycle
+
+# rewiring safely: always hold the rest before you cut
+prev = None
+while head:
+    nxt = head.next    # hold the rest FIRST
+    head.next = prev   # then re-point
+    prev = head
+    head = nxt`,
+    time: "Walk O(n) · insert or delete O(1) once you are standing there",
+    space: "O(1) to rewire in place",
+    pitfalls: [
+      "Losing the rest of the list because you overwrote a pointer before saving it.",
+      "Forgetting that the head itself can change when you delete the first item.",
+      "Writing fast.next.next on the last node and crashing on None.",
+    ],
+    hints: [
+      "Which arrow has to change, and what would you lose if you changed it first?",
+      "What does your code do on an empty list? On exactly one node?",
+      "If the head itself can be removed, how do you avoid writing a special case just for it?",
+      "Two walkers at different speeds — where would they overlap, and what would that prove?",
+    ],
+    drills: ["Reverse a linked list", "Detect a cycle", "Find the middle node", "Merge two sorted lists", "LRU cache"],
+    prerequisites: ["brute"],
+  },
+  {
     id: "stack",
     name: "Stack",
     emoji: "📚",
@@ -672,6 +737,68 @@ return "unreachable"`,
     drills: ["Maximum Depth of Binary Tree", "Number of Islands", "Flood Fill", "Path Sum", "Course Schedule"],
   },
   {
+    id: "trees",
+    name: "Trees & Recursion on Structure",
+    emoji: "🌳",
+    color: "slate",
+    level: "Intermediate",
+    tagline: "Solve one node, then trust the rest to be solved.",
+    plain: "A tree is folders inside folders. To answer a question about the whole tree, answer it for one node and let the same function handle the children.",
+    analogy:
+      "An org chart. To count everyone in the company you do not visit every desk — you ask each manager how many are in their team, and they ask their own reports. Everyone answers the same small question about one level.",
+    signals: [
+      "The data is nested or hierarchical, or 'a parent has children'",
+      "The question asks about depth, height, paths from root to leaf, or the top of the tree",
+      "You are told it is a binary search tree (left < node < right)",
+      "The answer for the whole tree looks like a combination of the answers for its children",
+    ],
+    keywords: [
+      ["binary tree", 3],
+      ["binary search tree", 3],
+      ["tree", 2.5],
+      ["bst", 3],
+      ["subtree", 2.5],
+      ["level order", 2.5],
+      ["ancestor", 2.5],
+      ["root", 2],
+      ["leaf", 2],
+      ["depth", 2],
+      ["height", 2],
+    ],
+    idea:
+      "Almost every tree question is the same three lines: handle the empty node, solve the left, solve the right, combine the two. Trust the recursion — assume your function already works for the smaller children, and only work out what the current node does with their answers.",
+    steps: [
+      "Write the base case for an empty node FIRST. It stops the recursion, and it is where most bugs live.",
+      "Assume the function already works for the left and right children. What do you do with their two answers?",
+      "Decide whether you carry a value down the tree, or return an answer back up it.",
+      "For level-by-level questions, swap the recursion for a queue and walk the tree in rings.",
+      "For a BST, use the ordering: you can ignore half the tree at every node, exactly like binary search.",
+    ],
+    skeleton: `def solve(node):
+    if node is None:
+        return <the answer for an empty tree>   # base case first
+
+    left = solve(node.left)      # trust that this works
+    right = solve(node.right)
+
+    return <combine node, left, right>`,
+    time: "O(n) — every node is visited once",
+    space: "O(h) recursion depth, where h is the tree height",
+    pitfalls: [
+      "Forgetting the None base case, so the recursion crashes the moment it reaches a leaf.",
+      "Writing an iterative version from memory instead of using the simple recursive shape.",
+      "Using the ordering of a BST on a tree that was never stated to be one.",
+    ],
+    hints: [
+      "What is the answer for an empty tree? Write that line before anything else.",
+      "If the left and right subtrees were already solved, what is left for you to do?",
+      "Are you carrying information down the tree, or bringing answers back up?",
+      "Does the ordering of a BST let you ignore half the tree at each step?",
+    ],
+    drills: ["Maximum depth of a binary tree", "Same tree", "Level order traversal", "Validate a BST", "Lowest common ancestor"],
+    prerequisites: ["dfs"],
+  },
+  {
     id: "backtracking",
     name: "Backtracking",
     emoji: "🔙",
@@ -737,6 +864,66 @@ return "unreachable"`,
     ],
     drills: ["Subsets", "Permutations", "Combination Sum", "Generate Parentheses", "N-Queens"],
     prerequisites: ["dfs"],
+  },
+  {
+    id: "intervals",
+    name: "Intervals & Overlap",
+    emoji: "📐",
+    color: "slate",
+    level: "Intermediate",
+    tagline: "Sort by start time, then sweep left to right.",
+    plain: "Each item is a range with a beginning and an end. Sort them by when they start, then walk through and join up the ones that touch.",
+    analogy:
+      "A day of back-to-back meetings. Sorting them by start time turns 'does anything clash?' into one walk down the list, comparing each meeting's start against the previous one's end.",
+    signals: [
+      "Each item is a pair like [start, end] — times, ranges, prices",
+      "The words 'overlap', 'merge', 'conflict', 'clash' or 'free time' appear",
+      "The question asks for the most things you can do at once",
+      "You must insert a new range into an existing set of ranges",
+    ],
+    keywords: [
+      ["interval", 3],
+      ["merge intervals", 3],
+      ["meeting room", 3],
+      ["overlap", 2.5],
+      ["start time", 2],
+      ["end time", 2],
+      ["conflict", 2],
+      ["schedule", 2],
+      ["booking", 1.5],
+    ],
+    idea:
+      "Sort by start. After that, an overlap can only ever happen between neighbours, so a single pass is enough. Two ranges overlap when the next one starts before the current one ends.",
+    steps: [
+      "Sort the intervals by their start value, and draw them as bars on a line.",
+      "Walk left to right, keeping the interval you are currently building.",
+      "If the next start is past your current end, that run is finished — record it and start a new one.",
+      "Otherwise they overlap: stretch the current end to the larger of the two ends and carry on.",
+      "For 'most things at once', sort the starts and the ends separately and sweep a counter up and down.",
+    ],
+    skeleton: `intervals.sort(key=start)     # sort first — everything depends on this
+merged = []
+for each interval:
+    if merged is empty or interval.start > merged.last.end:
+        merged.append(interval)          # no overlap: start a new run
+    else:
+        merged.last.end = max(merged.last.end, interval.end)   # stretch
+return merged`,
+    time: "O(n log n) — the sort dominates everything else",
+    space: "O(n) for the output",
+    pitfalls: [
+      "Forgetting to sort. Nothing else works until the data is ordered.",
+      "Using > instead of >= when ranges that merely touch should also merge.",
+      "Shrinking the end instead of taking the larger — the new interval can sit inside the old one.",
+    ],
+    hints: [
+      "What single ordering turns overlap into a question about neighbours only?",
+      "Two ranges are in front of you. What exactly must be true for them to overlap?",
+      "If they do overlap, which end do you keep, and why must it be the larger one?",
+      "For 'how many at once', do you need the pairs kept together, or would sorting the ends separately tell you more?",
+    ],
+    drills: ["Merge intervals", "Insert interval", "Non-overlapping intervals", "Meeting rooms", "Minimum number of arrows"],
+    prerequisites: ["sorting"],
   },
   {
     id: "dp",

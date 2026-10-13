@@ -175,6 +175,13 @@ export const LEARNING_PATH: PathStep[] = [
     check: '"Would sorting make this easy?" becomes one of your first questions.',
   },
   {
+    patternId: "linked-list",
+    title: "Linked lists: boxes that hold hands",
+    detail:
+      "You cannot jump to an index, but slipping something into the middle costs one move instead of shifting everything. The handling of pointers is the whole skill, and it is the reason the LRU cache is a classic interview question.",
+    check: "You can reverse a list on paper, drawing the arrows, without losing the rest of the chain.",
+  },
+  {
     patternId: "stack",
     title: "Stacks: handle unfinished business",
     detail:
@@ -194,6 +201,20 @@ export const LEARNING_PATH: PathStep[] = [
     detail:
       "Commit to a direction and follow it to the end before trying the next. The natural way to explore everything, and your first taste of recursion as a tool.",
     check: "You can describe what happens on the way back up the recursion.",
+  },
+  {
+    patternId: "trees",
+    title: "Trees: solve one node, trust the rest",
+    detail:
+      "Your first real recursion. Almost every tree question is the same three lines — empty case, solve the left, solve the right, combine. Once this clicks, recursion stops being scary.",
+    check: "You write the empty-node base case first, automatically, before anything else.",
+  },
+  {
+    patternId: "intervals",
+    title: "Intervals: sort, then sweep",
+    detail:
+      "A pair of numbers becomes a range on a line. Sorting by start time turns a tangle of overlaps into one walk down the list. The same move solves meeting rooms, bookings and scheduling.",
+    check: "You ask 'would sorting by the start make this a neighbour comparison?' before anything else.",
   },
   {
     patternId: "greedy",

@@ -22,6 +22,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("start");
   const [libraryId, setLibraryId] = useState<string | undefined>();
   const [learned, setLearned] = useLocalStorage<string[]>("algocoach-learned", []);
+  const [solved] = useLocalStorage<string[]>("algocoach-solved", []);
 
   const toggleLearned = (id: string) =>
     setLearned((l) => (l.includes(id) ? l.filter((x) => x !== id) : [...l, id]));
@@ -89,7 +90,9 @@ export default function App() {
               <p className="text-xs font-semibold text-slate-700">
                 {learned.length}/{PATTERNS.length} patterns
               </p>
-              <p className="text-[11px] text-slate-400">learned</p>
+              <p className="text-[11px] text-slate-400">
+                learned{solved.length > 0 && <> · {solved.length} solved</>}
+              </p>
             </div>
           </button>
         </div>
