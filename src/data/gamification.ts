@@ -80,7 +80,14 @@ export function levelFor(xp: number): LevelProgress {
   const next = LEVELS.find((l) => l.at > level.at) ?? null;
 
   if (!next) {
-    return { level, next: null, into: xp - level.at, span: 1, pct: 100, remaining: 0 };
+    return {
+      level,
+      next: null,
+      into: xp - level.at,
+      span: 1,
+      pct: 100,
+      remaining: 0,
+    };
   }
 
   const into = xp - level.at;
@@ -113,18 +120,90 @@ export function milestones(opts: {
 }): Milestone[] {
   const { learned, solved, streak, level, sessions } = opts;
   return [
-    { id: "first", label: "First Steps", detail: "Mark your first pattern learned", emoji: "🌱", earned: learned >= 1 },
-    { id: "five", label: "Five Down", detail: "Learn 5 patterns", emoji: "🖐️", earned: learned >= 5 },
-    { id: "ten", label: "Halfway", detail: "Learn 10 patterns", emoji: "🧗", earned: learned >= 10 },
-    { id: "all", label: "Completionist", detail: "Learn every pattern", emoji: "🏆", earned: learned >= 19 },
-    { id: "solve1", label: "First Blood", detail: "Solve a practice problem", emoji: "✅", earned: solved >= 1 },
-    { id: "solve10", label: "Practitioner", detail: "Solve 10 problems", emoji: "🔧", earned: solved >= 10 },
-    { id: "solve25", label: "Grinder", detail: "Solve 25 problems", emoji: "💪", earned: solved >= 25 },
-    { id: "streak3", label: "Warming Up", detail: "3-day streak", emoji: "🔥", earned: streak >= 3 },
-    { id: "streak7", label: "Week Strong", detail: "7-day streak", emoji: "⚡", earned: streak >= 7 },
-    { id: "streak30", label: "Habit Formed", detail: "30-day streak", emoji: "🌟", earned: streak >= 30 },
-    { id: "session1", label: "Reviewed", detail: "Finish a review session", emoji: "🎯", earned: sessions >= 1 },
-    { id: "level5", label: "Steady Hand", detail: "Reach level 5", emoji: "🎖️", earned: level >= 5 },
+    {
+      id: "first",
+      label: "First Steps",
+      detail: "Mark your first pattern learned",
+      emoji: "🌱",
+      earned: learned >= 1,
+    },
+    {
+      id: "five",
+      label: "Five Down",
+      detail: "Learn 5 patterns",
+      emoji: "🖐️",
+      earned: learned >= 5,
+    },
+    {
+      id: "ten",
+      label: "Halfway",
+      detail: "Learn 10 patterns",
+      emoji: "🧗",
+      earned: learned >= 10,
+    },
+    {
+      id: "all",
+      label: "Completionist",
+      detail: "Learn every pattern",
+      emoji: "🏆",
+      earned: learned >= 19,
+    },
+    {
+      id: "solve1",
+      label: "First Blood",
+      detail: "Solve a practice problem",
+      emoji: "✅",
+      earned: solved >= 1,
+    },
+    {
+      id: "solve10",
+      label: "Practitioner",
+      detail: "Solve 10 problems",
+      emoji: "🔧",
+      earned: solved >= 10,
+    },
+    {
+      id: "solve25",
+      label: "Grinder",
+      detail: "Solve 25 problems",
+      emoji: "💪",
+      earned: solved >= 25,
+    },
+    {
+      id: "streak3",
+      label: "Warming Up",
+      detail: "3-day streak",
+      emoji: "🔥",
+      earned: streak >= 3,
+    },
+    {
+      id: "streak7",
+      label: "Week Strong",
+      detail: "7-day streak",
+      emoji: "⚡",
+      earned: streak >= 7,
+    },
+    {
+      id: "streak30",
+      label: "Habit Formed",
+      detail: "30-day streak",
+      emoji: "🌟",
+      earned: streak >= 30,
+    },
+    {
+      id: "session1",
+      label: "Reviewed",
+      detail: "Finish a review session",
+      emoji: "🎯",
+      earned: sessions >= 1,
+    },
+    {
+      id: "level5",
+      label: "Steady Hand",
+      detail: "Reach level 5",
+      emoji: "🎖️",
+      earned: level >= 5,
+    },
   ];
 }
 
@@ -149,12 +228,37 @@ export interface Quest {
  * numbers the app already tracks, so nothing can drift, and the XP is real —
  * it is added to the same total the levels read.
  */
-export function dailyQuests(opts: { answered: number; sessions: number; goal: number }): Quest[] {
+export function dailyQuests(opts: {
+  answered: number;
+  sessions: number;
+  goal: number;
+}): Quest[] {
   const goal = Math.max(1, opts.goal);
   const raw = [
-    { id: "warmup", label: "Warm up", hint: "Answer one question", xp: 5, progress: opts.answered, target: 1 },
-    { id: "goal", label: "Hit today's goal", hint: `Answer ${goal} questions`, xp: 15, progress: opts.answered, target: goal },
-    { id: "review", label: "Finish a review", hint: "One full session, start to results", xp: 20, progress: opts.sessions, target: 1 },
+    {
+      id: "warmup",
+      label: "Warm up",
+      hint: "Answer one question",
+      xp: 5,
+      progress: opts.answered,
+      target: 1,
+    },
+    {
+      id: "goal",
+      label: "Hit today's goal",
+      hint: `Answer ${goal} questions`,
+      xp: 15,
+      progress: opts.answered,
+      target: goal,
+    },
+    {
+      id: "review",
+      label: "Finish a review",
+      hint: "One full session, start to results",
+      xp: 20,
+      progress: opts.sessions,
+      target: 1,
+    },
   ];
 
   return raw.map((q) => {

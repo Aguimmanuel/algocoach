@@ -96,3 +96,17 @@ class Feedback(Base):
     message: Mapped[str] = mapped_column(Text, nullable=False)
     context: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+class LearningState(Base):
+    """Authenticated curriculum progress; additive schema compatible with old DBs."""
+    __tablename__ = "learning_states"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    lessons: Mapped[dict] = mapped_column(JSON, default=dict)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class GoogleIdentity(Base):
+    """Additive identity table: no ALTER of existing users/progress tables."""
+    __tablename__ = "google_identities"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    google_sub: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)

@@ -1,0 +1,1441 @@
+{
+  "what-is-algorithm": {
+    "id": "what-is-algorithm",
+    "title": "Find the largest value",
+    "goal": "Find the largest number in [4, 1, 7], using a repeatable recipe.",
+    "intro": [
+      "An input is what we start with: the list [4, 1, 7]. The output is what we want back: its largest number. Brackets group the items; commas separate them.",
+      "An algorithm is a precise recipe. Read a number, compare it with the largest remembered number, and update that memory only when it is greater. We do not need to discuss speed yet."
+    ],
+    "recipe": [
+      "Start with no largest value.",
+      "Read 4: it becomes largest. Read 1: keep 4. Read 7: replace 4 with 7.",
+      "After reading every item, return the remembered number: 7."
+    ],
+    "words": [
+      "Value: an item such as 4. Position (index): where it sits; the first position is 0.",
+      "A variable is a named place to remember a value. Here largest remembers the best number seen so far.",
+      "A loop repeats the same instructions for each item. Greater than (>) asks whether the left number is larger."
+    ],
+    "caution": "For an empty list, return None: Python’s name for no value. Starting largest at 0 would incorrectly handle a list containing only negative numbers.",
+    "code": "def largest_number(numbers):  # numbers is the input list; define the recipe once\n    largest = None  # no number has been read yet\n    for number in numbers:  # read one item at a time, in order\n        if largest is None or number > largest:  # first number, or an improvement\n            largest = number  # remember the new largest value\n    return largest  # after the loop, send the answer back\n\nprint(largest_number([4, 1, 7]))  # use the same lesson input; print displays 7",
+    "expected": "7",
+    "predict": {
+      "prompt": "After remembering 4, you read 1. What should happen?",
+      "options": ["Replace 4 with 1", "Keep 4", "Stop reading"],
+      "answer": 1,
+      "explain": "1 is smaller than 4. Keep 4, then read the next item."
+    },
+    "transfer": {
+      "prompt": "For [-5, -2, -8], what is the largest value?",
+      "options": ["0", "-8", "-2"],
+      "answer": 2,
+      "explain": "Compare the numbers themselves. -2 is greater than -5 and -8; there is no 0 in the input."
+    },
+    "gap": {
+      "prompt": "Choose the update line when a larger number is found.",
+      "options": ["largest = number", "number = 0", "return None"],
+      "answer": 0,
+      "explain": "Store the new number in largest; do not stop the whole loop."
+    },
+    "hint": "Compare just two numbers first: which would you keep as the larger one?",
+    "final": {
+      "prompt": "Why does the recipe start with no largest value rather than 0?",
+      "options": [
+        "To handle lists with only negative values",
+        "To return 0 for every list",
+        "To avoid reading the input"
+      ],
+      "answer": 0,
+      "explain": "A starting 0 would beat every negative item even though 0 is absent. The first real item establishes the initial largest."
+    }
+  },
+  "big-o-intuition": {
+    "id": "big-o-intuition",
+    "title": "Count work as the input grows",
+    "goal": "Compare one visit per item with checking every ordered pair of items.",
+    "intro": [
+      "We can count repeated work without measuring seconds. In this lesson n means the number of items. For n = 4, one visit to each item makes 4 visits.",
+      "Now visit all 4 items for each of the 4 items. That makes 4 × 4 = 16 checks. This particular example includes an item paired with itself; other pair tasks may exclude it.",
+      "When n grows from 4 to 8, the first recipe grows from 4 to 8 visits. The second grows from 16 to 64 checks. Big-O describes a growth family, not an exact stopwatch time."
+    ],
+    "recipe": [
+      "One scan does n visits. We call its growth linear: O(n).",
+      "A full loop inside another full loop does n × n checks. n² is shorthand for n multiplied by n; its growth is quadratic: O(n²).",
+      "An inequality n ≤ 8 says n is at most 8. A power such as 10⁵ means 10 × 10 × 10 × 10 × 10 = 100,000. We will not use size limits as guaranteed timing promises."
+    ],
+    "words": [
+      "n: the input size, or number of items.",
+      "O(n): doubling input roughly doubles this recipe’s work. O(n²): doubling input multiplies work by four.",
+      "Big-O ignores fixed multipliers and small extra terms. It helps compare growth, but actual runtime also depends on the operations and environment."
+    ],
+    "caution": "Do not turn a size threshold into a universal rule. Compare the actual repeated work and the task’s time limit.",
+    "code": "def count_work(n):  # n means number of input items\n    visits = 0  # count one visit for each item\n    pairs = 0  # count every ordered pair, including self-pairs\n    for i in range(n):  # positions run from 0 to n-1\n        visits += 1  # one single-scan visit\n        for j in range(n):  # for each i, visit all n positions\n            pairs += 1  # count this ordered pair\n    return visits, pairs  # return both counts as a tuple\n\nprint(count_work(4))  # 4 visits, 16 ordered-pair checks",
+    "expected": "(4, 16)",
+    "predict": {
+      "prompt": "With 4 items, how many ordered-pair checks do two full loops make?",
+      "options": ["4", "8", "16"],
+      "answer": 2,
+      "explain": "Each of 4 outer visits makes 4 inner checks: 4 × 4 = 16."
+    },
+    "transfer": {
+      "prompt": "Double the input from 4 to 8. What happens to n × n checks?",
+      "options": ["16 → 32", "16 → 64", "4 → 8"],
+      "answer": 1,
+      "explain": "8 × 8 = 64. Twice the input gives four times this work."
+    },
+    "gap": {
+      "prompt": "Which line counts a single ordered pair inside the inner loop?",
+      "options": ["pairs += 1", "n = 0", "return visits"],
+      "answer": 0,
+      "explain": "Increase the pair counter once for each inner-loop visit."
+    },
+    "hint": "Draw four rows of four dots. Count the dots one row at a time.",
+    "final": {
+      "prompt": "What does counting growth tell us?",
+      "options": [
+        "The exact runtime on every computer",
+        "How repeated work changes as input grows",
+        "That every big input is impossible"
+      ],
+      "answer": 1,
+      "explain": "Growth counts compare recipes. They do not include hardware, language or cost per operation."
+    }
+  },
+  "brute-first": {
+    "id": "brute-first",
+    "title": "Try each unused pair",
+    "goal": "Find two different positions in [2, 4, 6] whose values add to 8.",
+    "intro": [
+      "A candidate is one possible answer to try. Here it is a pair of different positions. We want positions [0, 2], because their values are 2 and 6.",
+      "Brute force means trying every allowed candidate until one works, or until none remain. It is useful as a simple, checkable starting solution."
+    ],
+    "recipe": [
+      "Try positions 0 and 1: 2 + 4 = 6, so continue.",
+      "Try positions 0 and 2: 2 + 6 = 8, so return [0, 2].",
+      "Start the second position after the first; never reuse an item as its own partner."
+    ],
+    "words": [
+      "Candidate: a possible answer. Target: the desired total.",
+      "An index is a position, not the number at that position.",
+      "None means no matching pair exists."
+    ],
+    "caution": "With fewer than two items, there is no pair. A straightforward solution can be correct even when a larger input would need a faster approach.",
+    "code": "def find_pair(numbers, target):  # receive the list and desired sum\n    for i in range(len(numbers)):  # choose the first position\n        for j in range(i + 1, len(numbers)):  # choose a different, later position\n            if numbers[i] + numbers[j] == target:  # test this candidate’s sum\n                return [i, j]  # return positions, not their values\n    return None  # all candidates failed\n\nprint(find_pair([2, 4, 6], 8))  # positions 0 and 2 contain 2 and 6",
+    "expected": "[0, 2]",
+    "predict": {
+      "prompt": "After 2 + 4 fails, which unused pair comes next?",
+      "options": ["2 + 2", "2 + 6", "4 + 4"],
+      "answer": 1,
+      "explain": "Keep the first position and advance the second: positions 0 and 2."
+    },
+    "transfer": {
+      "prompt": "For [1, 3] and target 9, what should the recipe return?",
+      "options": ["[0, 1]", "None", "9"],
+      "answer": 1,
+      "explain": "The only allowed pair sums to 4, so no matching positions exist."
+    },
+    "gap": {
+      "prompt": "Where should the second position begin?",
+      "options": ["range(i + 1, len(numbers))", "range(i, i + 1)", "range(0)"],
+      "answer": 0,
+      "explain": "Begin after i to avoid reusing a position and repeating reversed pairs."
+    },
+    "hint": "List the position pairs (0,1), (0,2), (1,2), then write their sums.",
+    "final": {
+      "prompt": "Why does the second position begin after the first?",
+      "options": [
+        "To try no pairs",
+        "To reuse one item twice",
+        "To avoid self-pairs and reversed duplicates"
+      ],
+      "answer": 2,
+      "explain": "Every unused unordered pair is considered exactly once, with two different positions."
+    }
+  },
+  "reading-problems": {
+    "id": "reading-problems",
+    "title": "Separate values from positions",
+    "goal": "Turn “return two indices that sum to 9” into a concrete input/output task.",
+    "intro": [
+      "Read this task: given [2, 7, 11], return two different indices whose values add to 9. An index is a position; the first index is 0.",
+      "Draw a row of positions 0, 1, 2 over the values 2, 7, 11. Values 2 and 7 sum to 9, but the required output is [0, 1].",
+      "A useful reading routine is: name the input; name the output; work a tiny example; state the allowed choices; then describe a repeatable recipe. You do not need a pattern-ranking tool for this step."
+    ],
+    "recipe": [
+      "Input: the list [2, 7, 11] and target 9.",
+      "Output: two different positions, not the values at those positions.",
+      "Check the example: positions 0 and 1 give 2 + 7 = 9. If no pair works, this lesson returns None."
+    ],
+    "words": [
+      "Restate: explain the task in your own words.",
+      "Constraint: a limit on allowed inputs or choices; here the two positions must differ.",
+      "Index: a position. Value: what is stored at that position."
+    ],
+    "caution": "Returning [2, 7] solves a different task. Write the expected output before selecting an algorithm.",
+    "code": "def pair_positions(numbers, target):  # the input has a list and target\n    for i in range(len(numbers)):  # read a first position\n        for j in range(i + 1, len(numbers)):  # choose a distinct position\n            if numbers[i] + numbers[j] == target:  # values are used for the test\n                return [i, j]  # positions are used for the output\n    return None  # the task’s no-answer convention\n\nprint(pair_positions([2, 7, 11], 9))  # values 2 and 7 are at positions 0 and 1",
+    "expected": "[0, 1]",
+    "predict": {
+      "prompt": "Values 2 and 7 sum to 9. What does this task ask you to return?",
+      "options": ["[2, 7]", "[0, 1]", "9"],
+      "answer": 1,
+      "explain": "The task asks for indices, so return positions 0 and 1."
+    },
+    "transfer": {
+      "prompt": "For [3, 3] and target 6, which output uses two different positions?",
+      "options": ["[0, 0]", "[3, 3]", "[0, 1]"],
+      "answer": 2,
+      "explain": "The values are equal but their positions differ. Both items may be used once."
+    },
+    "gap": {
+      "prompt": "Which return line matches the required output?",
+      "options": [
+        "return [numbers[i], numbers[j]]",
+        "return [i, j]",
+        "return target"
+      ],
+      "answer": 1,
+      "explain": "The test uses values; the output must use indices."
+    },
+    "hint": "Draw two rows: positions on top, values underneath. Circle what the output request names.",
+    "final": {
+      "prompt": "What should you clarify before choosing a recipe?",
+      "options": [
+        "Whether the output wants positions or values",
+        "Which animation looks best",
+        "The answer without reading the task"
+      ],
+      "answer": 0,
+      "explain": "An algorithm can compute a useful quantity but still solve the wrong output request."
+    }
+  },
+  "hashmap-lesson": {
+    "id": "hashmap-lesson",
+    "title": "Remember earlier positions",
+    "goal": "Find a pair in [2, 7, 11] adding to 9 without searching earlier values again.",
+    "intro": [
+      "We already know how to try pairs. This recipe keeps a lookup box of earlier values and their positions. A dictionary (hash map) is Python’s form of that box.",
+      "For current value 2, the missing partner is 9 − 2 = 7. It is not in the box, so store 2 → 0. At position 1, value 7 needs 2; the box supplies position 0."
+    ],
+    "recipe": [
+      "Begin with an empty dictionary.",
+      "Compute the missing partner; look for it among earlier values.",
+      "If absent, store current value → current position. If present, return the remembered position and the current one."
+    ],
+    "words": [
+      "Key: what you look up, here an earlier value. Value: what the lookup returns, here its position.",
+      "Dictionary: a key-to-value lookup structure. Expected lookup cost is roughly constant for this use, not a guarantee for every implementation.",
+      "Check before storing to avoid using the current item twice."
+    ],
+    "caution": "Equal numbers at different positions can be a valid pair. A single number must never pair with itself.",
+    "code": "def pair_positions(numbers, target):  # find two positions with a target sum\n    seen = {}  # initially no earlier value has a remembered position\n    for i, number in enumerate(numbers):  # i is position; number is its value\n        need = target - number  # for 2 and target 9, the missing value is 7\n        if need in seen:  # ask whether that partner appeared earlier\n            return [seen[need], i]  # earlier partner position, then current position\n        seen[number] = i  # remember this value only after checking\n    return None  # no pair was found\n\nprint(pair_positions([2, 7, 11], 9))  # [0, 1]",
+    "expected": "[0, 1]",
+    "predict": {
+      "prompt": "After reading 2 at position 0, what belongs in the box?",
+      "options": ["0 → 9", "2 → 0", "7 → 1"],
+      "answer": 1,
+      "explain": "Store the value 2 as the key and its position 0 as the remembered value."
+    },
+    "transfer": {
+      "prompt": "For [3, 3] and target 6, can the second 3 find a partner?",
+      "options": [
+        "Yes, at earlier position 0",
+        "No, equal values are forbidden",
+        "Only by reusing position 1"
+      ],
+      "answer": 0,
+      "explain": "The first 3 is already stored. The second item has a different position."
+    },
+    "gap": {
+      "prompt": "Which line remembers an earlier value and its position?",
+      "options": ["seen[number] = i", "seen[i] = target", "return number"],
+      "answer": 0,
+      "explain": "Future lookups use values as keys and return positions."
+    },
+    "hint": "Pretend the box has one card: “2 is at position 0.” What do you ask for when you read 7?",
+    "final": {
+      "prompt": "Why check the lookup box BEFORE storing the current value?",
+      "options": [
+        "To avoid pairing a position with itself",
+        "To make the box permanently empty",
+        "To return only the current value"
+      ],
+      "answer": 0,
+      "explain": "Earlier entries must represent different positions. Store the current item only after looking for its partner."
+    }
+  },
+  "two-pointers-lesson": {
+    "id": "two-pointers-lesson",
+    "title": "Keep the useful pair candidates",
+    "goal": "Find positions adding to 9 in sorted [1, 2, 7, 11].",
+    "intro": [
+      "Sorted means increasing order. Start with the smallest remaining value on the left and largest on the right.",
+      "If their sum is too big, the right value cannot work even with the smallest remaining partner, so discard it. If too small, the left value cannot work even with the largest remaining partner, so discard it."
+    ],
+    "recipe": [
+      "1 + 11 = 12: too large, move the right position left.",
+      "1 + 7 = 8: too small, move the left position right.",
+      "2 + 7 = 9: return positions [1, 2]."
+    ],
+    "words": [
+      "Pointer: a position we remember, not a special kind of number.",
+      "Sorted input is the reason a move can discard candidates safely.",
+      "left and right name the two remaining boundary positions."
+    ],
+    "caution": "The same discard rule is not valid for arbitrary unsorted input. If positions in the original list matter, sorting requires preserving them.",
+    "code": "def sorted_pair(numbers, target):  # numbers must already be sorted\n    left, right = 0, len(numbers) - 1  # begin at the two ends\n    while left < right:  # a pair needs two different positions\n        total = numbers[left] + numbers[right]  # test the boundary pair\n        if total == target:  # equality means a match\n            return [left, right]  # both positions are the answer\n        if total < target:  # this left value cannot reach the target\n            left += 1  # discard it\n        else:  # this right value makes the sum too large\n            right -= 1  # discard it\n    return None  # boundaries met without a match\n\nprint(sorted_pair([1, 2, 7, 11], 9))  # [1, 2]",
+    "expected": "[1, 2]",
+    "predict": {
+      "prompt": "1 + 11 is greater than 9. Which position moves?",
+      "options": [
+        "Left moves right",
+        "Right moves left",
+        "Neither; return now"
+      ],
+      "answer": 1,
+      "explain": "11 is too large even with the smallest remaining partner, so discard 11."
+    },
+    "transfer": {
+      "prompt": "For sorted [1, 2, 3] and target 10, what is returned?",
+      "options": ["[0, 2]", "None", "10"],
+      "answer": 1,
+      "explain": "Even the largest possible pair cannot reach 10. The search ends without a pair."
+    },
+    "gap": {
+      "prompt": "What move repairs a sum that is too small?",
+      "options": ["left += 1", "right += 1", "return total"],
+      "answer": 0,
+      "explain": "Discard the smallest remaining value by advancing left."
+    },
+    "hint": "Try the largest remaining partner for the left value. Could a smaller partner improve a sum that is already too small?",
+    "final": {
+      "prompt": "What makes the discard rule safe?",
+      "options": [
+        "The input is already sorted",
+        "The values are colored",
+        "Every task asks for a pair"
+      ],
+      "answer": 0,
+      "explain": "Order lets us prove that skipped values cannot improve an already-too-large or too-small sum."
+    }
+  },
+  "sorting-lesson": {
+    "id": "sorting-lesson",
+    "title": "Sort, then compare neighbors",
+    "goal": "Find the smallest difference between two values in [4, 1, 3, 1].",
+    "intro": [
+      "Reordering numbers can reveal a useful structure. Sorting [4, 1, 3, 1] gives [1, 1, 3, 4]. We do not need their original positions for this task.",
+      "The closest pair must occur among neighbors in sorted order: a gap between non-neighbors spans at least one smaller neighboring gap. This lesson uses Python’s built-in sort; it does not teach bubble sort."
+    ],
+    "recipe": [
+      "Sort the values: [1, 1, 3, 4].",
+      "Neighbor differences are 0, 2 and 1.",
+      "Remember the smallest difference, 0. Two equal values at different positions are allowed."
+    ],
+    "words": [
+      "Neighbor: an item immediately next to another in the ordered list.",
+      "A difference is the larger value minus the smaller value.",
+      "Python’s sort has O(n log n) worst-case time; log describes repeated halving and is introduced later in binary search. The final neighbor scan is linear."
+    ],
+    "caution": "One or zero values do not provide a pair. Do not reuse this recipe to return original positions without tracking them.",
+    "code": "def smallest_gap(numbers):  # return a difference, not positions\n    if len(numbers) < 2:  # there is no pair\n        return None  # explicitly handle this edge case\n    ordered = sorted(numbers)  # keep the original list unchanged\n    best = ordered[1] - ordered[0]  # begin with the first neighbor gap\n    for i in range(2, len(ordered)):  # compare each later neighbor pair\n        gap = ordered[i] - ordered[i - 1]  # adjacent sorted values\n        best = min(best, gap)  # keep the smallest gap seen\n    return best  # include the last pair before returning\n\nprint(smallest_gap([4, 1, 3, 1]))  # equal neighboring 1s give gap 0",
+    "expected": "0",
+    "predict": {
+      "prompt": "After sorting [4, 1, 3, 1], which first pair is compared?",
+      "options": ["1 and 1", "4 and 1", "1 and 4"],
+      "answer": 0,
+      "explain": "Sorted neighbors begin with the two 1s."
+    },
+    "transfer": {
+      "prompt": "For [8, 2, 5], what is the smallest gap?",
+      "options": ["1", "3", "6"],
+      "answer": 1,
+      "explain": "Sorted [2,5,8] has neighboring gaps 3 and 3."
+    },
+    "gap": {
+      "prompt": "Which line keeps the smallest gap seen?",
+      "options": [
+        "best = min(best, gap)",
+        "best = max(best, gap)",
+        "return ordered"
+      ],
+      "answer": 0,
+      "explain": "Compare the previous smallest gap with the new neighbor gap."
+    },
+    "hint": "Put the numbers in order first. Write the subtraction between each neighboring pair.",
+    "final": {
+      "prompt": "Why compare neighbors after sorting?",
+      "options": [
+        "Every non-neighbor gap spans a neighbor gap",
+        "Because neighbors are always equal",
+        "Because original positions never matter"
+      ],
+      "answer": 0,
+      "explain": "A gap across several ordered values cannot be smaller than every gap inside it."
+    }
+  },
+  "sliding-window-lesson": {
+    "id": "sliding-window-lesson",
+    "title": "Repair a repeated-letter window",
+    "goal": "Find the length of the longest adjacent stretch without repeated letters in abca.",
+    "intro": [
+      "A window is an adjacent stretch of the text. It has a left position and a right position. A set remembers the letters currently inside.",
+      "Read a, then b, then c: abc is valid and has length 3. The next a repeats a letter. Remove from the left until a is no longer inside, then add the new a. The window is now bca, also length 3."
+    ],
+    "recipe": [
+      "Expand at the right one letter at a time.",
+      "While that letter is already in the set, remove the leftmost letter and move left.",
+      "Add the new letter, then compare the window’s length with the best earlier length."
+    ],
+    "words": [
+      "Contiguous: adjacent, with nothing skipped.",
+      "Set: a collection that remembers whether a value is present.",
+      "A while loop repeats a repair until the condition becomes false."
+    ],
+    "caution": "One removal is not always enough. Keep repairing until the new letter is absent. Empty text has answer 0.",
+    "code": "def longest_unique(text):  # find a length, not the window itself\n    letters = set()  # letters inside the current window\n    left = 0  # first position included in the window\n    best = 0  # empty input has length zero\n    for right, letter in enumerate(text):  # extend the right edge\n        while letter in letters:  # repair until there is no duplicate\n            letters.remove(text[left])  # remove the leftmost letter\n            left += 1  # advance the left edge\n        letters.add(letter)  # now the new letter is safe to include\n        best = max(best, right - left + 1)  # retain the longest valid length\n    return best  # return after every letter has been considered\n\nprint(longest_unique('abca'))  # abc and bca both have length 3",
+    "expected": "3",
+    "predict": {
+      "prompt": "The window is abc and a new a arrives. What must be removed first?",
+      "options": [
+        "The leftmost a",
+        "The new a permanently",
+        "All letters forever"
+      ],
+      "answer": 0,
+      "explain": "Removing the old a makes it possible to include the new a without a repeat."
+    },
+    "transfer": {
+      "prompt": "What is the longest unique stretch length in aaaa?",
+      "options": ["4", "2", "1"],
+      "answer": 2,
+      "explain": "Every stretch of two letters already repeats a. A single a is valid."
+    },
+    "gap": {
+      "prompt": "Which condition repeats the necessary repair?",
+      "options": ["while letter in letters:", "if best == 0:", "while False:"],
+      "answer": 0,
+      "explain": "Keep shrinking while the incoming letter is already inside."
+    },
+    "hint": "Write the letters inside the current window. Cross out from the left until the incoming letter is no longer there.",
+    "final": {
+      "prompt": "Why is repair a while loop rather than one if?",
+      "options": [
+        "A repeat may need several left removals",
+        "To delete all input always",
+        "Because one removal is always enough"
+      ],
+      "answer": 0,
+      "explain": "Keep shrinking until the incoming letter is absent. A single removal might not restore uniqueness."
+    }
+  },
+  "binary-search-lesson": {
+    "id": "binary-search-lesson",
+    "title": "Keep the useful half",
+    "goal": "Find the position of 23 in sorted [2, 5, 8, 12, 16, 23, 38, 45, 56, 67].",
+    "intro": [
+      "Start with the whole sorted list. Check its middle position. A smaller middle value means every value before it is too small too; discard that half.",
+      "For this list, middle position 4 contains 16. Keep positions 5 through 9. Their middle contains 45, which is too large. Keep positions 5 through 6. Position 5 contains 23: found.",
+      "Repeated halving is logarithmic growth, written O(log n). For a list of 8 candidates, halves reduce 8 → 4 → 2 → 1. We are searching for equality here, not an answer-space feasibility boundary."
+    ],
+    "recipe": [
+      "Use inclusive left/right positions for the remaining candidate region.",
+      "Compute middle as (left + right) // 2. // floors a division result; positions must be whole numbers.",
+      "Discard the middle along with the wrong half. If no positions remain, return None."
+    ],
+    "words": [
+      "Sorted: increasing order. Middle: a position halfway between two boundaries.",
+      "Logarithmic: a number of steps that grows slowly because each step removes about half the candidates.",
+      "None means the target does not occur in the list."
+    ],
+    "caution": "Target 9 is absent. Try that preset and observe the region become empty; do not pretend every search succeeds.",
+    "code": "def find_position(numbers, target):  # input must be sorted\n    left, right = 0, len(numbers) - 1  # inclusive remaining region\n    while left <= right:  # at least one candidate remains\n        middle = (left + right) // 2  # whole-number middle position\n        if numbers[middle] == target:  # target found here\n            return middle  # output is the position\n        if numbers[middle] < target:  # middle and all earlier values are too small\n            left = middle + 1  # discard them\n        else:  # middle and all later values are too large\n            right = middle - 1  # discard them\n    return None  # the region became empty\n\nprint(find_position([2, 5, 8, 12, 16, 23, 38, 45, 56, 67], 23))  # position 5",
+    "expected": "5",
+    "predict": {
+      "prompt": "The middle value is 16 and the target is 23. Which half remains?",
+      "options": ["Values at and before 16", "Values after 16", "Neither half"],
+      "answer": 1,
+      "explain": "Every earlier value is no larger than 16, so none can be 23."
+    },
+    "transfer": {
+      "prompt": "For this list, what should searching for 9 return?",
+      "options": ["Position 9", "None", "The nearest value 8"],
+      "answer": 1,
+      "explain": "The task asks for an exact match, not a nearest value."
+    },
+    "gap": {
+      "prompt": "Which boundary update excludes a middle value that is too small?",
+      "options": ["left = middle + 1", "left = middle", "right = middle + 1"],
+      "answer": 0,
+      "explain": "Advance past the middle; keeping it could repeat the same check."
+    },
+    "hint": "Compare the target with the middle value. Because the list is sorted, which side can no longer contain the target?",
+    "final": {
+      "prompt": "What happens when left becomes greater than right?",
+      "options": [
+        "Return the nearest value",
+        "No candidates remain; return None",
+        "Restart forever"
+      ],
+      "answer": 1,
+      "explain": "The remaining sorted region is empty, so an exact match is absent."
+    }
+  },
+  "prefix-sum-lesson": {
+    "id": "prefix-sum-lesson",
+    "title": "Subtract earlier totals",
+    "goal": "Sum positions 1 through 4, inclusive, in [3, 1, 4, 1, 5].",
+    "intro": [
+      "Repeatedly adding the same earlier values is unnecessary. Store running totals once: P[0] = 0, P[1] = 3, P[2] = 4, P[3] = 8, P[4] = 9, P[5] = 14.",
+      "P[k] includes the first k values, so its position is one beyond the final item included. To include positions 1 through 4, take the first 5 values’ total and remove the first 1 value’s total: 14 − 3 = 11."
+    ],
+    "recipe": [
+      "Start the prefix list with zero.",
+      "Add each value to the previous total and append the new total.",
+      "For inclusive left..right, use P[right + 1] − P[left]."
+    ],
+    "words": [
+      "Prefix: the beginning part of a list.",
+      "Inclusive: include both named endpoints.",
+      "P[k]: total of the first k items; it does not mean “through item k.”"
+    ],
+    "caution": "The extra initial zero handles a range starting at position 0. Do not confuse prefix positions with input positions.",
+    "code": "def range_sum(numbers, left, right):  # endpoints name included input positions\n    prefix = [0]  # zero values have total zero\n    for number in numbers:  # build each longer prefix once\n        prefix.append(prefix[-1] + number)  # -1 selects the last stored total\n    return prefix[right + 1] - prefix[left]  # subtract values before the range\n\nprint(range_sum([3, 1, 4, 1, 5], 1, 4))  # 14 minus 3 is 11",
+    "expected": "11",
+    "predict": {
+      "prompt": "Which prefix total includes input position 4?",
+      "options": ["P[4]", "P[5]", "P[1]"],
+      "answer": 1,
+      "explain": "Positions 0 through 4 contain five values, so their total is P[5]."
+    },
+    "transfer": {
+      "prompt": "In [3, -1, 4], what is the total from position 0 through 2?",
+      "options": ["6", "8", "4"],
+      "answer": 0,
+      "explain": "3 + (-1) + 4 = 6. Prefix subtraction also handles negative values."
+    },
+    "gap": {
+      "prompt": "Which expression includes both range endpoints?",
+      "options": [
+        "prefix[right] - prefix[left]",
+        "prefix[right + 1] - prefix[left]",
+        "prefix[left]"
+      ],
+      "answer": 1,
+      "explain": "right + 1 includes the last requested value; prefix[left] removes only earlier ones."
+    },
+    "hint": "Label the prefix totals by how MANY items they include, not by the last item’s index.",
+    "final": {
+      "prompt": "Why begin the prefix list with zero?",
+      "options": [
+        "So a range starting at input position 0 subtracts zero",
+        "So every answer is zero",
+        "To skip the first item"
+      ],
+      "answer": 0,
+      "explain": "P[0] represents zero included items. Subtracting it keeps a range beginning at the first input item."
+    }
+  },
+  "stack-lesson": {
+    "id": "stack-lesson",
+    "title": "Match the most recent opening",
+    "goal": "Decide whether the brackets in (()) are balanced.",
+    "intro": [
+      "An opening bracket promises a matching closing bracket. The latest unmatched opening must close first, just like removing the top plate from a stack.",
+      "Push each opening onto the stack. For a closing, remove the top opening and compare their shapes. A mismatch fails immediately; leftovers at the end fail too."
+    ],
+    "recipe": [
+      "Read (: push it. Read another (: push it above the first.",
+      "Read ): pop the newest (. Read the final ): pop the earlier (.",
+      "The stack is empty at the end, so return True."
+    ],
+    "words": [
+      "Stack: last added, first removed. Push adds; pop removes the newest item.",
+      "True and False are Python’s yes/no values.",
+      "Balanced brackets must match both order and shape."
+    ],
+    "caution": "A closing bracket with an empty stack is invalid. An unmatched opening at the end is invalid.",
+    "code": "def balanced(text):  # return a yes/no result for bracket-only text\n    stack = []  # remember unmatched opening brackets\n    matching = {')': '(', ']': '[', '}': '{'}  # expected opener for each closer\n    for bracket in text:  # process one symbol at a time\n        if bracket in '([{':  # an opener creates a new promise\n            stack.append(bracket)  # put it on top\n        elif not stack or stack.pop() != matching[bracket]:  # check latest opener\n            return False  # empty or mismatched stack makes the sequence invalid\n    return not stack  # no leftover openings means success\n\nprint(balanced('(())'))  # True",
+    "expected": "True",
+    "predict": {
+      "prompt": "After reading ((, which opening must the next ) match?",
+      "options": [
+        "The earliest opening",
+        "The most recent opening",
+        "Any opening anywhere"
+      ],
+      "answer": 1,
+      "explain": "Closings resolve the most recently unclosed opening."
+    },
+    "transfer": {
+      "prompt": "Is (] balanced?",
+      "options": ["True", "False", "Only when empty"],
+      "answer": 1,
+      "explain": "The latest opener is (, but ] requires [."
+    },
+    "gap": {
+      "prompt": "What adds a new opening to the stack?",
+      "options": ["stack.append(bracket)", "stack.clear()", "return True"],
+      "answer": 0,
+      "explain": "Push the opening so the next closing can compare with it."
+    },
+    "hint": "Imagine plates: the top plate must be removed before a lower plate.",
+    "final": {
+      "prompt": "At the end, what do leftover opening brackets mean?",
+      "options": [
+        "The sequence is invalid",
+        "The sequence is automatically valid",
+        "They can be ignored"
+      ],
+      "answer": 0,
+      "explain": "Each opening needed a matching close. Leftover openings are unfinished promises."
+    }
+  },
+  "linked-list-lesson": {
+    "id": "linked-list-lesson",
+    "title": "Reverse links without losing the rest",
+    "goal": "Reverse the linked list 1 → 2 → 3 → 4 → end.",
+    "intro": [
+      "A node holds a value and a link to the next node. The head is the first node. Unlike a numbered array, this structure is followed through links.",
+      "Remember three things: prev (the reversed part’s head), curr (the node being changed), and saved next (the untouched rest). Save next before replacing curr’s link."
+    ],
+    "recipe": [
+      "At node 1, save node 2, then point node 1 to end.",
+      "At node 2, save node 3, then point node 2 to node 1. Repeat at nodes 3 and 4.",
+      "Return node 4 as the new head. Follow its links to read 4, 3, 2, 1."
+    ],
+    "words": [
+      "Head: first node. Link: a reference to another node. None: no next node.",
+      "prev means previous; curr means current; nxt remembers the original next link.",
+      "A class groups a node’s value and next link into one object. The complete example defines it for you."
+    ],
+    "caution": "Change a link only after saving the rest. Empty and one-node lists also work.",
+    "code": "class Node:  # define the two pieces in a linked-list node\n    def __init__(self, value, next_node=None):  # create a node\n        self.value = value  # the stored number\n        self.next = next_node  # link to the next node, or None\n\ndef reverse(head):  # receive the original first node\n    prev, curr = None, head  # reversed part is empty; current is the original head\n    while curr is not None:  # a current node remains\n        nxt = curr.next  # save the original rest FIRST\n        curr.next = prev  # reverse this link\n        prev, curr = curr, nxt  # advance both remembered references\n    return prev  # final previous node is the new head\n\nhead = Node(1, Node(2, Node(3, Node(4))))  # the lesson input\ncurr = reverse(head)  # reverse its links\nvalues = []  # collect values just to display the result\nwhile curr is not None:  # follow the reversed links\n    values.append(curr.value)  # read this node’s number\n    curr = curr.next  # follow its next link\nprint(values)  # [4, 3, 2, 1]",
+    "expected": "[4, 3, 2, 1]",
+    "predict": {
+      "prompt": "Before replacing node 1’s next link, what must you save?",
+      "options": [
+        "Its old next link to node 2",
+        "The final output only",
+        "Nothing"
+      ],
+      "answer": 0,
+      "explain": "Without saving node 2, the untouched rest can become unreachable."
+    },
+    "transfer": {
+      "prompt": "What is the result of reversing the one-node list 9 → end?",
+      "options": ["An empty list", "9 → end", "Two nodes of value 9"],
+      "answer": 1,
+      "explain": "The only node becomes the head again; its next is still empty."
+    },
+    "gap": {
+      "prompt": "Which line must come before curr.next = prev?",
+      "options": ["nxt = curr.next", "return prev", "curr = None"],
+      "answer": 0,
+      "explain": "Save the rest before overwriting its only current link."
+    },
+    "hint": "Draw the arrow leaving the current node. Where will you remember its destination before erasing that arrow?",
+    "final": {
+      "prompt": "Why save nxt before redirecting curr.next?",
+      "options": [
+        "The only link to the untouched rest may be overwritten",
+        "To sort the values",
+        "To add a new node every move"
+      ],
+      "answer": 0,
+      "explain": "The saved reference keeps the remaining list reachable after the current link is reversed."
+    }
+  },
+  "intervals-lesson": {
+    "id": "intervals-lesson",
+    "title": "Merge overlapping meetings",
+    "goal": "Merge [1, 3], [2, 5], [7, 8] into separate occupied time ranges.",
+    "intro": [
+      "An interval gives a start and end, not a list of every time inside. In this lesson endpoints are closed: touching endpoints count as overlap.",
+      "Sort by start. Compare the next interval with the latest merged group. If its start is at most that group’s end, extend the group; otherwise start a new group. This lesson merges intervals; it does not insert a separate new meeting."
+    ],
+    "recipe": [
+      "Keep [1, 3] as the first group.",
+      "[2, 5] starts before 3, so extend the group to [1, 5].",
+      "[7, 8] starts after 5; keep it separately. Output [[1, 5], [7, 8]]."
+    ],
+    "words": [
+      "Overlap: share some time. Closed endpoints: include both endpoints.",
+      "Sort key: which part of an item determines its order; here the start time.",
+      "merged[-1]: the last group we have built."
+    ],
+    "caution": "For [1,3] and [3,5], this lesson merges to [1,5]. A different endpoint convention could change the rule.",
+    "code": "def merge_intervals(intervals):  # each interval is [start, end]\n    ordered = sorted(intervals, key=lambda interval: interval[0])  # sort by start\n    merged = []  # completed groups are built here\n    for start, end in ordered:  # process neighbors in start order\n        if not merged or start > merged[-1][1]:  # first group or a genuine gap\n            merged.append([start, end])  # keep a new independent range\n        else:  # this interval overlaps the latest range\n            merged[-1][1] = max(merged[-1][1], end)  # extend its end if needed\n    return merged  # includes the final accumulated group\n\nprint(merge_intervals([[1, 3], [2, 5], [7, 8]]))  # [[1, 5], [7, 8]]",
+    "expected": "[[1, 5], [7, 8]]",
+    "predict": {
+      "prompt": "After keeping [1,3], what happens when [2,5] arrives?",
+      "options": [
+        "Start another independent group",
+        "Extend to [1,5]",
+        "Delete both"
+      ],
+      "answer": 1,
+      "explain": "2 is no later than the existing end 3, so the ranges overlap."
+    },
+    "transfer": {
+      "prompt": "With closed endpoints, merge [1,3] and [3,5] into what?",
+      "options": ["[[1,5]]", "[[1,3],[3,5]]", "[]"],
+      "answer": 0,
+      "explain": "Both include time 3, so they overlap under the stated convention."
+    },
+    "gap": {
+      "prompt": "What condition identifies a genuine gap?",
+      "options": [
+        "start > merged[-1][1]",
+        "start <= merged[-1][1]",
+        "end == 0"
+      ],
+      "answer": 0,
+      "explain": "A start strictly after the latest end leaves a gap."
+    },
+    "hint": "Mark both intervals on a number line. Do they share an endpoint or any time in between?",
+    "final": {
+      "prompt": "For this task, do touching endpoints count as overlap?",
+      "options": [
+        "Yes, endpoints are closed",
+        "No, endpoints are always excluded",
+        "Only if the list is empty"
+      ],
+      "answer": 0,
+      "explain": "The lesson explicitly uses closed intervals, so [1,3] and [3,5] share time 3."
+    }
+  },
+  "heap-lesson": {
+    "id": "heap-lesson",
+    "title": "Keep only the largest three",
+    "goal": "Find the third-largest value in the stream [4, 1, 7, 3, 9, 2].",
+    "intro": [
+      "A heap is a priority structure, not a fully sorted list. In a min-heap, each parent is no greater than its children, so the smallest retained value is at the root.",
+      "Keep a min-heap of at most three items. Whenever an insertion creates four items, remove the smallest. The three remaining items are the largest three read so far. Their smallest is the third-largest overall."
+    ],
+    "recipe": [
+      "After 4, 1 and 7, retain those three. Inserting 3 evicts 1.",
+      "Inserting 9 evicts 3; inserting 2 immediately evicts 2.",
+      "Retain 4, 7 and 9. The heap root 4 is the third-largest, not the largest."
+    ],
+    "words": [
+      "Stream: values arrive one at a time. K: how many largest values to keep.",
+      "Min-heap: smallest at the top, so an unwanted small value is cheap to remove.",
+      "Heap order compares parents with children; siblings need not be ordered."
+    ],
+    "caution": "If fewer than K values arrived, the Kth largest is not defined here: return None. Equal values still count as separate arrivals.",
+    "code": "import heapq  # Python’s min-heap operations\n\ndef kth_largest(values, k):  # assume k is positive\n    heap = []  # retain at most k values\n    for value in values:  # read each arriving item\n        heapq.heappush(heap, value)  # insert while preserving heap order\n        if len(heap) > k:  # one too many retained items\n            heapq.heappop(heap)  # evict the smallest, not the largest\n    return heap[0] if len(heap) == k else None  # root is kth largest if enough arrived\n\nprint(kth_largest([4, 1, 7, 3, 9, 2], 3))  # 4",
+    "expected": "4",
+    "predict": {
+      "prompt": "The heap holds 1, 4 and 7. Inserting 3 creates four items. Which is evicted?",
+      "options": ["7", "1", "4"],
+      "answer": 1,
+      "explain": "Evict the smallest so the retained set remains the three largest."
+    },
+    "transfer": {
+      "prompt": "Only [4,1] arrived and K = 3. What should be returned?",
+      "options": ["4", "1", "None"],
+      "answer": 2,
+      "explain": "There are fewer than three items, so a third-largest value does not yet exist."
+    },
+    "gap": {
+      "prompt": "Which operation evicts the unwanted smallest item?",
+      "options": [
+        "heapq.heappop(heap)",
+        "heap.pop(0) without repairs",
+        "return max(values)"
+      ],
+      "answer": 0,
+      "explain": "heappop removes the root and restores heap order."
+    },
+    "hint": "Write all four values in order. Cross out the smallest; which three should remain?",
+    "final": {
+      "prompt": "Why is a MIN-heap useful for keeping the largest K values?",
+      "options": [
+        "Its smallest retained value is the one to evict",
+        "It keeps only the overall minimum",
+        "It is a completely sorted array"
+      ],
+      "answer": 0,
+      "explain": "Evicting the smallest retains the largest K. The root of those K values is their Kth largest."
+    }
+  },
+  "dfs-lesson": {
+    "id": "dfs-lesson",
+    "title": "Explore one branch before its neighbor",
+    "goal": "Visit A, B, C, D in depth-first order on A→B, A→C, B→D.",
+    "intro": [
+      "A graph is places (nodes) joined by connections (edges). Here A points to B and C, while B points to D. Read the connected diagram, not just a row of letters.",
+      "Depth-first search uses a stack to explore the latest waiting node. Push children in reverse order so B is removed before C. You can implement this without knowing recursion."
+    ],
+    "recipe": [
+      "Start with A waiting; visit A and push C, then B.",
+      "Pop B; push D. Pop D before the older waiting C.",
+      "Finally pop C. Visit order is [A, B, D, C]."
+    ],
+    "words": [
+      "Node: a place in the graph. Edge: a connection; an arrow permits travel only in its direction.",
+      "Visited: already explored, so do not explore it again.",
+      "A → B means B can be reached directly from A.",
+      "DFS: depth-first search, exploring a branch as far as it goes before returning."
+    ],
+    "caution": "Neighbor order affects the visit order. DFS is not a shortest-path guarantee.",
+    "code": "def depth_first(graph, start):  # graph maps each node to its outgoing neighbors\n    waiting = [start]  # stack: most recently added is removed first\n    visited = set()  # remember explored nodes\n    order = []  # collect the visit sequence\n    while waiting:  # keep exploring while a node is waiting\n        node = waiting.pop()  # remove from the end of the stack\n        if node in visited:  # another route might have queued it\n            continue  # do not visit it twice\n        visited.add(node)  # mark this node explored\n        order.append(node)  # record this visit\n        waiting.extend(reversed(graph[node]))  # push C before B so B is popped first\n    return order  # all reachable nodes have been visited\n\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}  # lesson graph\nprint(depth_first(graph, 'A'))  # ['A', 'B', 'D', 'C']",
+    "expected": "['A', 'B', 'D', 'C']",
+    "predict": {
+      "prompt": "After visiting A then B, which node is explored before C?",
+      "options": ["A again", "D", "No node"],
+      "answer": 1,
+      "explain": "D was added last, so the stack explores B’s branch before the older waiting C."
+    },
+    "transfer": {
+      "prompt": "If A has no outgoing edges, which nodes are reachable from A?",
+      "options": ["Only A", "All four", "Only D"],
+      "answer": 0,
+      "explain": "No connection lets the search leave A."
+    },
+    "gap": {
+      "prompt": "Which operation removes the most recent waiting node?",
+      "options": ["waiting.pop()", "waiting.pop(0)", "return waiting"],
+      "answer": 0,
+      "explain": "Removing the last item is the stack operation used by DFS."
+    },
+    "hint": "Write the waiting stack after visiting B. Which entry is newest?",
+    "final": {
+      "prompt": "Does depth-first search generally guarantee a shortest path?",
+      "options": [
+        "No, it may explore a long branch first",
+        "Yes, in every priced network",
+        "Only because its nodes are letters"
+      ],
+      "answer": 0,
+      "explain": "DFS explores branches. Shortest-path reasoning needs other assumptions and algorithms."
+    }
+  },
+  "bfs-lesson": {
+    "id": "bfs-lesson",
+    "title": "Explore the nearest layer first",
+    "goal": "Visit the same graph A→B, A→C, B→D in breadth-first order.",
+    "intro": [
+      "A queue serves the earliest added item first. Breadth-first search (BFS) uses it to explore neighbors before their farther-away children.",
+      "From A, enqueue B then C. B is removed first and enqueues D behind C. Therefore C is visited before D. In a graph where each edge has equal cost, these layers give shortest edge-count distances."
+    ],
+    "recipe": [
+      "Visit A; waiting queue becomes [B, C].",
+      "Visit B; waiting becomes [C, D]. Visit C; waiting becomes [D].",
+      "Visit D. Output [A, B, C, D]."
+    ],
+    "words": [
+      "Node: a place in the graph. Edge: a connection; an arrow permits travel only in its direction.",
+      "Visited: already explored, so do not explore it again.",
+      "A → B means B can be reached directly from A.",
+      "Queue: first added, first removed. A layer contains nodes the same number of edges from the start."
+    ],
+    "caution": "Mark nodes when they join the queue to avoid duplicates. Unequal edge prices need a different shortest-path algorithm.",
+    "code": "from collections import deque  # a queue with efficient removal at its front\n\ndef breadth_first(graph, start):  # visit the reachable graph layers\n    waiting = deque([start])  # oldest waiting node is at the front\n    visited = {start}  # mark a node when enqueued\n    order = []  # the output visit sequence\n    while waiting:  # some node still needs a visit\n        node = waiting.popleft()  # remove the earliest arrival\n        order.append(node)  # record the visit\n        for neighbor in graph[node]:  # discover outgoing neighbors\n            if neighbor not in visited:  # enqueue each node only once\n                visited.add(neighbor)  # mark before queuing\n                waiting.append(neighbor)  # add at the back\n    return order  # return the layer-by-layer sequence\n\ngraph = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}  # same graph as DFS\nprint(breadth_first(graph, 'A'))  # ['A', 'B', 'C', 'D']",
+    "expected": "['A', 'B', 'C', 'D']",
+    "predict": {
+      "prompt": "After visiting B, the queue is [C, D]. Who is visited next?",
+      "options": ["D", "C", "B again"],
+      "answer": 1,
+      "explain": "C arrived earlier, so the queue removes C before D."
+    },
+    "transfer": {
+      "prompt": "If A is isolated, does BFS visit B?",
+      "options": [
+        "Yes, all letters are always visited",
+        "No; only A is reachable",
+        "Only if B is last"
+      ],
+      "answer": 1,
+      "explain": "A search follows edges. There is no edge leaving isolated A."
+    },
+    "gap": {
+      "prompt": "Which operation makes waiting a queue rather than a stack?",
+      "options": ["waiting.popleft()", "waiting.pop()", "waiting.clear()"],
+      "answer": 0,
+      "explain": "popleft removes the oldest queued item."
+    },
+    "hint": "Imagine people lining up. Who should be served first: the earlier arrival C or later arrival D?",
+    "final": {
+      "prompt": "When does BFS give shortest edge-count distances?",
+      "options": [
+        "When each edge has equal cost",
+        "For every set of unequal road prices",
+        "Only on empty graphs"
+      ],
+      "answer": 0,
+      "explain": "The queue explores one layer of equal-cost edges at a time. Unequal prices break that argument."
+    }
+  },
+  "trees-lesson": {
+    "id": "trees-lesson",
+    "title": "Measure the deepest level",
+    "goal": "Find the depth of the tree A with children B, C, and B with child D.",
+    "intro": [
+      "A tree has a root and child connections. In this example A is the root, B and C are its children, and D is B’s child. A leaf has no children.",
+      "Here depth counts levels, not edges: A is on level 1, B/C on level 2, and D on level 3. Use a stack of (node, level) pairs to explore and remember the deepest level. This lesson measures depth; it does not switch to traversal sorting."
+    ],
+    "recipe": [
+      "Visit A at level 1; remember deepest = 1.",
+      "Visit B at level 2, then D at level 3; deepest becomes 3.",
+      "Visit C at level 2; keep 3. An empty tree has depth 0."
+    ],
+    "words": [
+      "Root: first/top node. Child: directly connected node below a parent. Leaf: node with no children.",
+      "Depth here is number of levels on the longest root-to-leaf route.",
+      "A stack entry carries both a node and the level already known for it."
+    ],
+    "caution": "Some tasks count edges rather than levels. State the convention before calculating.",
+    "code": "def tree_depth(children, root):  # children maps each node to its children\n    if root is None:  # empty tree\n        return 0  # no levels exist\n    waiting = [(root, 1)]  # root is on level 1\n    deepest = 0  # deepest level found so far\n    while waiting:  # explore every tree node\n        node, level = waiting.pop()  # take a node with its known level\n        deepest = max(deepest, level)  # keep the largest level\n        for child in children[node]:  # each child is one level below\n            waiting.append((child, level + 1))  # preserve that level in the stack\n    return deepest  # longest root-to-leaf level count\n\nchildren = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}  # connected lesson tree\nprint(tree_depth(children, 'A'))  # 3",
+    "expected": "3",
+    "predict": {
+      "prompt": "A is on level 1 and B on level 2. What is D’s level?",
+      "options": ["1", "2", "3"],
+      "answer": 2,
+      "explain": "D is B’s child, so its level is one more than B’s."
+    },
+    "transfer": {
+      "prompt": "What depth does an empty tree have under this convention?",
+      "options": ["0", "1", "An infinite depth"],
+      "answer": 0,
+      "explain": "There are no nodes and therefore zero levels."
+    },
+    "gap": {
+      "prompt": "Which level should a child receive?",
+      "options": ["level + 1", "level - 1", "deepest = 0"],
+      "answer": 0,
+      "explain": "Every child is one level below its parent."
+    },
+    "hint": "Follow A → B → D. Count nodes on that path, starting A at 1.",
+    "final": {
+      "prompt": "Does this lesson count edges or node levels for depth?",
+      "options": [
+        "Node levels, with root at 1",
+        "Edges, with root at 0",
+        "Neither convention matters"
+      ],
+      "answer": 0,
+      "explain": "The stated convention makes A→B→D have depth 3. An edge-count convention would give 2."
+    }
+  },
+  "union-find-lesson": {
+    "id": "union-find-lesson",
+    "title": "Join connected groups",
+    "goal": "Join people A–B, then B–C, and count the groups remaining.",
+    "intro": [
+      "At first each person is a separate group. A parent link points toward a representative: a label for the whole group. Following these links is called find.",
+      "To join two groups, find both representatives and redirect one representative to the other. Comparing only immediate parent entries can be misleading when links form a chain."
+    ],
+    "recipe": [
+      "Start with parents A→A, B→B, C→C: three groups.",
+      "Join A and B by making B’s representative point to A: two groups.",
+      "Find B’s representative A, then join C to A: one group."
+    ],
+    "words": [
+      "Representative: a label for an entire connected group.",
+      "Union: join two groups. Find: follow links to the representative.",
+      "Path compression shortens later lookups by pointing visited links to their representative. This simple example does not promise a particular timing bound."
+    ],
+    "caution": "This answers whether people are connected, not their shortest route or the roads on that route.",
+    "code": "def count_groups(people, connections):  # begin with separate groups\n    parent = {person: person for person in people}  # each initially represents itself\n    def find(person):  # locate the group representative\n        if parent[person] != person:  # this is not yet a representative\n            parent[person] = find(parent[person])  # shorten its path to the representative\n        return parent[person]  # the final group label\n    for first, second in connections:  # join one connection at a time\n        left, right = find(first), find(second)  # compare whole groups, not raw parents\n        if left != right:  # do not reconnect the same group\n            parent[right] = left  # combine the two groups\n    return len({find(person) for person in people})  # distinct representatives count groups\n\nprint(count_groups(['A', 'B', 'C'], [('A', 'B'), ('B', 'C')]))  # 1",
+    "expected": "1",
+    "predict": {
+      "prompt": "After joining A–B, what representative does B have?",
+      "options": ["C", "A", "Three groups"],
+      "answer": 1,
+      "explain": "B follows its new parent link to A."
+    },
+    "transfer": {
+      "prompt": "If only A–B is joined, how many groups remain among A, B, C?",
+      "options": ["1", "2", "3"],
+      "answer": 1,
+      "explain": "A/B form one group; C is a separate group."
+    },
+    "gap": {
+      "prompt": "Which expression compares the groups rather than immediate parents?",
+      "options": [
+        "find(first), find(second)",
+        "first, second only",
+        "people[0], people[1]"
+      ],
+      "answer": 0,
+      "explain": "Following parent links reaches each full group’s representative."
+    },
+    "hint": "Draw circles around connected people. How many separate circles are left?",
+    "final": {
+      "prompt": "What must you compare to test whether two people share a group?",
+      "options": [
+        "Their representatives found by following links",
+        "Their immediate parent entries only",
+        "Their alphabetical order"
+      ],
+      "answer": 0,
+      "explain": "A parent chain may have several links. find reaches the group representative."
+    }
+  },
+  "dijkstra-lesson": {
+    "id": "dijkstra-lesson",
+    "title": "Improve routes in price order",
+    "goal": "Find the cheapest directed route from S to T in the shown road network.",
+    "intro": [
+      "Each arrow is a permitted road direction; its label is a non-negative cost. S→A costs 4, S→B costs 2, A→B costs 1, A→C costs 5, B→C costs 8, B→T costs 10, C→T costs 2.",
+      "A tentative distance is the cheapest route discovered so far. Infinity (∞) means no route has been found. A min-heap chooses the smallest waiting distance; outgoing roads can improve neighbor distances.",
+      "Old heap entries may remain after an improvement. Skip those stale entries. Only a smallest non-stale entry settles a node’s final shortest distance."
+    ],
+    "recipe": [
+      "Set S = 0. Settle S; discover A = 4 and B = 2.",
+      "Settle B: discover C = 10 and T = 12. Settle A: improve C to 9.",
+      "Settle C at 9: improve T to 11. Skip stale entries for C = 10 and T = 12. T’s final distance is 11."
+    ],
+    "words": [
+      "Node: a place in the graph. Edge: a connection; an arrow permits travel only in its direction.",
+      "Visited: already explored, so do not explore it again.",
+      "A → B means B can be reached directly from A.",
+      "Tentative: best known so far. Settled: shortest cost is final. Stale: a waiting cost replaced by a better one.",
+      "Relax an edge: try improving its destination with current cost + edge price."
+    ],
+    "caution": "Negative weights are rejected before exploring. An unreachable target returns None. Reversing an arrow is not allowed.",
+    "code": "import heapq  # remove the smallest waiting route cost efficiently\n\ndef cheapest_route(graph, start, target):  # graph stores outgoing (neighbor, cost) pairs\n    if any(cost < 0 for edges in graph.values() for _, cost in edges):  # check all weights\n        raise ValueError('Negative weight rejected')  # Dijkstra requires non-negative weights\n    distance = {start: 0}  # start costs nothing to reach\n    waiting = [(0, start)]  # heap entries are (cost, node)\n    while waiting:  # explore waiting candidate routes\n        cost, node = heapq.heappop(waiting)  # smallest saved cost first\n        if cost != distance[node]:  # this entry was replaced by a cheaper route\n            continue  # skip the stale entry\n        for neighbor, price in graph[node]:  # only follow outgoing arrows\n            candidate = cost + price  # try extending this route\n            if candidate < distance.get(neighbor, float('inf')):  # improve best known cost\n                distance[neighbor] = candidate  # remember the cheaper route\n                heapq.heappush(waiting, (candidate, neighbor))  # queue the new candidate\n    return distance.get(target)  # absent target means unreachable, so return None\n\ngraph = {'S': [('A', 4), ('B', 2)], 'A': [('B', 1), ('C', 5)],  # directed roads\n         'B': [('C', 8), ('T', 10)], 'C': [('T', 2)], 'T': []}  # every destination has an entry\nprint(cheapest_route(graph, 'S', 'T'))  # 11 via S, A, C, T",
+    "expected": "11",
+    "predict": {
+      "prompt": "From S, waiting routes reach A at 4 and B at 2. Who is settled next?",
+      "options": ["A", "B", "T"],
+      "answer": 1,
+      "explain": "The smallest waiting non-stale cost is B = 2."
+    },
+    "transfer": {
+      "prompt": "If all roads entering T are removed, what should the recipe return?",
+      "options": ["0", "None", "11 anyway"],
+      "answer": 1,
+      "explain": "No route to T exists, so its distance is absent."
+    },
+    "gap": {
+      "prompt": "Which line skips an old heap cost replaced by a cheaper one?",
+      "options": [
+        "if cost != distance[node]:",
+        "if cost == 0:",
+        "return start"
+      ],
+      "answer": 0,
+      "explain": "An entry is stale when it no longer equals the current best cost."
+    },
+    "hint": "Write the waiting costs in increasing order. Ignore any cost whose node already has a better known value.",
+    "final": {
+      "prompt": "An old heap entry says C=10, but the current best says C=9. What do you do?",
+      "options": [
+        "Skip the stale 10 entry",
+        "Replace 9 with 10",
+        "Follow every road twice"
+      ],
+      "answer": 0,
+      "explain": "The old entry is no longer the current best; settling it would repeat outdated work."
+    }
+  },
+  "backtracking-lesson": {
+    "id": "backtracking-lesson",
+    "title": "Choose, explore, then undo",
+    "goal": "Generate every subset of [1, 2], including the empty subset.",
+    "intro": [
+      "A subset chooses which input items to include; each item is used at most once. For [1,2], the choices are [1,2], [1], [2], and [].",
+      "A function can call itself for a smaller remaining task: recursion. Here the position advances by one each time, so it eventually reaches the end. That stopping condition is the base case.",
+      "Use a path for current choices. Include an item and explore the remaining choices; undo that inclusion before exploring the skip branch. Save a copy at each completed path."
+    ],
+    "recipe": [
+      "Include 1, include 2: save [1,2]. Undo 2, skip it: save [1].",
+      "Undo 1. Skip it, include 2: save [2]. Undo 2, skip it: save [].",
+      "These are choices about including items—not strings that may repeat the same letter."
+    ],
+    "words": [
+      "Recursion: a function calls itself with a smaller remaining task. Base case: the stopping condition.",
+      "Backtrack: undo a choice and return to explore another branch.",
+      "Copy: a separate snapshot; later changes to the current path must not change saved answers."
+    ],
+    "caution": "For an empty input there is one subset: the empty subset. Save path.copy(), not the mutable path itself.",
+    "code": "def subsets(numbers):  # produce all include/skip choices\n    answers = []  # completed copies are collected here\n    path = []  # current branch’s included values\n    def explore(position):  # position is the next input item to decide about\n        if position == len(numbers):  # no undecided item remains: base case\n            answers.append(path.copy())  # snapshot before later undo operations\n            return  # stop this branch\n        path.append(numbers[position])  # choose to include this item\n        explore(position + 1)  # decide about the remaining items\n        path.pop()  # undo the inclusion before the other branch\n        explore(position + 1)  # choose to skip the current item\n    explore(0)  # start with the first item undecided\n    return answers  # all completed branches\n\nprint(subsets([1, 2]))  # [[1, 2], [1], [2], []]",
+    "expected": "[[1, 2], [1], [2], []]",
+    "predict": {
+      "prompt": "After saving [1,2], what must happen before exploring the branch without 2?",
+      "options": [
+        "Undo 2 from the current path",
+        "Delete all saved answers",
+        "Include 2 again"
+      ],
+      "answer": 0,
+      "explain": "Remove the latest choice so the next branch starts with [1]."
+    },
+    "transfer": {
+      "prompt": "How many subsets does an empty input have?",
+      "options": ["Zero", "One: []", "Two"],
+      "answer": 1,
+      "explain": "There is one way to choose nothing. The base case saves the empty path."
+    },
+    "gap": {
+      "prompt": "Which line saves a snapshot unaffected by later undo?",
+      "options": [
+        "answers.append(path)",
+        "answers.append(path.copy())",
+        "path.clear()"
+      ],
+      "answer": 1,
+      "explain": "A copy preserves the completed branch while path is changed for later branches."
+    },
+    "hint": "Keep saved answers on separate paper. Erase only the current branch’s last choice.",
+    "final": {
+      "prompt": "Why copy a completed path before saving it?",
+      "options": [
+        "Later undo must not change saved answers",
+        "To remove the base case",
+        "Because copying makes every branch identical"
+      ],
+      "answer": 0,
+      "explain": "The mutable path is reused. Each saved answer needs its own snapshot."
+    }
+  },
+  "greedy-lesson": {
+    "id": "greedy-lesson",
+    "title": "Leave time for the next meeting",
+    "goal": "Choose the greatest number of non-overlapping meetings from [1,3], [2,5], [4,6].",
+    "intro": [
+      "This is a different question from merging occupied ranges: we must SELECT original meetings, not combine them. A meeting may start exactly when a chosen meeting ends.",
+      "Sort by ending time and take the earliest-finishing available meeting. It leaves at least as much time for later meetings as a later-finishing alternative. For this unweighted scheduling task, replacing the first meeting in an optimal schedule with an earlier-finishing compatible one cannot reduce the remaining room.",
+      "This argument belongs to this task. A rule that looks convenient is not automatically correct for other goals such as highest total meeting value."
+    ],
+    "recipe": [
+      "Take [1,3], the earliest-ending meeting.",
+      "Skip [2,5]: it starts before the chosen end 3.",
+      "Take [4,6]: it starts after 3. Output [[1,3],[4,6]]."
+    ],
+    "words": [
+      "Greedy: commit to a local choice without exploring every future branch.",
+      "Compatible: starts at or after the last chosen end.",
+      "Counterexample: one input that shows a proposed rule gives a wrong answer."
+    ],
+    "caution": "Try a long meeting [1,10] versus three short meetings [1,3], [3,5], [5,7]. Choosing the earliest START would lose meetings; choosing the earliest END does not.",
+    "code": "def choose_meetings(meetings):  # maximize count, not total value\n    ordered = sorted(meetings, key=lambda meeting: meeting[1])  # earliest END first\n    chosen = []  # selected original meetings\n    last_end = float('-inf')  # before the first choice, any start is allowed\n    for start, end in ordered:  # consider each meeting by ending time\n        if start >= last_end:  # touching endpoints are compatible for this task\n            chosen.append([start, end])  # commit to this original meeting\n            last_end = end  # later choices cannot start before this end\n    return chosen  # list of non-overlapping selected meetings\n\nprint(choose_meetings([[1, 3], [2, 5], [4, 6]]))  # [[1, 3], [4, 6]]",
+    "expected": "[[1, 3], [4, 6]]",
+    "predict": {
+      "prompt": "After taking [1,3], should [2,5] also be taken?",
+      "options": [
+        "Yes, it ends later",
+        "No, it starts before 3",
+        "Yes, merge them"
+      ],
+      "answer": 1,
+      "explain": "The selected meetings cannot overlap; 2 is before the last end 3."
+    },
+    "transfer": {
+      "prompt": "Choose between [1,10] and the compatible short meetings [1,3], [3,5], [5,7]. Which gives more meetings?",
+      "options": [
+        "The one long meeting",
+        "The three short meetings",
+        "Neither"
+      ],
+      "answer": 1,
+      "explain": "The short sequence has count 3; a convenient earliest-start rule would lose two choices."
+    },
+    "gap": {
+      "prompt": "Which sort key matches the proven rule for meeting count?",
+      "options": ["meeting[0]", "meeting[1]", "len(meetings)"],
+      "answer": 1,
+      "explain": "Sort by end, the second component, not by start."
+    },
+    "hint": "Place the chosen end on a number line. Does the next meeting begin before or after it?",
+    "final": {
+      "prompt": "Does earliest-end selection automatically maximize total meeting VALUE?",
+      "options": [
+        "No, that is a different goal requiring a new argument",
+        "Yes, every greedy rule works for every goal",
+        "Only if values are never given"
+      ],
+      "answer": 0,
+      "explain": "The proof here maximizes meeting count. A high-value long meeting can change a value-based optimum."
+    }
+  },
+  "dp-lesson": {
+    "id": "dp-lesson",
+    "title": "Reuse smaller stair answers",
+    "goal": "Count ways to climb 4 stairs when each step is size 1 or 2.",
+    "intro": [
+      "A state is a smaller version of the question. Here dp[i] means the number of ways to climb i stairs. Start with dp[0] = 1: taking no steps is the one way to climb zero stairs. dp[1] = 1: one step of size 1.",
+      "To finish at stair i, the last step is either size 1 from i−1 or size 2 from i−2. These groups are distinct. Add their counts: dp[i] = dp[i−1] + dp[i−2]. This relationship is called a recurrence.",
+      "Dynamic programming reuses those smaller answers instead of recalculating them. Finding a suitable state and recurrence is the important reasoning step; it is not merely attaching a cache to arbitrary code."
+    ],
+    "recipe": [
+      "dp[2] = dp[1] + dp[0] = 1 + 1 = 2.",
+      "dp[3] = 2 + 1 = 3. dp[4] = 3 + 2 = 5.",
+      "The five routes are 1111, 112, 121, 211, and 22. The table stores their counts, not the routes themselves."
+    ],
+    "words": [
+      "State: a smaller question, here the number of stairs i.",
+      "Base cases: the known starting answers dp[0] and dp[1].",
+      "Recurrence: combine smaller answers. Table: store each answer at its state position."
+    ],
+    "caution": "Changing the allowed step sizes changes the recurrence. The empty route is why dp[0] is 1, not 0.",
+    "code": "def stair_ways(n):  # assume n is a non-negative whole number\n    if n == 0:  # zero stairs has one empty route\n        return 1  # explicit base case\n    ways = [1, 1]  # answers for zero and one stair\n    for stair in range(2, n + 1):  # solve smaller states before larger states\n        ways.append(ways[stair - 1] + ways[stair - 2])  # classify by final step size\n    return ways[n]  # stored count for the requested number of stairs\n\nprint(stair_ways(4))  # 5",
+    "expected": "5",
+    "predict": {
+      "prompt": "If ways for 2 stairs is 2 and for 3 stairs is 3, how many ways for 4?",
+      "options": ["3", "5", "6"],
+      "answer": 1,
+      "explain": "A final size-1 step extends each of 3 routes; a final size-2 step extends each of 2 routes."
+    },
+    "transfer": {
+      "prompt": "How many ways climb zero stairs?",
+      "options": ["0", "1: take no steps", "2"],
+      "answer": 1,
+      "explain": "The empty route is a valid choice and is needed by the recurrence."
+    },
+    "gap": {
+      "prompt": "Which expression combines the two allowed final-step groups?",
+      "options": [
+        "ways[stair - 1] + ways[stair - 2]",
+        "ways[stair - 1] * 2",
+        "stair * stair"
+      ],
+      "answer": 0,
+      "explain": "The two disjoint groups are added, not multiplied."
+    },
+    "hint": "Separate routes by their LAST step. Which smaller stair does each group come from?",
+    "final": {
+      "prompt": "Why add the two smaller stair counts rather than multiply them?",
+      "options": [
+        "They are separate groups classified by last step",
+        "Every route uses both groups at once",
+        "The input must be sorted"
+      ],
+      "answer": 0,
+      "explain": "A route ends with size 1 OR size 2. Counts of those disjoint choices are added."
+    }
+  },
+  "filtering-images": {
+    "id": "filtering-images",
+    "title": "Turn one pixel gray",
+    "goal": "Convert pixel (30, 60, 90) to grayscale, then see the same recipe across an image.",
+    "intro": [
+      "A picture is a grid of pixels. One pixel’s three numbers control red, green and blue. (0,0,0) is black and (255,255,255) is white.",
+      "A gray pixel has equal channels. Add the three amounts, divide by three, round down to a whole number, and put that average in all three channels.",
+      "Use the Grayscale preset below. These buttons choose one whole filter; they are not independent channel toggles. The image changes, and the editable sample numbers let you test a pixel using a keyboard too."
+    ],
+    "recipe": [
+      "30 + 60 + 90 = 180.",
+      "180 divided by 3 is 60.",
+      "Return (60,60,60). Apply this same function at every image position."
+    ],
+    "words": [
+      "Pixel: one picture position. RGB: red, green and blue channel amounts, each from 0 to 255.",
+      "Tuple: a group in a fixed order; here (red, green, blue).",
+      "Function: a named recipe that takes inputs and returns an output.",
+      "//: whole-number floor division; 2 // 3 is 0."
+    ],
+    "caution": "The result needs exactly three channel values. Equal channels—not deleting channels—produce gray.",
+    "code": "def grayscale(pixel):  # receive one (red, green, blue) pixel\n    red, green, blue = pixel  # give the three inputs meaningful names\n    average = (red + green + blue) // 3  # whole-number average, rounded down\n    return (average, average, average)  # equal amounts in all three channels\n\nprint(grayscale((30, 60, 90)))  # (60, 60, 60)",
+    "expected": "(60, 60, 60)",
+    "predict": {
+      "prompt": "30 + 60 + 90 has average 60. Which return makes the pixel gray?",
+      "options": ["(60,0,0)", "(60,60,60)", "(30,60,90)"],
+      "answer": 1,
+      "explain": "All three channels must contain the same average."
+    },
+    "transfer": {
+      "prompt": "Using floor division, grayscale (0,0,2) becomes what?",
+      "options": ["(0,0,0)", "(2,2,2)", "(1,1,1)"],
+      "answer": 0,
+      "explain": "2 // 3 is 0. Put the rounded-down average in each channel."
+    },
+    "gap": {
+      "prompt": "Which return distributes the average to all channels?",
+      "options": [
+        "return (average, 0, 0)",
+        "return (average, average, average)",
+        "return pixel"
+      ],
+      "answer": 1,
+      "explain": "Repeat the computed average three times."
+    },
+    "hint": "Calculate the average first. Then write that same number in red, green AND blue.",
+    "final": {
+      "prompt": "What property makes a pixel gray?",
+      "options": [
+        "All three channels have equal amounts",
+        "Only the red channel remains",
+        "The image has fewer pixels"
+      ],
+      "answer": 0,
+      "explain": "Equal red, green and blue produce gray. Their common average sets its shade."
+    }
+  },
+  "inverting-colors": {
+    "id": "inverting-colors",
+    "title": "Mirror each channel",
+    "goal": "Invert pixel (20, 200, 255) by subtracting each channel from 255.",
+    "intro": [
+      "Inversion mirrors each channel amount within 0..255. Red 20 becomes 235, green 200 becomes 55, and blue 255 becomes 0.",
+      "Applying inversion twice returns the original: 255 − (255 − value) = value. This is a concrete example of undoing a function with itself.",
+      "Optional Brighten exploration adds an amount and clamps each channel to the allowed range. Clamp means cap values above 255 and raise values below 0. Select Brighten to reveal its amount slider; inversion itself needs no slider."
+    ],
+    "recipe": [
+      "255 − 20 = 235.",
+      "255 − 200 = 55. 255 − 255 = 0.",
+      "Return (235,55,0), in the same RGB order."
+    ],
+    "words": [
+      "Pixel: one picture position. RGB: red, green and blue channel amounts, each from 0 to 255.",
+      "Tuple: a group in a fixed order; here (red, green, blue).",
+      "Function: a named recipe that takes inputs and returns an output.",
+      "Invert: mirror each channel around the range endpoints. Clamp: keep a value in 0..255."
+    ],
+    "caution": "Do not confuse inversion with adding brightness. Brightening 250 by 20 must cap at 255; darkening 10 by 40 must stop at 0.",
+    "code": "def invert(pixel):  # mirror each channel independently\n    red, green, blue = pixel  # preserve RGB order\n    return (255 - red, 255 - green, 255 - blue)  # each endpoint is subtracted from 255\n\nprint(invert((20, 200, 255)))  # (235, 55, 0)",
+    "expected": "(235, 55, 0)",
+    "predict": {
+      "prompt": "Which red amount replaces 20 when inverted?",
+      "options": ["20", "235", "255"],
+      "answer": 1,
+      "explain": "255 − 20 = 235."
+    },
+    "transfer": {
+      "prompt": "What does inverting black (0,0,0) produce?",
+      "options": ["Black", "White (255,255,255)", "Gray (128,128,128)"],
+      "answer": 1,
+      "explain": "Each zero channel becomes 255."
+    },
+    "gap": {
+      "prompt": "Which calculation inverts the green channel?",
+      "options": ["255 - green", "green + 255", "green // 3"],
+      "answer": 0,
+      "explain": "Subtract each original channel from 255 independently."
+    },
+    "hint": "Write 255 minus the original channel. Check that original + inverted equals 255.",
+    "final": {
+      "prompt": "What happens after applying inversion twice?",
+      "options": [
+        "The original pixel returns",
+        "Every pixel becomes white",
+        "Channels disappear"
+      ],
+      "answer": 0,
+      "explain": "255 − (255 − channel) equals channel for each component."
+    }
+  },
+  "composing-functions": {
+    "id": "composing-functions",
+    "title": "Follow a two-stage pipeline",
+    "goal": "Brighten (60,60,60) by 100, then threshold its average at 128.",
+    "intro": [
+      "Composition feeds the output of one function into the next. This lesson has exactly two stages: brighten, then threshold.",
+      "Brighten adds 100 with a cap at 255. Threshold takes the channel average: at least 128 becomes white, below 128 becomes black.",
+      "Order matters here. Brighten first makes (160,160,160), then white. Threshold first makes black; brightening that black gives (100,100,100). Reset restores the original (60,60,60) demonstration."
+    ],
+    "recipe": [
+      "Stage 1: (60,60,60) → (160,160,160).",
+      "Stage 2: average 160 ≥ 128 → (255,255,255).",
+      "Swap stages: average 60 < 128 → (0,0,0), then +100 → (100,100,100)."
+    ],
+    "words": [
+      "Pixel: one picture position. RGB: red, green and blue channel amounts, each from 0 to 255.",
+      "Tuple: a group in a fixed order; here (red, green, blue).",
+      "Function: a named recipe that takes inputs and returns an output.",
+      "Pipeline: ordered stages. Threshold: a cutoff separating two outcomes.",
+      "≥ means greater than or equal to; our white branch includes exactly 128."
+    ],
+    "caution": "Not all pairs of functions have interchangeable order. Test intermediate outputs, not only the final picture.",
+    "code": "def brighten(pixel, amount):  # add brightness while preserving valid channels\n    return tuple(max(0, min(255, channel + amount)) for channel in pixel)  # clamp each amount\n\ndef threshold(pixel, cutoff):  # use the average to choose black or white\n    average = sum(pixel) // 3  # average of the three input channels\n    value = 255 if average >= cutoff else 0  # exactly cutoff belongs to white\n    return (value, value, value)  # black or white pixel\n\ndef pipeline(pixel):  # lesson order: brighten THEN threshold\n    brighter = brighten(pixel, 100)  # (60,60,60) becomes (160,160,160)\n    return threshold(brighter, 128)  # average 160 becomes white\n\nprint(pipeline((60, 60, 60)))  # (255, 255, 255)",
+    "expected": "(255, 255, 255)",
+    "predict": {
+      "prompt": "After stage 1, what pixel is passed into threshold?",
+      "options": ["(60,60,60)", "(160,160,160)", "(0,0,0)"],
+      "answer": 1,
+      "explain": "The second stage consumes the first stage’s result, not the original input."
+    },
+    "transfer": {
+      "prompt": "Swap the order for (60,60,60). What final pixel results?",
+      "options": ["(255,255,255)", "(100,100,100)", "(0,0,0)"],
+      "answer": 1,
+      "explain": "Threshold gives black first, then brighten adds 100 to each channel."
+    },
+    "gap": {
+      "prompt": "Which expression sends the brightened pixel to stage 2?",
+      "options": [
+        "threshold(pixel, 128)",
+        "threshold(brighter, 128)",
+        "return 128"
+      ],
+      "answer": 1,
+      "explain": "Use brighter, the output of stage 1, not the original pixel."
+    },
+    "hint": "Write the output of stage 1 on paper. Cover the original input: stage 2 must use only that new output.",
+    "final": {
+      "prompt": "What input must stage 2 consume?",
+      "options": [
+        "The output of stage 1",
+        "The original pixel again",
+        "The stage number"
+      ],
+      "answer": 0,
+      "explain": "Composition connects recipes: the intermediate output becomes the next input."
+    }
+  },
+  "debugging-images": {
+    "id": "debugging-images",
+    "title": "Fix the wrong channel values",
+    "goal": "Repair grayscale that returns (60,0,0) instead of (60,60,60) for (30,60,90).",
+    "intro": [
+      "The broken function computes the average correctly but returns (average,0,0). It returns THREE values; the green and blue VALUES are wrong. This is not a missing-value bug.",
+      "Use one non-black pixel. Calculate the expected result by hand and compare each returned channel. Black alone would hide the error because its average is already zero.",
+      "In the image lab, choose a replacement return line. Equal channels fix the red image. Then verify a new white pixel, not only the original sample."
+    ],
+    "recipe": [
+      "Average of (30,60,90) is 60. Broken output is (60,0,0).",
+      "Keep the red 60, but also send the average to green and blue.",
+      "Correct return: (average,average,average). White must remain white; black alone is not a sufficient test."
+    ],
+    "words": [
+      "Pixel: one picture position. RGB: red, green and blue channel amounts, each from 0 to 255.",
+      "Tuple: a group in a fixed order; here (red, green, blue).",
+      "Function: a named recipe that takes inputs and returns an output.",
+      "Assertion: a check that an actual result equals the expected result.",
+      "Regression test: a small check you keep so the same bug is caught if it returns."
+    ],
+    "caution": "A plausible-looking picture does not prove every input works. Keep a non-black test and an extreme-channel test.",
+    "code": "def grayscale(pixel):  # repaired version of the same lesson function\n    red, green, blue = pixel  # exactly three inputs\n    average = (red + green + blue) // 3  # arithmetic was already correct\n    return (average, average, average)  # repair VALUES in green and blue\n\nassert grayscale((30, 60, 90)) == (60, 60, 60)  # exposes the original red-only bug\nassert grayscale((255, 255, 255)) == (255, 255, 255)  # white must stay white\nprint(grayscale((30, 60, 90)))  # (60, 60, 60)",
+    "expected": "(60, 60, 60)",
+    "predict": {
+      "prompt": "The broken return is (average,0,0). What is actually wrong?",
+      "options": [
+        "There are only two values",
+        "Green and blue do not receive the average",
+        "The average is missing entirely"
+      ],
+      "answer": 1,
+      "explain": "Three channel values exist, but only red gets the average."
+    },
+    "transfer": {
+      "prompt": "Which test would hide the broken red-only return?",
+      "options": ["Black (0,0,0)", "White (255,255,255)", "(30,60,90)"],
+      "answer": 0,
+      "explain": "Black’s average is zero, so even the broken (0,0,0) looks correct."
+    },
+    "gap": {
+      "prompt": "Which line repairs the wrong channels?",
+      "options": [
+        "return (average, average, average)",
+        "return (average, 0, 0)",
+        "return (red, green, blue)"
+      ],
+      "answer": 0,
+      "explain": "A grayscale result must repeat the computed average, not the original channels."
+    },
+    "hint": "Count the returned values, then compare their amounts. The shape is right; which channel amounts differ from the expected pixel?",
+    "final": {
+      "prompt": "Why keep a non-black test after fixing the function?",
+      "options": [
+        "Black alone hides the old wrong-channel bug",
+        "Black proves every case works",
+        "Non-black pixels do not use channels"
+      ],
+      "answer": 0,
+      "explain": "With average zero, broken and correct returns both look black. A nonzero average exposes the difference."
+    }
+  }
+}

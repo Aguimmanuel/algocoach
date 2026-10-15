@@ -22,7 +22,13 @@ import ReviewSession from "./ReviewSession";
 import StreakHeatmap from "./StreakHeatmap";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Progress } from "./ui/progress";
 import { Separator } from "./ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -45,8 +51,6 @@ interface Props {
   streak: StreakInfo;
   busy: boolean;
   error: string | null;
-  onSignUp: (email: string, password: string, name: string) => Promise<boolean>;
-  onSignIn: (email: string, password: string) => Promise<boolean>;
   onSignOut: () => void;
   onClearError: () => void;
   onOpenPattern: (id: string) => void;
@@ -56,7 +60,13 @@ interface Props {
 }
 
 /** One fact from the status line — a label and a value, no card around it. */
-function Fact({ icon: Icon, children }: { icon: typeof Flame; children: React.ReactNode }) {
+function Fact({
+  icon: Icon,
+  children,
+}: {
+  icon: typeof Flame;
+  children: React.ReactNode;
+}) {
   return (
     <span className="flex items-center gap-1.5">
       <Icon className="size-4 text-muted-foreground" />
@@ -90,8 +100,6 @@ export default function ProgressHome({
   streak,
   busy,
   error,
-  onSignUp,
-  onSignIn,
   onSignOut,
   onClearError,
   onOpenPattern,
@@ -101,9 +109,16 @@ export default function ProgressHome({
 }: Props) {
   const [mode, setMode] = useState<"home" | "review">("home");
 
-  const totalProblems = Object.values(PRACTICE).reduce((n, list) => n + list.length, 0);
+  const totalProblems = Object.values(PRACTICE).reduce(
+    (n, list) => n + list.length,
+    0,
+  );
   const lvl = levelFor(xp);
-  const quests = dailyQuests({ answered: answeredToday, sessions: sessionsToday, goal });
+  const quests = dailyQuests({
+    answered: answeredToday,
+    sessions: sessionsToday,
+    goal,
+  });
   const questsDone = quests.filter((q) => q.done).length;
   const earnedMilestones = milestones({
     learned: learned.length,
@@ -114,8 +129,12 @@ export default function ProgressHome({
   });
   const earnedCount = earnedMilestones.filter((m) => m.earned).length;
 
-  const nextStep = LEARNING_PATH.find((s) => s.patternId && !learned.includes(s.patternId));
-  const nextPattern = nextStep?.patternId ? PATTERN_MAP[nextStep.patternId] : null;
+  const nextStep = LEARNING_PATH.find(
+    (s) => s.patternId && !learned.includes(s.patternId),
+  );
+  const nextPattern = nextStep?.patternId
+    ? PATTERN_MAP[nextStep.patternId]
+    : null;
 
   const goalPct = goal > 0 ? Math.min(100, (answeredToday / goal) * 100) : 0;
   /**
@@ -152,7 +171,13 @@ export default function ProgressHome({
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     const iso = toISO(d);
-    return { iso, label: "MTWTFSS"[i], isToday: i === dow, future: i > dow, active: activeDays.includes(iso) };
+    return {
+      iso,
+      label: "MTWTFSS"[i],
+      isToday: i === dow,
+      future: i > dow,
+      active: activeDays.includes(iso),
+    };
   });
   const weekDays = week.filter((d) => !d.future && d.active).length;
 
@@ -171,7 +196,9 @@ export default function ProgressHome({
             <div className="mt-1.5 flex items-center gap-2">
               <Progress value={lvl.pct} className="h-1.5 w-28" />
               <span className="text-[11px] text-muted-foreground tabular-nums">
-                {lvl.next ? `${lvl.remaining.toLocaleString()} XP to go` : "top level"}
+                {lvl.next
+                  ? `${lvl.remaining.toLocaleString()} XP to go`
+                  : "top level"}
               </span>
             </div>
           </div>
@@ -187,14 +214,18 @@ export default function ProgressHome({
             </span>
           </Fact>
           <Fact icon={Target}>
-            {answeredToday >= goal ? answeredToday : `${answeredToday} / ${goal}`}
+            {answeredToday >= goal
+              ? answeredToday
+              : `${answeredToday} / ${goal}`}
             <span className="ml-1 font-normal text-muted-foreground">
               {answeredToday >= goal ? "today · goal met" : "today"}
             </span>
           </Fact>
           <Fact icon={Layers}>
             {learned.length}
-            <span className="ml-1 font-normal text-muted-foreground">/ {PATTERNS.length} patterns</span>
+            <span className="ml-1 font-normal text-muted-foreground">
+              / {PATTERNS.length} patterns
+            </span>
           </Fact>
         </div>
 
@@ -211,11 +242,21 @@ export default function ProgressHome({
         <CardContent className="flex flex-wrap items-center justify-between gap-6 py-2">
           <div className="flex items-start gap-4">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-strong-foreground/10">
-              {reviewIsNext ? <RotateCcw className="size-6" /> : <BookOpen className="size-6" />}
+              {reviewIsNext ? (
+                <RotateCcw className="size-6" />
+              ) : (
+                <BookOpen className="size-6" />
+              )}
             </span>
             <div>
               <p className="text-xs font-semibold tracking-widest uppercase opacity-85">
-                {dueCount > 0 ? "Today's review" : nextPattern ? (learned.length ? "Next up" : "Start here") : "Keep it sharp"}
+                {dueCount > 0
+                  ? "Today's review"
+                  : nextPattern
+                    ? learned.length
+                      ? "Next up"
+                      : "Start here"
+                    : "Keep it sharp"}
               </p>
               <p className="mt-1 text-xl font-bold">
                 {dueCount > 0
@@ -237,15 +278,24 @@ export default function ProgressHome({
                 {questsDone} of {quests.length} quests done
               </p>
               <p>
-                {quests.reduce((n, q) => n + (q.done ? 0 : q.xp), 0)} XP left today
+                {quests.reduce((n, q) => n + (q.done ? 0 : q.xp), 0)} XP left
+                today
               </p>
             </div>
             <Button
               size="lg"
               className="bg-strong-foreground text-strong hover:bg-strong-foreground/90"
-              onClick={reviewIsNext ? () => setMode("review") : () => nextPattern && onOpenPattern(nextPattern.id)}
+              onClick={
+                reviewIsNext
+                  ? () => setMode("review")
+                  : () => nextPattern && onOpenPattern(nextPattern.id)
+              }
             >
-              {dueCount > 0 ? "Start the review" : nextPattern ? "Open the lesson" : "Practise a round"}
+              {dueCount > 0
+                ? "Start the review"
+                : nextPattern
+                  ? "Open the lesson"
+                  : "Practise a round"}
               <ArrowRight />
             </Button>
           </div>
@@ -267,7 +317,10 @@ export default function ProgressHome({
         </CardHeader>
         <CardContent className="divide-y divide-border">
           {quests.map((q) => (
-            <div key={q.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+            <div
+              key={q.id}
+              className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+            >
               <span
                 className={cn(
                   "flex size-8 shrink-0 items-center justify-center rounded-full border-2 transition",
@@ -279,20 +332,35 @@ export default function ProgressHome({
                 {q.done ? (
                   <Check className="size-4" />
                 ) : q.target > 1 ? (
-                  <span className="text-xs font-bold tabular-nums">{q.progress}</span>
+                  <span className="text-xs font-bold tabular-nums">
+                    {q.progress}
+                  </span>
                 ) : null}
               </span>
 
               <div className="min-w-0 flex-1">
-                <p className={cn("text-sm font-semibold", q.done && "text-muted-foreground line-through")}>{q.label}</p>
+                <p
+                  className={cn(
+                    "text-sm font-semibold",
+                    q.done && "text-muted-foreground line-through",
+                  )}
+                >
+                  {q.label}
+                </p>
                 <p className="text-xs text-muted-foreground">{q.hint}</p>
               </div>
 
               <div className="flex items-center gap-3">
                 <div className="hidden w-24 sm:block">
-                  <Progress value={(q.progress / q.target) * 100} className="h-1.5" />
+                  <Progress
+                    value={(q.progress / q.target) * 100}
+                    className="h-1.5"
+                  />
                 </div>
-                <Badge variant={q.done ? "default" : "secondary"} className="tabular-nums">
+                <Badge
+                  variant={q.done ? "default" : "secondary"}
+                  className="tabular-nums"
+                >
                   +{q.xp} XP
                 </Badge>
               </div>
@@ -317,20 +385,31 @@ export default function ProgressHome({
         <CardContent>
           <div className="flex items-center">
             {week.map((d, i) => (
-              <div key={d.iso} className={cn("flex items-center", i > 0 && "flex-1")}>
+              <div
+                key={d.iso}
+                className={cn("flex items-center", i > 0 && "flex-1")}
+              >
                 {i > 0 && (
                   <span
                     aria-hidden
-                    className={cn("h-0.5 flex-1 rounded-full", week[i - 1].active && d.active ? "bg-primary" : "bg-border")}
+                    className={cn(
+                      "h-0.5 flex-1 rounded-full",
+                      week[i - 1].active && d.active
+                        ? "bg-primary"
+                        : "bg-border",
+                    )}
                   />
                 )}
                 <span
                   aria-label={`${d.iso}${d.active ? " — active" : ""}`}
                   className={cn(
                     "flex size-9 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition",
-                    d.active && "border-primary bg-primary text-primary-foreground",
+                    d.active &&
+                      "border-primary bg-primary text-primary-foreground",
                     !d.active && d.isToday && "border-primary text-primary",
-                    !d.active && !d.isToday && "border-border text-muted-foreground",
+                    !d.active &&
+                      !d.isToday &&
+                      "border-border text-muted-foreground",
                     d.future && "opacity-40",
                   )}
                 >
@@ -352,18 +431,27 @@ export default function ProgressHome({
           <TabsTrigger value="milestones">
             <Trophy className="size-4" />
             Milestones
-            <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] tabular-nums">
+            <Badge
+              variant="secondary"
+              className="ml-1 px-1.5 py-0 text-[10px] tabular-nums"
+            >
               {earnedCount}/{earnedMilestones.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="account">{user ? "Account" : "Sign in"}</TabsTrigger>
+          <TabsTrigger value="account">
+            {user ? "Account" : "Sign in"}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="progress" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm tracking-wide uppercase">Last 12 weeks</CardTitle>
-              <CardDescription>Every day you did anything at all.</CardDescription>
+              <CardTitle className="text-sm tracking-wide uppercase">
+                Last 12 weeks
+              </CardTitle>
+              <CardDescription>
+                Every day you did anything at all.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <StreakHeatmap activeDays={activeDays} />
@@ -372,16 +460,31 @@ export default function ProgressHome({
 
           <div className="grid gap-x-6 gap-y-4 rounded-xl border border-border bg-card px-6 py-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Patterns learned", value: learned.length, of: PATTERNS.length },
-              { label: "Problems solved", value: solved.length, of: totalProblems },
+              {
+                label: "Patterns learned",
+                value: learned.length,
+                of: PATTERNS.length,
+              },
+              {
+                label: "Problems solved",
+                value: solved.length,
+                of: totalProblems,
+              },
               { label: "Best streak", value: streak.longest, of: 0 },
               { label: "Review sessions", value: sessions, of: 0 },
             ].map((s) => (
               <div key={s.label} className="space-y-1">
-                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{s.label}</p>
+                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  {s.label}
+                </p>
                 <p className="text-2xl font-extrabold tabular-nums">
                   {s.value}
-                  {s.of > 0 && <span className="text-base font-semibold text-muted-foreground"> / {s.of}</span>}
+                  {s.of > 0 && (
+                    <span className="text-base font-semibold text-muted-foreground">
+                      {" "}
+                      / {s.of}
+                    </span>
+                  )}
                 </p>
               </div>
             ))}
@@ -391,7 +494,9 @@ export default function ProgressHome({
         <TabsContent value="milestones">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm tracking-wide uppercase">Milestones</CardTitle>
+              <CardTitle className="text-sm tracking-wide uppercase">
+                Milestones
+              </CardTitle>
               <CardDescription>
                 {earnedCount} of {earnedMilestones.length} earned.
               </CardDescription>
@@ -402,15 +507,37 @@ export default function ProgressHome({
                   key={m.id}
                   className={cn(
                     "flex items-center gap-3 rounded-lg border p-3 transition",
-                    m.earned ? "border-transparent bg-primary text-primary-foreground" : "border-border",
+                    m.earned
+                      ? "border-transparent bg-primary text-primary-foreground"
+                      : "border-border",
                   )}
                 >
-                  <span className={cn("text-2xl", !m.earned && "opacity-40 grayscale")} aria-hidden>
+                  <span
+                    className={cn(
+                      "text-2xl",
+                      !m.earned && "opacity-40 grayscale",
+                    )}
+                    aria-hidden
+                  >
                     {m.emoji}
                   </span>
                   <div className="min-w-0">
-                    <p className={cn("text-sm font-semibold", !m.earned && "text-muted-foreground")}>{m.label}</p>
-                    <p className={cn("text-xs", m.earned ? "opacity-80" : "text-muted-foreground")}>{m.detail}</p>
+                    <p
+                      className={cn(
+                        "text-sm font-semibold",
+                        !m.earned && "text-muted-foreground",
+                      )}
+                    >
+                      {m.label}
+                    </p>
+                    <p
+                      className={cn(
+                        "text-xs",
+                        m.earned ? "opacity-80" : "text-muted-foreground",
+                      )}
+                    >
+                      {m.detail}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -423,8 +550,6 @@ export default function ProgressHome({
             user={user}
             busy={busy}
             error={error}
-            onSignUp={onSignUp}
-            onSignIn={onSignIn}
             onSignOut={onSignOut}
             onClearError={onClearError}
           />

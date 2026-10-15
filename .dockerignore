@@ -26,3 +26,22 @@ env
 .vscode
 .idea
 *.log
+
+# Developer-only test app and artifacts are never part of the Docker build.
+tests
+backend/test_*.py
+test-results
+playwright-report
+
+# Explicit nested paths too: never copy backend secrets, DBs or virtualenvs.
+**/.env
+**/.env.*
+!**/.env.example
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*-wal
+**/*-shm
+**/__pycache__
+**/.venv
+**/node_modules

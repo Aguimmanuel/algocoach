@@ -1,66 +1,73 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useRef, useSyncExternalStore } from "react";
+import { validStorage } from "../lib/storageValidation";
 
-/**
- * localStorage-backed state that stays in sync across components.
- *
- * Two places read the same key at once — the header shows overall progress and
- * the lesson page ticks off individual problems — so a write in one must show
- * up in the other without a reload. A custom event carries the new value, which
- * keeps this to a few lines instead of pulling in a state library.
- *
- * This is also the state that will move to the server when accounts land, so it
- * stays a plain JSON value with no component-specific shape.
- */
+const volatile = new Map<string, unknown>();
+export function clearVolatileStorage() {
+  volatile.clear();
+}
+
+/** Cross-tab storage with a stable snapshot and no side effects during render. */
 export function useLocalStorage<T>(key: string, initial: T) {
+  const fallback = useRef(initial);
+  const cache = useRef<{ key: string; raw: string | null; value: T }>({
+    key,
+    raw: null,
+    value: initial,
+  });
   const read = useCallback((): T => {
+    if (volatile.has(key)) return volatile.get(key) as T;
+    let raw: string | null = null;
     try {
-      const raw = localStorage.getItem(key);
-      return raw ? (JSON.parse(raw) as T) : initial;
+      raw = localStorage.getItem(key);
     } catch {
-      return initial;
+      return cache.current.value;
     }
-    // `initial` is intentionally not a dependency — it is a fallback, not state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (cache.current.key === key && cache.current.raw === raw)
+      return cache.current.value;
+    let value = fallback.current;
+    try {
+      if (raw !== null) {
+        const parsed: unknown = JSON.parse(raw);
+        if (validStorage(key, parsed, fallback.current)) value = parsed as T;
+      }
+    } catch {
+      /* corrupt storage falls back */
+    }
+    cache.current = { key, raw, value };
+    return value;
   }, [key]);
-
-  const [value, setValue] = useState<T>(read);
-
-  useEffect(() => {
-    // Another component in this tab changed the same key.
-    const onLocal = (e: Event) => {
-      const detail = (e as CustomEvent<T>).detail;
-      if (detail !== undefined) setValue(detail);
-    };
-    // Another browser tab changed the same key.
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === key) setValue(read());
-    };
-
-    window.addEventListener(`algocoach:${key}`, onLocal);
-    window.addEventListener("storage", onStorage);
-    return () => {
-      window.removeEventListener(`algocoach:${key}`, onLocal);
-      window.removeEventListener("storage", onStorage);
-    };
-  }, [key, read]);
-
-  const update = useCallback(
-    (next: T | ((prev: T) => T)) => {
-      setValue((prev) => {
-        const resolved = typeof next === "function" ? (next as (p: T) => T)(prev) : next;
-        try {
-          localStorage.setItem(key, JSON.stringify(resolved));
-          // Same object reference reaches every listener, so the component that
-          // made the change bails out instead of re-rendering needlessly.
-          window.dispatchEvent(new CustomEvent(`algocoach:${key}`, { detail: resolved }));
-        } catch {
-          /* storage full or blocked — keep the in-memory value */
-        }
-        return resolved;
-      });
+  const subscribe = useCallback(
+    (notify: () => void) => {
+      const storage = (e: StorageEvent) => {
+        if (e.key === key || e.key === null) notify();
+      };
+      window.addEventListener(`algocoach:${key}`, notify);
+      window.addEventListener("storage", storage);
+      return () => {
+        window.removeEventListener(`algocoach:${key}`, notify);
+        window.removeEventListener("storage", storage);
+      };
     },
     [key],
   );
-
+  const value = useSyncExternalStore(subscribe, read, () => fallback.current);
+  const update = useCallback(
+    (next: T | ((prev: T) => T)) => {
+      const resolved =
+        typeof next === "function" ? (next as (prev: T) => T)(read()) : next;
+      const raw = JSON.stringify(resolved);
+      try {
+        localStorage.setItem(key, raw);
+        volatile.delete(key);
+      } catch {
+        volatile.set(key, resolved);
+      }
+      cache.current = { key, raw, value: resolved };
+      window.dispatchEvent(
+        new CustomEvent(`algocoach:${key}`, { detail: resolved }),
+      );
+    },
+    [key, read],
+  );
   return [value, update] as const;
 }

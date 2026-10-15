@@ -5,9 +5,21 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useRevealStagger } from "../hooks/useReveal";
 import { markActiveToday } from "../lib/activity";
 import { Button } from "./ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 import { Badge } from "./ui/badge";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Progress } from "./ui/progress";
 import { cn } from "@/lib/utils";
 
@@ -54,19 +66,28 @@ function codeLines(pattern: Pattern): string[] {
   return pattern.skeleton
     .split("\n")
     .map((l) => l.trimEnd())
-    .filter((l) => l.trim() && !l.trim().startsWith("#") && l.trim().length > 8);
+    .filter(
+      (l) => l.trim() && !l.trim().startsWith("#") && l.trim().length > 8,
+    );
 }
 
 /* ==========================================================================
    Exercise 1 — put the recipe back in order
    ========================================================================== */
 
-function OrderRecipe({ pattern, onPass }: { pattern: Pattern; onPass: () => void }) {
+function OrderRecipe({
+  pattern,
+  onPass,
+}: {
+  pattern: Pattern;
+  onPass: () => void;
+}) {
   const shuffled = useMemo(() => {
     const seed = hash(pattern.id + "steps");
     let out = shuffle(pattern.steps, seed);
     // A shuffle that happens to come out already sorted would give the game away.
-    if (out.every((s, i) => s === pattern.steps[i])) out = shuffle(pattern.steps, seed + 7);
+    if (out.every((s, i) => s === pattern.steps[i]))
+      out = shuffle(pattern.steps, seed + 7);
     return out;
   }, [pattern]);
 
@@ -93,7 +114,8 @@ function OrderRecipe({ pattern, onPass }: { pattern: Pattern; onPass: () => void
   return (
     <div>
       <p className="text-sm text-muted-foreground">
-        Click the steps in the order you would actually write them. The list is deliberately scrambled.
+        Click the steps in the order you would actually write them. The list is
+        deliberately scrambled.
       </p>
 
       {/* What has been placed so far */}
@@ -105,13 +127,17 @@ function OrderRecipe({ pattern, onPass }: { pattern: Pattern; onPass: () => void
               key={i}
               className={cn(
                 "flex items-start gap-3 rounded-xl border p-3 text-sm transition",
-                step ? "animate-pop border-border bg-card" : "border-dashed border-border bg-transparent",
+                step
+                  ? "animate-pop border-border bg-card"
+                  : "border-dashed border-border bg-transparent",
               )}
             >
               <span
                 className={cn(
                   "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold",
-                  step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                  step
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground",
                 )}
               >
                 {i + 1}
@@ -149,7 +175,8 @@ function OrderRecipe({ pattern, onPass }: { pattern: Pattern; onPass: () => void
 
       {complete && (
         <p className="animate-fade-up mt-4 rounded-xl bg-muted p-3 text-sm font-medium text-muted-foreground">
-          🎉 Recipe complete. That order is the algorithm — if you can write it, you can code it.
+          🎉 Recipe complete. That order is the algorithm — if you can write it,
+          you can code it.
         </p>
       )}
 
@@ -166,7 +193,13 @@ function OrderRecipe({ pattern, onPass }: { pattern: Pattern; onPass: () => void
    Exercise 2 — which of these are real traps for THIS pattern?
    ========================================================================== */
 
-function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }) {
+function SpotTraps({
+  pattern,
+  onPass,
+}: {
+  pattern: Pattern;
+  onPass: () => void;
+}) {
   /** `from` is set only on decoys, so a wrong pick can name its real owner. */
   type Option = { text: string; real: boolean; from?: string };
 
@@ -175,7 +208,10 @@ function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }
     const others = PATTERNS.filter((p) => p.id !== pattern.id).flatMap((p) =>
       p.pitfalls.map((t) => ({ t, from: p.name })),
     );
-    const decoys = shuffle(others, hash(pattern.id + "traps")).slice(0, Math.max(2, Math.min(3, mine.length)));
+    const decoys = shuffle(others, hash(pattern.id + "traps")).slice(
+      0,
+      Math.max(2, Math.min(3, mine.length)),
+    );
     return shuffle<Option>(
       [
         ...mine.map((t) => ({ text: t, real: true })),
@@ -209,8 +245,10 @@ function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }
   return (
     <div>
       <p className="text-sm text-muted-foreground">
-        Some of these are the real traps for <strong className="text-muted-foreground">{pattern.name}</strong>. The rest belong to
-        other patterns and would send you down the wrong road. Select the ones that belong here.
+        Some of these are the real traps for{" "}
+        <strong className="text-muted-foreground">{pattern.name}</strong>. The
+        rest belong to other patterns and would send you down the wrong road.
+        Select the ones that belong here.
       </p>
 
       <div className="mt-4 space-y-2">
@@ -227,7 +265,9 @@ function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }
               className={cn(
                 "press flex w-full items-start gap-3 rounded-xl border p-3 text-left text-sm transition",
                 !checked && isPicked && "border-primary bg-muted",
-                !checked && !isPicked && "border-border bg-card hover:border-ring",
+                !checked &&
+                  !isPicked &&
+                  "border-border bg-card hover:border-ring",
                 right && "animate-pop border-primary bg-muted",
                 missed && "border-dashed border-primary bg-muted",
                 badPick && "animate-shake border-destructive bg-destructive/10",
@@ -236,19 +276,29 @@ function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }
               <span
                 className={cn(
                   "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] font-bold",
-                  isPicked ? "border-primary bg-primary text-primary-foreground" : "border-border",
+                  isPicked
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border",
                 )}
               >
                 {right ? "✓" : badPick ? "✕" : isPicked ? "•" : ""}
               </span>
-              <span className={cn(badPick ? "text-destructive" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  badPick ? "text-destructive" : "text-muted-foreground",
+                )}
+              >
                 {o.text}
                 {checked && !o.real && (
                   <span className="mt-1 block text-xs text-muted-foreground">
                     That one is a {o.from} concern.
                   </span>
                 )}
-                {missed && <span className="mt-1 block text-xs text-muted-foreground">You missed this one.</span>}
+                {missed && (
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    You missed this one.
+                  </span>
+                )}
               </span>
             </button>
           );
@@ -263,7 +313,9 @@ function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }
         <p
           className={cn(
             "animate-fade-up mt-4 rounded-xl p-3 text-sm font-medium",
-            perfect ? "bg-muted text-muted-foreground" : "bg-muted text-muted-foreground",
+            perfect
+              ? "bg-muted text-muted-foreground"
+              : "bg-muted text-muted-foreground",
           )}
         >
           {perfect
@@ -279,10 +331,17 @@ function SpotTraps({ pattern, onPass }: { pattern: Pattern; onPass: () => void }
    Exercise 3 — put the missing line of code back
    ========================================================================== */
 
-function RebuildCode({ pattern, onPass }: { pattern: Pattern; onPass: () => void }) {
+function RebuildCode({
+  pattern,
+  onPass,
+}: {
+  pattern: Pattern;
+  onPass: () => void;
+}) {
   const { lines, gapIndex, answer, choices } = useMemo(() => {
     const ls = codeLines(pattern);
-    if (ls.length < 3) return { lines: [], gapIndex: -1, answer: "", choices: [] as string[] };
+    if (ls.length < 3)
+      return { lines: [], gapIndex: -1, answer: "", choices: [] as string[] };
 
     // Blank a line from the middle, where the logic lives.
     const gap = Math.max(1, Math.floor(ls.length / 2));
@@ -313,14 +372,18 @@ function RebuildCode({ pattern, onPass }: { pattern: Pattern; onPass: () => void
       onPass();
     } else {
       setWrongPick(line);
-      window.setTimeout(() => setWrongPick((w) => (w === line ? null : w)), 600);
+      window.setTimeout(
+        () => setWrongPick((w) => (w === line ? null : w)),
+        600,
+      );
     }
   };
 
   return (
     <div>
       <p className="text-sm text-muted-foreground">
-        One line has been lifted out of the template. Which line belongs in the gap?
+        One line has been lifted out of the template. Which line belongs in the
+        gap?
       </p>
 
       <pre className="code-surface mt-4 overflow-x-auto rounded-lg p-4 font-mono text-[13px] leading-6">
@@ -330,11 +393,15 @@ function RebuildCode({ pattern, onPass }: { pattern: Pattern; onPass: () => void
               key={i}
               className={cn(
                 "my-1 flex items-center gap-2 rounded px-2 py-1",
-                wrongPick ? "animate-shake bg-destructive/25" : "bg-strong-foreground/10",
+                wrongPick
+                  ? "animate-shake bg-destructive/25"
+                  : "bg-strong-foreground/10",
               )}
             >
               <span className="text-strong-foreground/65">?</span>
-              <span className="animate-blink text-strong-foreground/85">the missing line</span>
+              <span className="animate-blink text-strong-foreground/85">
+                the missing line
+              </span>
             </div>
           ) : (
             <div
@@ -345,7 +412,9 @@ function RebuildCode({ pattern, onPass }: { pattern: Pattern; onPass: () => void
                 i > gapIndex && !solved && "opacity-40",
               )}
             >
-              <span className="w-4 shrink-0 text-right text-strong-foreground/75">{i + 1}</span>
+              <span className="w-4 shrink-0 text-right text-strong-foreground/75">
+                {i + 1}
+              </span>
               <span className="whitespace-pre">{l}</span>
             </div>
           ),
@@ -371,7 +440,8 @@ function RebuildCode({ pattern, onPass }: { pattern: Pattern; onPass: () => void
         </div>
       ) : (
         <p className="animate-fade-up mt-4 rounded-xl bg-muted p-3 text-sm font-medium text-muted-foreground">
-          ✅ That is the load-bearing line. Everything else is scaffolding around it.
+          ✅ That is the load-bearing line. Everything else is scaffolding
+          around it.
         </p>
       )}
     </div>
@@ -395,13 +465,22 @@ function headline(time: string): string {
   return (time.match(/O\([^)]*\)/)?.[0] ?? time).trim();
 }
 
-function CostQuiz({ pattern, onPass }: { pattern: Pattern; onPass: () => void }) {
+function CostQuiz({
+  pattern,
+  onPass,
+}: {
+  pattern: Pattern;
+  onPass: () => void;
+}) {
   const { options, answer } = useMemo(() => {
     const correct = headline(pattern.time);
     const seen = new Set([correct]);
     const decoys: string[] = [];
 
-    for (const other of shuffle(PATTERNS.filter((p) => p.id !== pattern.id), hash(pattern.id + "cost"))) {
+    for (const other of shuffle(
+      PATTERNS.filter((p) => p.id !== pattern.id),
+      hash(pattern.id + "cost"),
+    )) {
       const token = headline(other.time);
       if (seen.has(token)) continue;
       seen.add(token);
@@ -409,7 +488,10 @@ function CostQuiz({ pattern, onPass }: { pattern: Pattern; onPass: () => void })
       if (decoys.length === 3) break;
     }
 
-    return { options: shuffle([correct, ...decoys], hash(pattern.id + "cost2")), answer: correct };
+    return {
+      options: shuffle([correct, ...decoys], hash(pattern.id + "cost2")),
+      answer: correct,
+    };
   }, [pattern]);
 
   const [picked, setPicked] = useState<string | null>(null);
@@ -425,8 +507,9 @@ function CostQuiz({ pattern, onPass }: { pattern: Pattern; onPass: () => void })
   return (
     <div>
       <p className="text-sm text-muted-foreground">
-        What does <strong className="text-foreground">{pattern.name}</strong> aim for? Read the constraints before you
-        answer — the maximum input size decides which of these is even allowed.
+        What does <strong className="text-foreground">{pattern.name}</strong>{" "}
+        aim for? Read the constraints before you answer — the maximum input size
+        decides which of these is even allowed.
       </p>
 
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -441,13 +524,23 @@ function CostQuiz({ pattern, onPass }: { pattern: Pattern; onPass: () => void })
               className={cn(
                 "press flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left font-mono text-sm transition",
                 !answered && "border-border hover:border-ring hover:bg-muted",
-                answered && isAnswer && "animate-pop border-primary bg-primary text-primary-foreground",
-                answered && isPicked && !isAnswer && "animate-shake border-destructive bg-destructive/10 text-destructive",
-                answered && !isPicked && !isAnswer && "border-border opacity-50",
+                answered &&
+                  isAnswer &&
+                  "animate-pop border-primary bg-primary text-primary-foreground",
+                answered &&
+                  isPicked &&
+                  !isAnswer &&
+                  "animate-shake border-destructive bg-destructive/10 text-destructive",
+                answered &&
+                  !isPicked &&
+                  !isAnswer &&
+                  "border-border opacity-50",
               )}
             >
               <span className="font-semibold">{token}</span>
-              {answered && isAnswer && <span className="ml-auto text-xs">✓</span>}
+              {answered && isAnswer && (
+                <span className="ml-auto text-xs">✓</span>
+              )}
             </button>
           );
         })}
@@ -457,18 +550,32 @@ function CostQuiz({ pattern, onPass }: { pattern: Pattern; onPass: () => void })
         <div
           className={cn(
             "animate-slide-right mt-4 rounded-xl p-4 ring-1",
-            right ? "bg-muted ring-border" : "bg-destructive/10 ring-destructive/30",
+            right
+              ? "bg-muted ring-border"
+              : "bg-destructive/10 ring-destructive/30",
           )}
         >
-          <p className={cn("text-sm font-semibold", right ? "text-foreground" : "text-destructive")}>
-            {right ? "✓ That is the target." : `Not quite — this one is ${answer}.`}
+          <p
+            className={cn(
+              "text-sm font-semibold",
+              right ? "text-foreground" : "text-destructive",
+            )}
+          >
+            {right
+              ? "✓ That is the target."
+              : `Not quite — this one is ${answer}.`}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Time <strong className="text-foreground">{pattern.time}</strong> · Space{" "}
-            <strong className="text-foreground">{pattern.space}</strong>
+            Time <strong className="text-foreground">{pattern.time}</strong> ·
+            Space <strong className="text-foreground">{pattern.space}</strong>
           </p>
           {!right && (
-            <Button size="sm" variant="secondary" className="mt-3" onClick={() => setPicked(null)}>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="mt-3"
+              onClick={() => setPicked(null)}
+            >
               Try again
             </Button>
           )}
@@ -480,10 +587,11 @@ function CostQuiz({ pattern, onPass }: { pattern: Pattern; onPass: () => void })
 
 interface Props {
   pattern: Pattern;
+  onExerciseComplete?: () => void;
 }
 
 /**
- * Four exercises, unlocked in sequence.
+ * Four exercises, presented in a focused accordion.
  *
  * Reading a lesson is not learning it. Each of these forces a decision and
  * tells you immediately whether it was right — which is the whole difference
@@ -491,15 +599,23 @@ interface Props {
  * content the lesson used to just print: the recipe, the traps and the code
  * template are all revealed by getting them right.
  */
-export default function LessonLab({ pattern }: Props) {
-  const [done, setDone] = useLocalStorage<string[]>(`algocoach-lab-${pattern.id}`, []);
-  const [open, setOpen] = useState(1);
+export default function LessonLab({ pattern, onExerciseComplete }: Props) {
+  const [done, setDone] = useLocalStorage<string[]>(
+    `algocoach-lab-${pattern.id}`,
+    [],
+  );
+  const [open, setOpen] = useState(
+    () => [1, 2, 3, 4].find((n) => !done.includes(String(n))) ?? 1,
+  );
 
   const mark = (n: number) => {
     // A finished exercise is real work, so it feeds the streak and the daily
     // goal — the same list the review session and the problem ticks write to.
     markActiveToday();
-    setDone((d) => (d.includes(String(n)) ? d : [...d, String(n)]));
+    if (!done.includes(String(n))) {
+      setDone((d) => [...new Set([...d, String(n)])]);
+      onExerciseComplete?.();
+    }
   };
 
   const exercises = [
@@ -530,7 +646,10 @@ export default function LessonLab({ pattern }: Props) {
   ];
 
   const completed = exercises.filter((e) => done.includes(String(e.n))).length;
-  const listRef = useRevealStagger<HTMLDivElement>(80, [pattern.id, done.length]);
+  const listRef = useRevealStagger<HTMLDivElement>(80, [
+    pattern.id,
+    done.length,
+  ]);
 
   return (
     <Card className="mt-7 gap-0">
@@ -540,7 +659,8 @@ export default function LessonLab({ pattern }: Props) {
           Practice this pattern now
         </CardTitle>
         <CardDescription>
-          Four short exercises. You cannot pass them by reading — you have to decide.
+          Four short exercises. You cannot pass them by reading — you have to
+          decide.
         </CardDescription>
         <CardAction>
           <Badge className="tabular-nums">
@@ -563,29 +683,47 @@ export default function LessonLab({ pattern }: Props) {
           {exercises.map((e, i) => {
             const isDone = done.includes(String(e.n));
             return (
-              <AccordionItem key={e.n} value={String(e.n)} className="reveal relative last:border-b-0">
+              <AccordionItem
+                key={e.n}
+                value={String(e.n)}
+                className="reveal relative last:border-b-0"
+              >
                 {/* the same dotted connector the learning path uses, so the
                     exercises read as a route rather than a menu */}
                 {i < exercises.length - 1 && (
                   <span
                     aria-hidden
-                    className={cn("path-line absolute top-12 bottom-0 left-[1.6875rem] w-1.5", isDone && "path-line-done")}
+                    className={cn(
+                      "path-line absolute top-12 bottom-0 left-[1.6875rem] w-1.5",
+                      isDone && "path-line-done",
+                    )}
                   />
                 )}
 
-                <AccordionTrigger className="px-4 hover:no-underline">
+                <AccordionTrigger
+                  disabled={
+                    e.n > 1 && !isDone && !done.includes(String(e.n - 1))
+                  }
+                  className="px-4 hover:no-underline"
+                >
                   <span className="flex items-center gap-3 text-left">
                     <span
                       className={cn(
                         "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold",
-                        isDone ? "bg-primary text-primary-foreground" : "border text-muted-foreground",
+                        isDone
+                          ? "bg-primary text-primary-foreground"
+                          : "border text-muted-foreground",
                       )}
                     >
                       {isDone ? <Check className="size-4" /> : e.n}
                     </span>
                     <span>
-                      <span className="block text-sm font-semibold">{e.title}</span>
-                      <span className="block text-xs font-normal text-muted-foreground">{e.hint}</span>
+                      <span className="block text-sm font-semibold">
+                        {e.title}
+                      </span>
+                      <span className="block text-xs font-normal text-muted-foreground">
+                        {e.hint}
+                      </span>
                     </span>
                   </span>
                 </AccordionTrigger>
@@ -597,8 +735,7 @@ export default function LessonLab({ pattern }: Props) {
       </CardContent>
 
       <p className="mt-4 text-xs text-muted-foreground">
-        Progress here is saved on this device with the rest of your work. Finishing all four counts towards your daily
-        goal.
+        Finishing all four counts towards your daily goal.
       </p>
     </Card>
   );

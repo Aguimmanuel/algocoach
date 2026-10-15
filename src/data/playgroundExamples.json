@@ -1,0 +1,1095 @@
+{
+  "brute": [
+    {
+      "id": "brute-1",
+      "label": "Everyday pair",
+      "note": "Use two different positions, even when the values look alike.",
+      "input": {
+        "values": [2, 4, 6, 8, 11, 15],
+        "target": 10
+      },
+      "expected": [0, 3]
+    },
+    {
+      "id": "brute-2",
+      "label": "Negative values",
+      "note": "A negative number can be part of a valid pair.",
+      "input": {
+        "values": [-5, -2, 0, 3, 8],
+        "target": 3
+      },
+      "expected": [0, 4]
+    },
+    {
+      "id": "brute-3",
+      "label": "Duplicate values",
+      "note": "Two copies of 4 can make 8; reusing one position cannot.",
+      "input": {
+        "values": [4, 4, 1, 9],
+        "target": 8
+      },
+      "expected": [0, 1]
+    },
+    {
+      "id": "brute-4",
+      "label": "No matching pair",
+      "note": "A complete search can legitimately return no answer.",
+      "input": {
+        "values": [1, 3, 5],
+        "target": 20
+      },
+      "expected": [-1, -1]
+    },
+    {
+      "id": "brute-5",
+      "label": "Only one number",
+      "note": "One value is not enough to form a pair of distinct positions.",
+      "input": {
+        "values": [7],
+        "target": 14
+      },
+      "expected": [-1, -1]
+    }
+  ],
+  "hashmap": [
+    {
+      "id": "hashmap-1",
+      "label": "Everyday pair",
+      "note": "Use two different positions, even when the values look alike.",
+      "input": {
+        "values": [2, 4, 6, 8, 11, 15],
+        "target": 10
+      },
+      "expected": [1, 2]
+    },
+    {
+      "id": "hashmap-2",
+      "label": "Negative values",
+      "note": "A negative number can be part of a valid pair.",
+      "input": {
+        "values": [-5, -2, 0, 3, 8],
+        "target": 3
+      },
+      "expected": [2, 3]
+    },
+    {
+      "id": "hashmap-3",
+      "label": "Duplicate values",
+      "note": "Two copies of 4 can make 8; reusing one position cannot.",
+      "input": {
+        "values": [4, 4, 1, 9],
+        "target": 8
+      },
+      "expected": [0, 1]
+    },
+    {
+      "id": "hashmap-4",
+      "label": "No matching pair",
+      "note": "A complete search can legitimately return no answer.",
+      "input": {
+        "values": [1, 3, 5],
+        "target": 20
+      },
+      "expected": [-1, -1]
+    },
+    {
+      "id": "hashmap-5",
+      "label": "Only one number",
+      "note": "One value is not enough to form a pair of distinct positions.",
+      "input": {
+        "values": [7],
+        "target": 14
+      },
+      "expected": [-1, -1]
+    }
+  ],
+  "two-pointers": [
+    {
+      "id": "two-pointers-1",
+      "label": "Everyday pair",
+      "note": "Use two different positions, even when the values look alike.",
+      "input": {
+        "values": [2, 4, 6, 8, 11, 15],
+        "target": 10
+      },
+      "expected": [0, 3]
+    },
+    {
+      "id": "two-pointers-2",
+      "label": "Negative values",
+      "note": "A negative number can be part of a valid pair.",
+      "input": {
+        "values": [-5, -2, 0, 3, 8],
+        "target": 3
+      },
+      "expected": [0, 4]
+    },
+    {
+      "id": "two-pointers-3",
+      "label": "Duplicate values",
+      "note": "Two copies of 4 can make 8; reusing one position cannot.",
+      "input": {
+        "values": [1, 4, 4, 9],
+        "target": 8
+      },
+      "expected": [1, 2]
+    },
+    {
+      "id": "two-pointers-4",
+      "label": "No matching pair",
+      "note": "A complete search can legitimately return no answer.",
+      "input": {
+        "values": [1, 3, 5],
+        "target": 20
+      },
+      "expected": [-1, -1]
+    },
+    {
+      "id": "two-pointers-5",
+      "label": "Only one number",
+      "note": "One value is not enough to form a pair of distinct positions.",
+      "input": {
+        "values": [7],
+        "target": 14
+      },
+      "expected": [-1, -1]
+    }
+  ],
+  "sliding-window": [
+    {
+      "id": "sliding-window-1",
+      "label": "Moving total",
+      "note": "Reuse the previous sum instead of recounting three values.",
+      "input": {
+        "values": [2, 1, 5, 1, 3, 2],
+        "k": 3
+      },
+      "expected": 9
+    },
+    {
+      "id": "sliding-window-2",
+      "label": "All negative",
+      "note": "The best sum is still negative; do not initialize it to zero.",
+      "input": {
+        "values": [-5, -2, -8, -1],
+        "k": 2
+      },
+      "expected": -7
+    },
+    {
+      "id": "sliding-window-3",
+      "label": "One-value window",
+      "note": "A window of size one selects the largest individual value.",
+      "input": {
+        "values": [4, 9, 2, 7],
+        "k": 1
+      },
+      "expected": 9
+    },
+    {
+      "id": "sliding-window-4",
+      "label": "Whole-array window",
+      "note": "When the window is the whole array, there is no slide.",
+      "input": {
+        "values": [3, 1, 4, 2],
+        "k": 4
+      },
+      "expected": 10
+    },
+    {
+      "id": "sliding-window-5",
+      "label": "Equal windows",
+      "note": "Different windows can have the same best sum.",
+      "input": {
+        "values": [2, 2, 2, 2, 2],
+        "k": 2
+      },
+      "expected": 4
+    }
+  ],
+  "binary-search": [
+    {
+      "id": "binary-search-1",
+      "label": "Middle value",
+      "note": "Repeatedly halve a sorted search interval.",
+      "input": {
+        "values": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+        "target": 23
+      },
+      "expected": 5
+    },
+    {
+      "id": "binary-search-2",
+      "label": "First value",
+      "note": "Keep the left endpoint until it has actually been checked.",
+      "input": {
+        "values": [1, 3, 5, 7],
+        "target": 1
+      },
+      "expected": 0
+    },
+    {
+      "id": "binary-search-3",
+      "label": "Last value",
+      "note": "The right endpoint is part of the search interval too.",
+      "input": {
+        "values": [4, 9, 12],
+        "target": 12
+      },
+      "expected": 2
+    },
+    {
+      "id": "binary-search-4",
+      "label": "Missing value",
+      "note": "An empty search interval means the target is absent.",
+      "input": {
+        "values": [2, 4, 8, 10],
+        "target": 6
+      },
+      "expected": -1
+    },
+    {
+      "id": "binary-search-5",
+      "label": "Single value",
+      "note": "A one-element interval still needs one comparison.",
+      "input": {
+        "values": [42],
+        "target": 42
+      },
+      "expected": 0
+    }
+  ],
+  "prefix-sum": [
+    {
+      "id": "prefix-sum-1",
+      "label": "Middle range",
+      "note": "Subtract two prefix totals to answer an inclusive range query.",
+      "input": {
+        "values": [3, 1, 4, 1, 5, 9],
+        "from": 1,
+        "to": 4
+      },
+      "expected": 11
+    },
+    {
+      "id": "prefix-sum-2",
+      "label": "Mixed signs",
+      "note": "Running totals may go down as well as up.",
+      "input": {
+        "values": [5, -2, 4, -1],
+        "from": 0,
+        "to": 3
+      },
+      "expected": 6
+    },
+    {
+      "id": "prefix-sum-3",
+      "label": "One element",
+      "note": "The extra leading zero makes a single-element query work.",
+      "input": {
+        "values": [7],
+        "from": 0,
+        "to": 0
+      },
+      "expected": 7
+    },
+    {
+      "id": "prefix-sum-4",
+      "label": "All zeros",
+      "note": "A zero sum is a real answer, not an uninitialized value.",
+      "input": {
+        "values": [0, 0, 0],
+        "from": 1,
+        "to": 2
+      },
+      "expected": 0
+    },
+    {
+      "id": "prefix-sum-5",
+      "label": "Last position",
+      "note": "Use prefix[end + 1], even at the final array position.",
+      "input": {
+        "values": [2, 4, 6, 8],
+        "from": 3,
+        "to": 3
+      },
+      "expected": 8
+    }
+  ],
+  "sorting": [
+    {
+      "id": "sorting-1",
+      "label": "Mixed order",
+      "note": "Insert each value into the sorted prefix.",
+      "input": {
+        "values": [5, 2, 9, 1, 6]
+      },
+      "expected": [1, 2, 5, 6, 9]
+    },
+    {
+      "id": "sorting-2",
+      "label": "Already sorted",
+      "note": "The comparison can stop without shifting anything.",
+      "input": {
+        "values": [1, 2, 3, 4]
+      },
+      "expected": [1, 2, 3, 4]
+    },
+    {
+      "id": "sorting-3",
+      "label": "Reverse order",
+      "note": "A small key may need to move past every earlier value.",
+      "input": {
+        "values": [5, 4, 3, 2, 1]
+      },
+      "expected": [1, 2, 3, 4, 5]
+    },
+    {
+      "id": "sorting-4",
+      "label": "Duplicates",
+      "note": "Equal values remain present after sorting.",
+      "input": {
+        "values": [3, 1, 3, 2, 1]
+      },
+      "expected": [1, 1, 2, 3, 3]
+    },
+    {
+      "id": "sorting-5",
+      "label": "Negative values",
+      "note": "Ordering works for negative numbers too.",
+      "input": {
+        "values": [0, -4, 3, -1, 2]
+      },
+      "expected": [-4, -1, 0, 2, 3]
+    }
+  ],
+  "linked-list": [
+    {
+      "id": "linked-list-1",
+      "label": "Four nodes",
+      "note": "Save the next node before reversing its link.",
+      "input": {
+        "values": [1, 2, 3, 4]
+      },
+      "expected": [4, 3, 2, 1]
+    },
+    {
+      "id": "linked-list-2",
+      "label": "One node",
+      "note": "The head and tail are the same node.",
+      "input": {
+        "values": [9]
+      },
+      "expected": [9]
+    },
+    {
+      "id": "linked-list-3",
+      "label": "Two nodes",
+      "note": "One reversed link changes which node is the head.",
+      "input": {
+        "values": [5, 8]
+      },
+      "expected": [8, 5]
+    },
+    {
+      "id": "linked-list-4",
+      "label": "Repeated values",
+      "note": "Nodes have separate identities even if their values repeat.",
+      "input": {
+        "values": [2, 2, 7]
+      },
+      "expected": [7, 2, 2]
+    },
+    {
+      "id": "linked-list-5",
+      "label": "Empty list",
+      "note": "There is no node to visit; the reversed list is empty.",
+      "input": {
+        "values": []
+      },
+      "expected": []
+    }
+  ],
+  "stack": [
+    {
+      "id": "stack-1",
+      "label": "Nested pairs",
+      "note": "The last opener must be the first one closed.",
+      "input": {
+        "text": "({[]})"
+      },
+      "expected": true
+    },
+    {
+      "id": "stack-2",
+      "label": "Separate pairs",
+      "note": "An empty stack can start another balanced group.",
+      "input": {
+        "text": "()[]{}"
+      },
+      "expected": true
+    },
+    {
+      "id": "stack-3",
+      "label": "Wrong nesting",
+      "note": "Having equal numbers of openers and closers is not enough.",
+      "input": {
+        "text": "([)]"
+      },
+      "expected": false
+    },
+    {
+      "id": "stack-4",
+      "label": "Unclosed opener",
+      "note": "A leftover opener makes the answer false.",
+      "input": {
+        "text": "(()"
+      },
+      "expected": false
+    },
+    {
+      "id": "stack-5",
+      "label": "Empty text",
+      "note": "No unmatched bracket means the empty text is balanced.",
+      "input": {
+        "text": ""
+      },
+      "expected": true
+    }
+  ],
+  "bfs": [
+    {
+      "id": "bfs-1",
+      "label": "Winding route",
+      "note": "Explore equally distant cells before moving farther away.",
+      "input": {
+        "grid": ["S.....", "####.#", ".....#", "####.#", "......", ".#..T."]
+      },
+      "expected": 9
+    },
+    {
+      "id": "bfs-2",
+      "label": "Adjacent goal",
+      "note": "A goal next to the start needs only one move.",
+      "input": {
+        "grid": ["ST", ".."]
+      },
+      "expected": 1
+    },
+    {
+      "id": "bfs-3",
+      "label": "Blocked goal",
+      "note": "Exhausting the queue can prove that no route exists.",
+      "input": {
+        "grid": ["S#T", "###", "..."]
+      },
+      "expected": -1
+    },
+    {
+      "id": "bfs-4",
+      "label": "Necessary detour",
+      "note": "Walls can force a longer route than straight-line distance.",
+      "input": {
+        "grid": ["S#..", ".#.#", "...T"]
+      },
+      "expected": 5
+    },
+    {
+      "id": "bfs-5",
+      "label": "Open board",
+      "note": "Several shortest routes can have the same length.",
+      "input": {
+        "grid": ["S..", "...", "..T"]
+      },
+      "expected": 4
+    }
+  ],
+  "dfs": [
+    {
+      "id": "dfs-1",
+      "label": "Connected corridors",
+      "note": "A long winding area can still be one connected region.",
+      "input": {
+        "grid": ["S.....", "####.#", ".....#", "####.#", "......", ".#..T."]
+      },
+      "expected": 1
+    },
+    {
+      "id": "dfs-2",
+      "label": "Open board",
+      "note": "Every cell belongs to one region.",
+      "input": {
+        "grid": ["...", "..."]
+      },
+      "expected": 1
+    },
+    {
+      "id": "dfs-3",
+      "label": "Four islands",
+      "note": "Diagonal contact does not count as a four-direction connection.",
+      "input": {
+        "grid": [".#.", "###", ".#."]
+      },
+      "expected": 4
+    },
+    {
+      "id": "dfs-4",
+      "label": "Only walls",
+      "note": "No open cells means zero regions.",
+      "input": {
+        "grid": ["##", "##"]
+      },
+      "expected": 0
+    },
+    {
+      "id": "dfs-5",
+      "label": "Two rooms",
+      "note": "Finish one flood before starting another.",
+      "input": {
+        "grid": ["..#", "###", "#.."]
+      },
+      "expected": 2
+    }
+  ],
+  "trees": [
+    {
+      "id": "trees-1",
+      "label": "Balanced search tree",
+      "note": "In-order means left subtree, node, then right subtree.",
+      "input": {
+        "tree": [4, 2, 6, 1, 3, 5, 7]
+      },
+      "expected": [1, 2, 3, 4, 5, 6, 7]
+    },
+    {
+      "id": "trees-2",
+      "label": "Left-heavy tree",
+      "note": "The smallest node can be several left links away.",
+      "input": {
+        "tree": [4, 2, null, 1]
+      },
+      "expected": [1, 2, 4]
+    },
+    {
+      "id": "trees-3",
+      "label": "Right-heavy tree",
+      "note": "Missing left children do not stop a traversal.",
+      "input": {
+        "tree": [1, null, 2, null, null, null, 3]
+      },
+      "expected": [1, 2, 3]
+    },
+    {
+      "id": "trees-4",
+      "label": "Single root",
+      "note": "A tree with one node has a one-value traversal.",
+      "input": {
+        "tree": [9]
+      },
+      "expected": [9]
+    },
+    {
+      "id": "trees-5",
+      "label": "Empty tree",
+      "note": "A missing root is the recursion base case.",
+      "input": {
+        "tree": []
+      },
+      "expected": []
+    }
+  ],
+  "backtracking": [
+    {
+      "id": "backtracking-1",
+      "label": "Three choices",
+      "note": "Each position has a take branch and a skip branch.",
+      "input": {
+        "values": [1, 2, 3]
+      },
+      "expected": [[1, 2, 3], [1, 2], [1, 3], [1], [2, 3], [2], [3], []]
+    },
+    {
+      "id": "backtracking-2",
+      "label": "One choice",
+      "note": "One item makes two subsets.",
+      "input": {
+        "values": [7]
+      },
+      "expected": [[7], []]
+    },
+    {
+      "id": "backtracking-3",
+      "label": "Empty set",
+      "note": "There is one subset of an empty set: the empty subset.",
+      "input": {
+        "values": []
+      },
+      "expected": [[]]
+    },
+    {
+      "id": "backtracking-4",
+      "label": "Negative values",
+      "note": "The choices depend on positions, not the sign of a value.",
+      "input": {
+        "values": [-1, 2]
+      },
+      "expected": [[-1, 2], [-1], [2], []]
+    },
+    {
+      "id": "backtracking-5",
+      "label": "Four choices",
+      "note": "One extra item doubles the number of subsets.",
+      "input": {
+        "values": [1, 2, 3, 4]
+      },
+      "expected": [
+        [1, 2, 3, 4],
+        [1, 2, 3],
+        [1, 2, 4],
+        [1, 2],
+        [1, 3, 4],
+        [1, 3],
+        [1, 4],
+        [1],
+        [2, 3, 4],
+        [2, 3],
+        [2, 4],
+        [2],
+        [3, 4],
+        [3],
+        [4],
+        []
+      ]
+    }
+  ],
+  "intervals": [
+    {
+      "id": "intervals-1",
+      "label": "Overlapping ranges",
+      "note": "Sort by start, then extend the most recent merged range.",
+      "input": {
+        "intervals": [
+          [1, 3],
+          [2, 6],
+          [8, 10],
+          [9, 12]
+        ]
+      },
+      "expected": [
+        [1, 6],
+        [8, 12]
+      ]
+    },
+    {
+      "id": "intervals-2",
+      "label": "Touching endpoints",
+      "note": "Closed intervals sharing an endpoint are merged here.",
+      "input": {
+        "intervals": [
+          [1, 3],
+          [3, 5],
+          [5, 7]
+        ]
+      },
+      "expected": [[1, 7]]
+    },
+    {
+      "id": "intervals-3",
+      "label": "Contained range",
+      "note": "A range inside another does not shorten its end.",
+      "input": {
+        "intervals": [
+          [1, 9],
+          [2, 4],
+          [6, 8]
+        ]
+      },
+      "expected": [[1, 9]]
+    },
+    {
+      "id": "intervals-4",
+      "label": "Separate ranges",
+      "note": "A real gap starts a new merged range.",
+      "input": {
+        "intervals": [
+          [7, 8],
+          [1, 2],
+          [4, 5]
+        ]
+      },
+      "expected": [
+        [1, 2],
+        [4, 5],
+        [7, 8]
+      ]
+    },
+    {
+      "id": "intervals-5",
+      "label": "Empty calendar",
+      "note": "There is no first interval to index in an empty input.",
+      "input": {
+        "intervals": []
+      },
+      "expected": []
+    }
+  ],
+  "dp": [
+    {
+      "id": "dp-1",
+      "label": "Greedy trap",
+      "note": "Two 3-coins beat taking a 4-coin and then two 1-coins.",
+      "input": {
+        "coins": [1, 3, 4],
+        "amount": 6
+      },
+      "expected": 2
+    },
+    {
+      "id": "dp-2",
+      "label": "Impossible amount",
+      "note": "Even-valued coins cannot make an odd total.",
+      "input": {
+        "coins": [2, 4],
+        "amount": 7
+      },
+      "expected": -1
+    },
+    {
+      "id": "dp-3",
+      "label": "Exact coin",
+      "note": "A coin matching the amount gives a one-coin solution.",
+      "input": {
+        "coins": [1, 5, 10],
+        "amount": 10
+      },
+      "expected": 1
+    },
+    {
+      "id": "dp-4",
+      "label": "Zero amount",
+      "note": "Paying zero needs zero coins.",
+      "input": {
+        "coins": [2, 3],
+        "amount": 0
+      },
+      "expected": 0
+    },
+    {
+      "id": "dp-5",
+      "label": "Repeated coin",
+      "note": "Coins may be used more than once in this unbounded problem.",
+      "input": {
+        "coins": [2, 5],
+        "amount": 8
+      },
+      "expected": 4
+    }
+  ],
+  "greedy": [
+    {
+      "id": "greedy-1",
+      "label": "Busy calendar",
+      "note": "Choose the earliest finish time, not the earliest start.",
+      "input": {
+        "intervals": [
+          [1, 4],
+          [3, 5],
+          [0, 6],
+          [5, 7],
+          [3, 9],
+          [5, 9],
+          [6, 10],
+          [8, 11]
+        ]
+      },
+      "expected": [
+        [1, 4],
+        [5, 7],
+        [8, 11]
+      ]
+    },
+    {
+      "id": "greedy-2",
+      "label": "Back-to-back meetings",
+      "note": "A meeting may start exactly when the previous one ends.",
+      "input": {
+        "intervals": [
+          [1, 3],
+          [3, 5],
+          [5, 7]
+        ]
+      },
+      "expected": [
+        [1, 3],
+        [3, 5],
+        [5, 7]
+      ]
+    },
+    {
+      "id": "greedy-3",
+      "label": "Long versus short",
+      "note": "Several short meetings can beat one long booking.",
+      "input": {
+        "intervals": [
+          [1, 10],
+          [1, 3],
+          [3, 5],
+          [5, 7]
+        ]
+      },
+      "expected": [
+        [1, 3],
+        [3, 5],
+        [5, 7]
+      ]
+    },
+    {
+      "id": "greedy-4",
+      "label": "All overlap",
+      "note": "Only one meeting fits; pick the one that finishes first.",
+      "input": {
+        "intervals": [
+          [1, 6],
+          [2, 4],
+          [3, 5]
+        ]
+      },
+      "expected": [[2, 4]]
+    },
+    {
+      "id": "greedy-5",
+      "label": "No meetings",
+      "note": "An empty calendar produces an empty selection.",
+      "input": {
+        "intervals": []
+      },
+      "expected": []
+    }
+  ],
+  "heap": [
+    {
+      "id": "heap-1",
+      "label": "Bubbling to the root",
+      "note": "A newly inserted minimum rises past its parents.",
+      "input": {
+        "values": [5, 3, 8, 1]
+      },
+      "expected": [1, 3, 8, 5]
+    },
+    {
+      "id": "heap-2",
+      "label": "Increasing input",
+      "note": "Values already larger than their parents need no swaps.",
+      "input": {
+        "values": [1, 2, 3, 4, 5]
+      },
+      "expected": [1, 2, 3, 4, 5]
+    },
+    {
+      "id": "heap-3",
+      "label": "Negative values",
+      "note": "The minimum can be a negative value.",
+      "input": {
+        "values": [4, -3, 7, -8, 0]
+      },
+      "expected": [-8, -3, 7, 4, 0]
+    },
+    {
+      "id": "heap-4",
+      "label": "Duplicate priorities",
+      "note": "A heap preserves duplicate items; it is not a set.",
+      "input": {
+        "values": [3, 1, 1, 5, 3]
+      },
+      "expected": [1, 3, 1, 5, 3]
+    },
+    {
+      "id": "heap-5",
+      "label": "Single item",
+      "note": "The only value is already the root.",
+      "input": {
+        "values": [9]
+      },
+      "expected": [9]
+    }
+  ],
+  "union-find": [
+    {
+      "id": "union-find-1",
+      "label": "Two groups",
+      "note": "Joining edges does not necessarily connect every node.",
+      "input": {
+        "n": 6,
+        "edges": [
+          [0, 1],
+          [1, 2],
+          [3, 4],
+          [2, 5]
+        ]
+      },
+      "expected": 2
+    },
+    {
+      "id": "union-find-2",
+      "label": "One chain",
+      "note": "Three unions connect four nodes into one group.",
+      "input": {
+        "n": 4,
+        "edges": [
+          [0, 1],
+          [1, 2],
+          [2, 3]
+        ]
+      },
+      "expected": 1
+    },
+    {
+      "id": "union-find-3",
+      "label": "Redundant edge",
+      "note": "A cycle-forming edge does not reduce the group count.",
+      "input": {
+        "n": 3,
+        "edges": [
+          [0, 1],
+          [1, 2],
+          [0, 2]
+        ]
+      },
+      "expected": 1
+    },
+    {
+      "id": "union-find-4",
+      "label": "Isolated nodes",
+      "note": "With no edges, every node stays in its own group.",
+      "input": {
+        "n": 4,
+        "edges": []
+      },
+      "expected": 4
+    },
+    {
+      "id": "union-find-5",
+      "label": "Self connection",
+      "note": "Joining a node to itself changes nothing.",
+      "input": {
+        "n": 1,
+        "edges": [[0, 0]]
+      },
+      "expected": 1
+    }
+  ],
+  "dijkstra": [
+    {
+      "id": "dijkstra-1",
+      "label": "Weighted routes",
+      "note": "A route with more edges can still cost less.",
+      "input": {
+        "weightedEdges": [
+          ["A", "B", 4],
+          ["A", "C", 2],
+          ["C", "B", 1],
+          ["C", "D", 5],
+          ["B", "D", 3],
+          ["D", "E", 2],
+          ["C", "E", 7],
+          ["E", "F", 1]
+        ]
+      },
+      "expected": {
+        "A": 0,
+        "B": 3,
+        "C": 2,
+        "D": 6,
+        "E": 8,
+        "F": 9
+      }
+    },
+    {
+      "id": "dijkstra-2",
+      "label": "Cheaper detour",
+      "note": "Discovering a cheaper route updates a tentative distance.",
+      "input": {
+        "weightedEdges": [
+          ["A", "B", 10],
+          ["A", "C", 1],
+          ["C", "B", 1],
+          ["B", "D", 1],
+          ["D", "E", 1],
+          ["E", "F", 1]
+        ]
+      },
+      "expected": {
+        "A": 0,
+        "B": 2,
+        "C": 1,
+        "D": 3,
+        "E": 4,
+        "F": 5
+      }
+    },
+    {
+      "id": "dijkstra-3",
+      "label": "Disconnected nodes",
+      "note": "Infinity means no route from A, not a very large real cost.",
+      "input": {
+        "weightedEdges": [
+          ["A", "B", 2],
+          ["B", "C", 3]
+        ]
+      },
+      "expected": {
+        "A": 0,
+        "B": 2,
+        "C": 5,
+        "D": "∞",
+        "E": "∞",
+        "F": "∞"
+      }
+    },
+    {
+      "id": "dijkstra-4",
+      "label": "Zero-weight edges",
+      "note": "Zero cost is allowed; negative cost is not.",
+      "input": {
+        "weightedEdges": [
+          ["A", "B", 0],
+          ["B", "C", 0],
+          ["C", "D", 2],
+          ["D", "E", 1],
+          ["E", "F", 1]
+        ]
+      },
+      "expected": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 2,
+        "E": 3,
+        "F": 4
+      }
+    },
+    {
+      "id": "dijkstra-5",
+      "label": "Equal-cost routes",
+      "note": "Ties can reach the same shortest distance through different nodes.",
+      "input": {
+        "weightedEdges": [
+          ["A", "B", 2],
+          ["A", "C", 2],
+          ["B", "D", 3],
+          ["C", "D", 3],
+          ["D", "E", 1],
+          ["E", "F", 1]
+        ]
+      },
+      "expected": {
+        "A": 0,
+        "B": 2,
+        "C": 2,
+        "D": 5,
+        "E": 6,
+        "F": 7
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # AlgoCoach — one image, one service, one URL.
 #
-# Stage 1 builds the frontend into a single self-contained index.html.
-# Stage 2 runs the API and serves that file, so the browser only ever talks to
+# Stage 1 builds the frontend into a optimized HTML, CSS, and JavaScript assets.
+# Stage 2 runs the API and serves those assets, so the browser only ever talks to
 # one origin. That is what keeps /api working with no CORS and no proxy.
 #
 # Python is the *last* stage so the image that ships contains no Node.
@@ -29,8 +29,8 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app/backend
 
 # Only the requirements, so this layer is cached across app-code changes.
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/requirements.lock.txt .
+RUN pip install --no-cache-dir -r requirements.lock.txt
 
 COPY backend/ .
 

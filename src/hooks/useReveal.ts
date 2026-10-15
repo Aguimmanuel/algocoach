@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
  * per-frame work, and unobserves once the element has appeared — a section
  * should animate once, not every time you scroll past it.
  *
+ * Visibility is CSS-default, independent of this decorative observer.
  * Returns a ref to attach to the element. Pair with the `.reveal` class:
  *
  *   const ref = useReveal();
@@ -18,7 +19,7 @@ import { useEffect, useRef } from "react";
 export function useReveal<T extends HTMLElement = HTMLDivElement>(options?: {
   /** how much of the element must be visible before it animates */
   threshold?: number;
-  /** stagger, in ms, applied as a transition-delay */
+  /** stagger, in ms, applied as a animation-delay */
   delay?: number;
   /** re-run when this changes (e.g. a tab switch rendering fresh content) */
   deps?: unknown[];
@@ -30,7 +31,7 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(options?: {
     if (!el) return;
 
     if (options?.delay) {
-      el.style.transitionDelay = `${options.delay}ms`;
+      el.style.animationDelay = `${options.delay}ms`;
     }
 
     // No observer support (or SSR): just show it.
@@ -48,7 +49,7 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(options?: {
           }
         }
       },
-      { threshold: options?.threshold ?? 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: options?.threshold ?? 0, rootMargin: "0px 0px -40px 0px" },
     );
 
     observer.observe(el);
@@ -71,11 +72,16 @@ export function useRevealStagger<T extends HTMLElement = HTMLDivElement>(step = 
     const el = ref.current;
     if (!el) return;
 
-    const targets = Array.from(el.querySelectorAll<HTMLElement>(".reveal"));
+    // querySelectorAll excludes the root. Library attaches this ref directly
+    // to a .reveal wrapper, so include it as well as its child sections.
+    const targets = [
+      ...(el.matches(".reveal") ? [el] : []),
+      ...Array.from(el.querySelectorAll<HTMLElement>(".reveal")),
+    ];
     if (targets.length === 0) return;
 
     targets.forEach((t, i) => {
-      t.style.transitionDelay = `${Math.min(i * step, 400)}ms`;
+      t.style.animationDelay = `${Math.min(i * step, 400)}ms`;
     });
 
     if (typeof IntersectionObserver === "undefined") {
@@ -92,7 +98,7 @@ export function useRevealStagger<T extends HTMLElement = HTMLDivElement>(step = 
           }
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -30px 0px" },
+      { threshold: 0, rootMargin: "0px 0px -30px 0px" },
     );
 
     targets.forEach((t) => observer.observe(t));
