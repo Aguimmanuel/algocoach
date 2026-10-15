@@ -3,7 +3,7 @@
 One engine for both environments, chosen by DATABASE_URL:
 
     dev  → sqlite:///./algocoach.db           (no setup, no server needed)
-    prod → postgresql+psycopg://…             (Aiven, in production)
+    prod → postgresql+psycopg://…             (Neon, in production)
 
 Nothing in the app is aware of which one is running. The only place the
 difference leaks is JSON columns, which SQLAlchemy handles on both.
@@ -22,9 +22,9 @@ DEFAULT_SQLITE = f"sqlite:///{Path(__file__).with_name('algocoach.db')}"
 
 
 def _normalise(url: str) -> str:
-    """Accept the URL exactly as Aiven hands it to you.
+    """Accept the complete URL from Neon or another PostgreSQL provider.
 
-    Aiven shows `postgres://user:pass@host:port/db?sslmode=require`. SQLAlchemy
+    Providers can use `postgres://user:pass@host:port/db?sslmode=require`. SQLAlchemy
     needs a driver in the scheme, and the old `postgres://` alias was removed in
     SQLAlchemy 2 — so fix both up rather than making the user edit it.
     """
@@ -38,7 +38,7 @@ def _normalise(url: str) -> str:
 DATABASE_URL = _normalise(os.getenv("DATABASE_URL") or DEFAULT_SQLITE)
 IS_SQLITE = DATABASE_URL.startswith("sqlite")
 
-# pool_pre_ping keeps the app alive when Aiven drops an idle connection, which
+# pool_pre_ping keeps the app alive when managed PostgreSQL drops an idle connection, which
 # managed Postgres does routinely. Without it the first request after a quiet
 # spell fails for no visible reason.
 engine = create_engine(

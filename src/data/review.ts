@@ -46,15 +46,32 @@ function shuffle<T>(items: T[], seed: number): T[] {
   return out;
 }
 
-function distractors(answer: Pattern, pool: Pattern[], seed: number, count = 3): Pattern[] {
+function distractors(
+  answer: Pattern,
+  pool: Pattern[],
+  seed: number,
+  count = 3,
+): Pattern[] {
   // Prefer patterns at a similar level, so the wrong answers are plausible
   // rather than obviously silly. That is what makes retrieval actually work.
-  const sameLevel = pool.filter((p) => p.id !== answer.id && p.level === answer.level);
-  const others = pool.filter((p) => p.id !== answer.id && p.level !== answer.level);
-  return shuffle([...shuffle(sameLevel, seed), ...shuffle(others, seed + 7)], seed + 3).slice(0, count);
+  const sameLevel = pool.filter(
+    (p) => p.id !== answer.id && p.level === answer.level,
+  );
+  const others = pool.filter(
+    (p) => p.id !== answer.id && p.level !== answer.level,
+  );
+  return shuffle(
+    [...shuffle(sameLevel, seed), ...shuffle(others, seed + 7)],
+    seed + 3,
+  ).slice(0, count);
 }
 
-function buildQuestion(pattern: Pattern, kind: QuestionKind, pool: Pattern[], seed: number): Question {
+function buildQuestion(
+  pattern: Pattern,
+  kind: QuestionKind,
+  pool: Pattern[],
+  seed: number,
+): Question {
   let prompt: string;
   let explain: string;
 
@@ -109,12 +126,16 @@ export function buildReview(opts: {
     return 2; // something new
   };
 
-  const ranked = [...pool].sort((a, b) => priority(a) - priority(b) || a.id.localeCompare(b.id));
+  const ranked = [...pool].sort(
+    (a, b) => priority(a) - priority(b) || a.id.localeCompare(b.id),
+  );
   const kinds: QuestionKind[] = ["signal", "which", "compare"];
 
-  return ranked.slice(0, count).map((p, i) =>
-    buildQuestion(p, kinds[(seed + i) % kinds.length], pool, seed + i * 101),
-  );
+  return ranked
+    .slice(0, count)
+    .map((p, i) =>
+      buildQuestion(p, kinds[(seed + i) % kinds.length], pool, seed + i * 101),
+    );
 }
 
 /** Local-day seed: the review is the same all day, and new tomorrow. */

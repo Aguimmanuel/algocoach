@@ -78,7 +78,12 @@ export default function Library({ learned, onToggleLearned, onVisualize, initial
   };
 
   const select = (id: string) => {
+    const pattern = PATTERNS.find((p) => p.id === id);
+    if (!pattern) return;
     setSelectedId(id);
+    // Keep the level and selected detail consistent when a search result or
+    // prerequisite opens a pattern outside the previously selected level.
+    setLevel(pattern.level);
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 

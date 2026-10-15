@@ -4,8 +4,8 @@ import {
   Loader2Icon,
   OctagonXIcon,
   TriangleAlertIcon,
-} from "lucide-react"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+} from "lucide-react";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   // One theme only, so this is a constant rather than a provider lookup.
@@ -14,6 +14,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme={"dark" as ToasterProps["theme"]}
       className="toaster group"
+      offset={{ bottom: 110, right: 24 }}
+      mobileOffset={{ bottom: 110, right: 16, left: 16 }}
       icons={{
         success: <CircleCheckIcon className="size-4" />,
         info: <InfoIcon className="size-4" />,
@@ -31,7 +33,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

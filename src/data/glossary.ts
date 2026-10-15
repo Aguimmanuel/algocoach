@@ -25,7 +25,8 @@ export const GLOSSARY: TermGroup[] = [
   {
     title: "The pieces of a problem",
     emoji: "🧱",
-    blurb: "Before you can pick an algorithm, you need words for what you're looking at.",
+    blurb:
+      "Before you can pick an algorithm, you need words for what you're looking at.",
     terms: [
       {
         term: "Array / List",
@@ -43,7 +44,8 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "String",
-        meaning: "A row of characters — just an array where each box holds a letter.",
+        meaning:
+          "A row of characters — just an array where each box holds a letter.",
         why: "Anything you learn about arrays works on strings too.",
       },
       {
@@ -53,7 +55,8 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "Subarray",
-        meaning: "A run of neighbouring boxes — a slice you cut out without skipping any.",
+        meaning:
+          "A run of neighbouring boxes — a slice you cut out without skipping any.",
         why: "In [5, 3, 9, 1], [3, 9] is a subarray but [5, 9] is not (it skips 3).",
       },
       {
@@ -84,7 +87,8 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "Time limit",
-        meaning: "Roughly 10⁸ (100 million) simple steps per second is what you get.",
+        meaning:
+          "Roughly 10⁸ (100 million) simple steps per second is what you get.",
         why: "This is the whole trick: read n, do the arithmetic, know what's allowed.",
       },
       {
@@ -94,12 +98,14 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "Recursion",
-        meaning: "A function that calls itself on a smaller version of the same problem.",
+        meaning:
+          "A function that calls itself on a smaller version of the same problem.",
         why: "Usually 'I trust the smaller version is already solved, so what's left for me?'",
       },
       {
         term: "Memoization",
-        meaning: "Writing down an answer you already worked out so you never compute it twice.",
+        meaning:
+          "Writing down an answer you already worked out so you never compute it twice.",
         why: "Recognising repeated work is the entire idea behind Dynamic Programming.",
       },
     ],
@@ -107,16 +113,19 @@ export const GLOSSARY: TermGroup[] = [
   {
     title: "The containers",
     emoji: "📦",
-    blurb: "Each one trades something for something. That trade IS the algorithm choice.",
+    blurb:
+      "Each one trades something for something. That trade IS the algorithm choice.",
     terms: [
       {
         term: "Hash Map / Dictionary",
-        meaning: "A lookup box: you ask for a key, you get the value instantly — no searching.",
+        meaning:
+          "A lookup box: you ask for a key, you get the value instantly — no searching.",
         why: "The single biggest speed-up available to a beginner. Turns 'search the list' into 'just ask'.",
       },
       {
         term: "Hash Set",
-        meaning: "A hash map with no values — it only answers 'have I seen this before?'",
+        meaning:
+          "A hash map with no values — it only answers 'have I seen this before?'",
       },
       {
         term: "Stack",
@@ -130,16 +139,19 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "Heap / Priority Queue",
-        meaning: "A pile that always hands you the smallest (or biggest) item instantly.",
+        meaning:
+          "A pile that always hands you the smallest (or biggest) item instantly.",
         why: "Use it when you only care about the best one, not the full order.",
       },
       {
         term: "Tree",
-        meaning: "Items connected in a hierarchy with no loops — like folders inside folders.",
+        meaning:
+          "Items connected in a hierarchy with no loops — like folders inside folders.",
       },
       {
         term: "Graph",
-        meaning: "Dots joined by lines. Cities joined by roads, friends joined by friendship.",
+        meaning:
+          "Dots joined by lines. Cities joined by roads, friends joined by friendship.",
         why: "Two names for the same thing: 'node' = dot, 'edge' = line.",
       },
       {
@@ -160,16 +172,19 @@ export const GLOSSARY: TermGroup[] = [
   {
     title: "The moves",
     emoji: "🎯",
-    blurb: "Words that show up in problem statements and point straight at a pattern.",
+    blurb:
+      "Words that show up in problem statements and point straight at a pattern.",
     terms: [
       {
         term: "Pointer",
-        meaning: "A variable that remembers a position (an index) in the array.",
+        meaning:
+          "A variable that remembers a position (an index) in the array.",
         why: "Two pointers = two bookmarks you move around.",
       },
       {
         term: "Window",
-        meaning: "A slice of the array you're currently looking at, which you slide along.",
+        meaning:
+          "A slice of the array you're currently looking at, which you slide along.",
       },
       {
         term: "Traversal",
@@ -177,12 +192,14 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "BFS / DFS",
-        meaning: "Two ways to walk a graph. BFS = explore outward in rings. DFS = go deep, then back up.",
+        meaning:
+          "Two ways to walk a graph. BFS = explore outward in rings. DFS = go deep, then back up.",
         why: "BFS finds the fewest steps. DFS explores everything.",
       },
       {
         term: "Greedy",
-        meaning: "Always take the best-looking choice right now and never look back.",
+        meaning:
+          "Always take the best-looking choice right now and never look back.",
         why: "Fast and simple — but only correct when the problem allows it.",
       },
       {
@@ -191,7 +208,8 @@ export const GLOSSARY: TermGroup[] = [
       },
       {
         term: "Edge case",
-        meaning: "An unusual input that breaks naive code: empty, one item, all equal, negatives.",
+        meaning:
+          "An unusual input that breaks naive code: empty, one item, all equal, negatives.",
       },
     ],
   },

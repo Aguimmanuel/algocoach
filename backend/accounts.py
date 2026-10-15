@@ -2,9 +2,8 @@
 
 Design rules, because they matter more than the code:
 
-1. **An account is optional.** The whole app works offline on localStorage.
-   Signing in adds one thing: your progress follows you to another device.
-   Nothing here may ever be required to learn.
+1. **Google sign-in is required.** Sessions use HttpOnly cookies.
+   Password sign-up/sign-in routes have been removed.
 2. **First sign-in adopts local progress.** A learner who already used the app
    should not lose their work by creating an account. We merge, never replace.
 3. **Activity is logged, never inferred.** One event per real action, so the
@@ -16,14 +15,14 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from fastapi import APIRouter, Depends, Header, HTTPException
-from pydantic import BaseModel, EmailStr, Field
+from fastapi import APIRouter, Depends, Request, HTTPException
+from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 import security
 from db import get_db
-from models import ActivityEvent, Feedback, Progress, User, utcnow
+from models import ActivityEvent, Feedback, Progress, User, GoogleIdentity
 
 router = APIRouter(prefix="/api", tags=["account"])
 
@@ -34,34 +33,24 @@ MAX_LIST = 5000
 # Auth plumbing
 # --------------------------------------------------------------------------
 
-def current_user(
-    authorization: str | None = Header(default=None),
-    db: Session = Depends(get_db),
-) -> User:
-    if not authorization or not authorization.lower().startswith("bearer "):
-        raise HTTPException(401, "Sign in to sync your progress.")
-    user_id = security.user_id_from_token(authorization.split(" ", 1)[1].strip())
-    if user_id is None:
-        raise HTTPException(401, "Your session expired. Please sign in again.")
-    user = db.get(User, user_id)
-    if user is None:
-        raise HTTPException(401, "That account no longer exists.")
-    return user
-
-
-def optional_user(
-    authorization: str | None = Header(default=None),
-    db: Session = Depends(get_db),
-) -> User | None:
-    """Like current_user, but returns None instead of raising.
-
-    Used by anything that logs activity as a nice-to-have. A learner who is not
-    signed in should never hit an error just for using the app.
-    """
-    if not authorization or not authorization.lower().startswith("bearer "):
+def optional_user(request: Request, db: Session = Depends(get_db)) -> User | None:
+    token = request.cookies.get(security.SESSION_COOKIE, "")
+    user_id = security.user_id_from_token(token) if token else None
+    if user_id is None or db.get(GoogleIdentity, user_id) is None:
         return None
-    user_id = security.user_id_from_token(authorization.split(" ", 1)[1].strip())
-    return db.get(User, user_id) if user_id is not None else None
+    expected = request.headers.get("x-algocoach-account")
+    if expected and expected != str(user_id):
+        raise HTTPException(401, "The Google account changed in another tab. Verify your session again.")
+    if request.method in {"POST", "PUT", "PATCH", "DELETE"} and not expected:
+        raise HTTPException(403, "Refresh the app to verify the active account before saving.")
+    return db.get(User, user_id)
+
+
+def current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    user = optional_user(request, db)
+    if user is None:
+        raise HTTPException(401, "Sign in with Google to continue.")
+    return user
 
 
 def log(db: Session, user_id: int, kind: str, **detail: Any) -> None:
@@ -72,25 +61,10 @@ def log(db: Session, user_id: int, kind: str, **detail: Any) -> None:
 # Schemas
 # --------------------------------------------------------------------------
 
-class SignupIn(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=1, max_length=200)
-    display_name: str = Field(default="", max_length=80)
-    # carried over from localStorage so nothing is lost on first sign-in
-    learned: list[str] = Field(default_factory=list)
-    solved: list[str] = Field(default_factory=list)
-    shaky: list[str] = Field(default_factory=list)
-
-
-class LoginIn(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=1, max_length=200)
-
-
 class ProgressIn(BaseModel):
-    learned: list[str] = Field(default_factory=list)
-    solved: list[str] = Field(default_factory=list)
-    shaky: list[str] = Field(default_factory=list)
+    learned: list[str] = Field(default_factory=list, max_length=MAX_LIST)
+    solved: list[str] = Field(default_factory=list, max_length=MAX_LIST)
+    shaky: list[str] = Field(default_factory=list, max_length=MAX_LIST)
 
 
 class EventIn(BaseModel):
@@ -192,50 +166,6 @@ def _today_count(db: Session, user_id: int) -> int:
 # Routes
 # --------------------------------------------------------------------------
 
-@router.post("/auth/signup", status_code=201)
-def signup(body: SignupIn, db: Session = Depends(get_db)) -> dict[str, Any]:
-    email = body.email.strip().lower()
-    if problem := security.check_password_strength(body.password):
-        raise HTTPException(422, problem)
-    if db.execute(select(User).where(User.email == email)).scalar_one_or_none():
-        raise HTTPException(409, "An account with that email already exists.")
-
-    user = User(
-        email=email,
-        password_hash=security.hash_password(body.password),
-        display_name=body.display_name.strip()[:80],
-        last_seen_at=utcnow(),
-    )
-    db.add(user)
-    db.flush()  # assign user.id
-
-    # Adopt whatever they already did on this device.
-    db.add(
-        Progress(
-            user_id=user.id,
-            learned=_clean(body.learned),
-            solved=_clean(body.solved),
-            shaky=_clean(body.shaky),
-        )
-    )
-    log(db, user.id, "signup", carried_learned=len(body.learned), carried_solved=len(body.solved))
-    db.commit()
-    return {"token": security.create_token(user.id), "user": _user_payload(user)}
-
-
-@router.post("/auth/login")
-def login(body: LoginIn, db: Session = Depends(get_db)) -> dict[str, Any]:
-    email = body.email.strip().lower()
-    user = db.execute(select(User).where(User.email == email)).scalar_one_or_none()
-    # Same message either way: don't reveal which emails have accounts.
-    if not user or not security.verify_password(body.password, user.password_hash):
-        raise HTTPException(401, "Email or password is incorrect.")
-    user.last_seen_at = utcnow()
-    log(db, user.id, "login")
-    db.commit()
-    return {"token": security.create_token(user.id), "user": _user_payload(user)}
-
-
 def _user_payload(user: User) -> dict[str, Any]:
     return {"id": user.id, "email": user.email, "display_name": user.display_name}
 
@@ -283,13 +213,12 @@ def put_progress(
 @router.post("/events", status_code=202)
 def post_event(
     body: EventIn,
-    user: User | None = Depends(optional_user),
+    user: User = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
     """Best-effort activity logging.
 
-    Returns 202 whether or not anyone is signed in: tracking must never be the
-    reason a learner sees an error.
+    Requires the current Google account; clients treat tracking as best effort.
     """
     if user is not None:
         log(db, user.id, body.kind[:40], **body.detail)
@@ -338,10 +267,10 @@ def activity(
 @router.post("/feedback", status_code=201)
 def feedback(
     body: FeedbackIn,
-    user: User | None = Depends(optional_user),
+    user: User = Depends(current_user),
     db: Session = Depends(get_db),
 ) -> dict[str, str]:
-    """Anyone can send feedback, signed in or not. Never block on auth."""
+    """Feedback belongs to the signed-in Google account."""
     db.add(
         Feedback(
             user_id=user.id if user else None,
@@ -351,3 +280,50 @@ def feedback(
     )
     db.commit()
     return {"status": "thanks"}
+
+# Curriculum completion uses the account identity, never a supplied device ID.
+class LessonStateIn(BaseModel):
+    page: int = Field(default=0, ge=0, le=100)
+    visited: list[str] = Field(default_factory=list, max_length=100)
+    passed: list[str] = Field(default_factory=list, max_length=100)
+    completed: bool = False
+    updatedAt: int = Field(default=0, ge=0)
+
+class LearningIn(BaseModel):
+    lessons: dict[str, LessonStateIn] = Field(default_factory=dict, max_length=300)
+
+@router.get('/learning')
+def get_learning(user: User = Depends(current_user), db: Session = Depends(get_db)) -> dict[str, Any]:
+    from models import LearningState
+    row = db.get(LearningState, user.id)
+    return row.lessons if row else {}
+
+@router.put('/learning')
+def put_learning(body: LearningIn, user: User = Depends(current_user), db: Session = Depends(get_db)) -> dict[str, Any]:
+    import re
+    from models import LearningState
+    if any(not re.fullmatch(r'[a-z0-9-]+:[a-z0-9-]+', key) for key in body.lessons):
+        raise HTTPException(422, 'Invalid lesson key.')
+    row = db.get(LearningState, user.id)
+    if row is None:
+        row = LearningState(user_id=user.id, lessons={})
+        db.add(row)
+    merged = dict(row.lessons or {})
+    for key, value in body.lessons.items():
+        new = value.model_dump()
+        new['visited'] = _clean(new['visited'])[:100]
+        new['passed'] = _clean(new['passed'])[:100]
+        old = merged.get(key)
+        if old:
+            latest = new if new['updatedAt'] >= old.get('updatedAt', 0) else old
+            new = {**latest, 'visited': list(dict.fromkeys(old.get('visited', []) + new['visited']))[:100],
+                   'passed': list(dict.fromkeys(old.get('passed', []) + new['passed']))[:100],
+                   'completed': old.get('completed', False) or new['completed']}
+        if new['completed'] and not (old or {}).get('completed'):
+            log(db, user.id, 'lesson_completed', lesson=key)
+        merged[key] = new
+    if len(merged) > 300:
+        raise HTTPException(422, 'Too many saved lessons.')
+    row.lessons = merged
+    db.commit()
+    return merged

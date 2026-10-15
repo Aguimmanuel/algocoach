@@ -36,7 +36,8 @@ export const PATTERNS: Pattern[] = [
     level: "Beginner",
     tagline: "Try everything, or act out the rules exactly as written.",
     /** the same idea with no jargon at all */
-    plain: "Try every possibility and keep the answer. Slow, but always correct — and always your first move.",
+    plain:
+      "Try every possibility and keep the answer. Slow, but always correct — and always your first move.",
     analogy:
       "Checking every key on a keyring until one opens the door. Slow, but always correct — and the best starting point for every problem.",
     signals: [
@@ -54,8 +55,7 @@ export const PATTERNS: Pattern[] = [
       ["after k", 1],
       ["repeat", 1],
     ],
-    idea:
-      "Translate the problem statement literally into loops. Correctness first, speed second. A brute-force solution also gives you a way to test your fancy solution later.",
+    idea: "Translate the problem statement literally into loops. Correctness first, speed second. A brute-force solution also gives you a way to test your fancy solution later.",
     steps: [
       "Write down what 'one attempt' looks like (one pair, one step, one candidate).",
       "Loop over every attempt.",
@@ -81,7 +81,11 @@ return answer`,
       "Count how many attempts exist. Is that number acceptable for the maximum n?",
       "If it is too slow, point at the exact thing you recompute again and again.",
     ],
-    drills: ["Find all pairs with a given difference", "Simulate a robot walking on a grid", "FizzBuzz-style rule problems"],
+    drills: [
+      "Find all pairs with a given difference",
+      "Simulate a robot walking on a grid",
+      "FizzBuzz-style rule problems",
+    ],
   },
   {
     id: "hashmap",
@@ -91,7 +95,8 @@ return answer`,
     level: "Beginner",
     tagline: "Trade memory for instant lookups.",
     /** the same idea with no jargon at all */
-    plain: "Keep a lookup box of things you've already seen, so you never search the list twice.",
+    plain:
+      "Keep a lookup box of things you've already seen, so you never search the list twice.",
     analogy:
       "A coat-check desk. Instead of searching every coat on the rack, you hand over a ticket and get yours in one move.",
     signals: [
@@ -119,8 +124,7 @@ return answer`,
       ["exists", 1],
       ["target", 1],
     ],
-    idea:
-      "Whenever an inner loop is only there to SEARCH for something, replace it with a dictionary lookup. You turn O(n) searching into O(1).",
+    idea: "Whenever an inner loop is only there to SEARCH for something, replace it with a dictionary lookup. You turn O(n) searching into O(1).",
     steps: [
       "Decide the KEY (what do you look up by?) and the VALUE (what do you need to remember?).",
       "Walk through the data once.",
@@ -147,7 +151,13 @@ for each item in data:
       "If you stored every earlier item in a dictionary, what would be the KEY?",
       "What would the VALUE need to be (a count, an index, a list)?",
     ],
-    drills: ["Two Sum", "Contains Duplicate", "Valid Anagram", "Group Anagrams", "First Unique Character"],
+    drills: [
+      "Two Sum",
+      "Contains Duplicate",
+      "Valid Anagram",
+      "Group Anagrams",
+      "First Unique Character",
+    ],
   },
   {
     id: "two-pointers",
@@ -157,7 +167,8 @@ for each item in data:
     level: "Beginner",
     tagline: "Two fingers moving through the data instead of two nested loops.",
     /** the same idea with no jargon at all */
-    plain: "Put one finger at each end and walk them toward each other, instead of checking every pair.",
+    plain:
+      "Put one finger at each end and walk them toward each other, instead of checking every pair.",
     analogy:
       "Two people walking toward each other along a corridor, meeting in the middle — each step eliminates part of the corridor.",
     signals: [
@@ -182,8 +193,7 @@ for each item in data:
       ["move zeroes", 3],
       ["move zeros", 3],
     ],
-    idea:
-      "Because of some order (sorted data, or a one-way scan), moving a pointer lets you PROVE a whole set of options is useless, so you never check them.",
+    idea: "Because of some order (sorted data, or a one-way scan), moving a pointer lets you PROVE a whole set of options is useless, so you never check them.",
     steps: [
       "Place pointers: usually both ends (left, right) or both at the start (slow, fast).",
       "Look at the pair of values under the pointers.",
@@ -213,7 +223,13 @@ while left < right:
       "If the value is too big, which pointer movement could possibly make it smaller?",
       "When do the pointers stop? Think about what 'crossed' means.",
     ],
-    drills: ["Valid Palindrome", "Two Sum II (sorted)", "3Sum", "Container With Most Water", "Move Zeroes"],
+    drills: [
+      "Valid Palindrome",
+      "Two Sum II (sorted)",
+      "3Sum",
+      "Container With Most Water",
+      "Move Zeroes",
+    ],
   },
   {
     id: "sliding-window",
@@ -221,9 +237,11 @@ while left < right:
     emoji: "🪟",
     color: "teal",
     level: "Beginner",
-    tagline: "Slide a window across a sequence, updating instead of recomputing.",
+    tagline:
+      "Slide a window across a sequence, updating instead of recomputing.",
     /** the same idea with no jargon at all */
-    plain: "Look at a moving block of items instead of every possible block, and only nudge the edges.",
+    plain:
+      "Look at a moving block of items instead of every possible block, and only nudge the edges.",
     analogy:
       "Looking through a train window: as the train moves, one new thing enters on the right and one old thing leaves on the left — you don't re-look at the whole landscape.",
     signals: [
@@ -247,8 +265,7 @@ while left < right:
       ["consecutive", 1.5],
       ["maximum sum", 1],
     ],
-    idea:
-      "Keep a running summary of the current window. Add the new element on the right, remove the old element on the left, and never start over.",
+    idea: "Keep a running summary of the current window. Add the new element on the right, remove the old element on the left, and never start over.",
     steps: [
       "Define precisely what a VALID window is (a sentence!).",
       "Expand: move the right edge, adding that element to your summary.",
@@ -277,7 +294,12 @@ for right from 0 to last index:
       "When you add one element on the right, what must you update? What if you drop one on the left?",
       "Each element enters once and leaves once. What does that say about the speed?",
     ],
-    drills: ["Max Sum Subarray of Size K", "Longest Substring Without Repeating Characters", "Minimum Window Substring", "Longest Repeating Character Replacement"],
+    drills: [
+      "Max Sum Subarray of Size K",
+      "Longest Substring Without Repeating Characters",
+      "Minimum Window Substring",
+      "Longest Repeating Character Replacement",
+    ],
   },
   {
     id: "binary-search",
@@ -287,7 +309,8 @@ for right from 0 to last index:
     level: "Beginner",
     tagline: "Cut the search space in half with every question.",
     /** the same idea with no jargon at all */
-    plain: "Guess the middle, throw away the half that can't hold the answer, repeat.",
+    plain:
+      "Guess the middle, throw away the half that can't hold the answer, repeat.",
     analogy:
       "Guessing a number between 1 and 100 with 'higher / lower' feedback. Seven questions are always enough.",
     signals: [
@@ -314,8 +337,7 @@ for right from 0 to last index:
       ["capacity", 1.5],
       ["speed", 1],
     ],
-    idea:
-      "If you can look at ONE middle option and decide which half the answer is NOT in, discard that half. It works on arrays AND on 'guess the answer' problems.",
+    idea: "If you can look at ONE middle option and decide which half the answer is NOT in, discard that half. It works on arrays AND on 'guess the answer' problems.",
     steps: [
       "Define the search space: [low, high] — indexes OR possible answer values.",
       "Take mid. Ask a yes/no question about mid.",
@@ -345,7 +367,13 @@ return the right boundary`,
       "If answer X works, does X + 1 (or X − 1) also always work? That's monotonic.",
       "What would you search over — array indexes, or answer values 1…max?",
     ],
-    drills: ["Binary Search", "Search Insert Position", "Search in Rotated Sorted Array", "Koko Eating Bananas", "Capacity to Ship Packages"],
+    drills: [
+      "Binary Search",
+      "Search Insert Position",
+      "Search in Rotated Sorted Array",
+      "Koko Eating Bananas",
+      "Capacity to Ship Packages",
+    ],
   },
   {
     id: "prefix-sum",
@@ -355,7 +383,8 @@ return the right boundary`,
     level: "Beginner",
     tagline: "Precompute running totals to answer range questions instantly.",
     /** the same idea with no jargon at all */
-    plain: "Add everything up once into running totals, so any range total is a single subtraction.",
+    plain:
+      "Add everything up once into running totals, so any range total is a single subtraction.",
     analogy:
       "A bank statement: to know how much you spent between March and June, subtract the balance in March from June instead of adding every receipt.",
     signals: [
@@ -378,8 +407,7 @@ return the right boundary`,
       ["range update", 2],
       ["number of subarrays", 2],
     ],
-    idea:
-      "prefix[i] = sum of the first i items. Then sum(i..j) = prefix[j+1] − prefix[i]. Pay O(n) once, answer each query in O(1).",
+    idea: "prefix[i] = sum of the first i items. Then sum(i..j) = prefix[j+1] − prefix[i]. Pay O(n) once, answer each query in O(1).",
     steps: [
       "Build prefix array where prefix[0] = 0.",
       "Each next entry = previous entry + current item.",
@@ -405,7 +433,12 @@ answer = prefix[j+1] - prefix[i]`,
       "What would you precompute — and how long does it take once?",
       "For counting problems: which earlier prefix value would complete the target?",
     ],
-    drills: ["Range Sum Query – Immutable", "Subarray Sum Equals K", "Product of Array Except Self", "Contiguous Array"],
+    drills: [
+      "Range Sum Query – Immutable",
+      "Subarray Sum Equals K",
+      "Product of Array Except Self",
+      "Contiguous Array",
+    ],
     prerequisites: ["hashmap"],
   },
   {
@@ -416,7 +449,8 @@ answer = prefix[j+1] - prefix[i]`,
     level: "Beginner",
     tagline: "Put things in order so that the problem becomes easy.",
     /** the same idea with no jargon at all */
-    plain: "Put the items in order first, then whatever you're looking for sits right next to its answer.",
+    plain:
+      "Put the items in order first, then whatever you're looking for sits right next to its answer.",
     analogy:
       "Alphabetizing a stack of papers before looking for duplicates — neighbours now tell you everything.",
     signals: [
@@ -438,8 +472,7 @@ answer = prefix[j+1] - prefix[i]`,
       ["order", 0.5],
       ["rank", 1],
     ],
-    idea:
-      "Spend O(n log n) to sort, and then the interesting items sit NEXT to each other. Many O(n²) pair-checks become a single scan.",
+    idea: "Spend O(n log n) to sort, and then the interesting items sit NEXT to each other. Many O(n²) pair-checks become a single scan.",
     steps: [
       "Ask: does the original order matter? If not, sorting is free to try.",
       "Pick what to sort by (value, start time, end time, custom rule).",
@@ -465,7 +498,12 @@ for each next item in data (after the first):
       "Which key should you sort by: start, end, value, or a custom comparison?",
       "After sorting, what single pass do you need?",
     ],
-    drills: ["Merge Intervals", "Meeting Rooms", "Minimum Absolute Difference", "Largest Number"],
+    drills: [
+      "Merge Intervals",
+      "Meeting Rooms",
+      "Minimum Absolute Difference",
+      "Largest Number",
+    ],
   },
   {
     id: "linked-list",
@@ -474,7 +512,8 @@ for each next item in data (after the first):
     color: "slate",
     level: "Beginner",
     tagline: "Boxes that know who comes next.",
-    plain: "Instead of numbering the items, give each one a hand on the shoulder of the next. To change the order you only re-point the hands.",
+    plain:
+      "Instead of numbering the items, give each one a hand on the shoulder of the next. To change the order you only re-point the hands.",
     analogy:
       "A treasure hunt: each clue tells you where the next clue is. You cannot jump straight to clue 7 — you have to walk the chain. That is the price, and it is also why slipping a new clue into the middle takes one move instead of shifting everything along.",
     signals: [
@@ -492,8 +531,7 @@ for each next item in data (after the first):
       ["cycle", 2],
       ["reverse the", 1.5],
     ],
-    idea:
-      "A node holds a value and a reference to the next node. You never move data around; you only change which node points at which. The classic trick is the dummy head — a fake node in front, so that inserting or deleting the very first item stops being a special case.",
+    idea: "A node holds a value and a reference to the next node. You never move data around; you only change which node points at which. The classic trick is the dummy head — a fake node in front, so that inserting or deleting the very first item stops being a special case.",
     steps: [
       "Draw the nodes as boxes and the links as arrows before writing any code.",
       "Say out loud which arrows must change, and in what order, so you never lose the rest of the list.",
@@ -529,7 +567,13 @@ while head:
       "If the head itself can be removed, how do you avoid writing a special case just for it?",
       "Two walkers at different speeds — where would they overlap, and what would that prove?",
     ],
-    drills: ["Reverse a linked list", "Detect a cycle", "Find the middle node", "Merge two sorted lists", "LRU cache"],
+    drills: [
+      "Reverse a linked list",
+      "Detect a cycle",
+      "Find the middle node",
+      "Merge two sorted lists",
+      "LRU cache",
+    ],
     prerequisites: ["brute"],
   },
   {
@@ -538,9 +582,11 @@ while head:
     emoji: "📚",
     color: "orange",
     level: "Intermediate",
-    tagline: "Last in, first out — perfect for nested and 'most recent' things.",
+    tagline:
+      "Last in, first out — perfect for nested and 'most recent' things.",
     /** the same idea with no jargon at all */
-    plain: "Keep a pile. The last thing you put down is the first thing you pick up.",
+    plain:
+      "Keep a pile. The last thing you put down is the first thing you pick up.",
     analogy:
       "A stack of plates: you can only touch the top one. Great whenever the thing you handle next is the thing you saw most recently.",
     signals: [
@@ -566,8 +612,7 @@ while head:
       ["matching", 1],
       ["backspace", 2],
     ],
-    idea:
-      "Push things that are 'still waiting', pop them the moment they get resolved. A monotonic stack keeps its items in sorted order so each element is pushed and popped once.",
+    idea: "Push things that are 'still waiting', pop them the moment they get resolved. A monotonic stack keeps its items in sorted order so each element is pushed and popped once.",
     steps: [
       "Decide what 'waiting' means (an open bracket, an unresolved index).",
       "Scan left to right.",
@@ -595,7 +640,12 @@ for each item in data:
       "What should you store: the value or its index?",
       "What does it mean if the stack is not empty at the very end?",
     ],
-    drills: ["Valid Parentheses", "Daily Temperatures", "Next Greater Element", "Evaluate Reverse Polish Notation"],
+    drills: [
+      "Valid Parentheses",
+      "Daily Temperatures",
+      "Next Greater Element",
+      "Evaluate Reverse Polish Notation",
+    ],
   },
   {
     id: "bfs",
@@ -603,9 +653,11 @@ for each item in data:
     emoji: "🌊",
     color: "blue",
     level: "Intermediate",
-    tagline: "Explore level by level — the shortest path in an unweighted graph.",
+    tagline:
+      "Explore level by level — the shortest path in an unweighted graph.",
     /** the same idea with no jargon at all */
-    plain: "Explore outward in rings — one step away, then two, then three. The first time you arrive is the shortest way.",
+    plain:
+      "Explore outward in rings — one step away, then two, then three. The first time you arrive is the shortest way.",
     analogy:
       "A ripple spreading in a pond. Everything 1 step away gets touched first, then everything 2 steps away, and so on.",
     signals: [
@@ -631,8 +683,7 @@ for each item in data:
       ["minimum time", 1.5],
       ["each level", 2],
     ],
-    idea:
-      "A queue guarantees you finish all nodes at distance d before any at distance d+1 — so the first time you reach a node is via the shortest route.",
+    idea: "A queue guarantees you finish all nodes at distance d before any at distance d+1 — so the first time you reach a node is via the shortest route.",
     steps: [
       "Model the problem as a graph: what is a NODE (state)? What are its NEIGHBOURS (moves)?",
       "Put the start in a queue and mark it visited.",
@@ -666,7 +717,13 @@ return "unreachable"`,
       "Why would exploring in rings guarantee the shortest answer?",
       "How will you avoid visiting the same state twice?",
     ],
-    drills: ["Binary Tree Level Order Traversal", "Rotting Oranges", "Shortest Path in Binary Matrix", "Word Ladder", "Number of Islands (BFS version)"],
+    drills: [
+      "Binary Tree Level Order Traversal",
+      "Rotting Oranges",
+      "Shortest Path in Binary Matrix",
+      "Word Ladder",
+      "Number of Islands (BFS version)",
+    ],
   },
   {
     id: "dfs",
@@ -676,7 +733,8 @@ return "unreachable"`,
     level: "Intermediate",
     tagline: "Go as deep as possible, then come back.",
     /** the same idea with no jargon at all */
-    plain: "Pick a direction, go as far as you can, then back up and try the next one.",
+    plain:
+      "Pick a direction, go as far as you can, then back up and try the next one.",
     analogy:
       "Exploring a cave system by always taking the next tunnel until you hit a dead end, then backing up to the last fork.",
     signals: [
@@ -704,8 +762,7 @@ return "unreachable"`,
       ["ancestor", 2],
       ["maximum depth", 3],
     ],
-    idea:
-      "Solve the problem for one node by trusting that recursion solves it for the children. Combine their results.",
+    idea: "Solve the problem for one node by trusting that recursion solves it for the children. Combine their results.",
     steps: [
       "Define precisely what dfs(node) returns or does.",
       "Write the base case (null node / out of bounds / already visited).",
@@ -734,7 +791,13 @@ return "unreachable"`,
       "What are your base cases?",
       "How will you avoid going in circles?",
     ],
-    drills: ["Maximum Depth of Binary Tree", "Number of Islands", "Flood Fill", "Path Sum", "Course Schedule"],
+    drills: [
+      "Maximum Depth of Binary Tree",
+      "Number of Islands",
+      "Flood Fill",
+      "Path Sum",
+      "Course Schedule",
+    ],
   },
   {
     id: "trees",
@@ -743,7 +806,8 @@ return "unreachable"`,
     color: "slate",
     level: "Intermediate",
     tagline: "Solve one node, then trust the rest to be solved.",
-    plain: "A tree is folders inside folders. To answer a question about the whole tree, answer it for one node and let the same function handle the children.",
+    plain:
+      "A tree is folders inside folders. To answer a question about the whole tree, answer it for one node and let the same function handle the children.",
     analogy:
       "An org chart. To count everyone in the company you do not visit every desk — you ask each manager how many are in their team, and they ask their own reports. Everyone answers the same small question about one level.",
     signals: [
@@ -765,8 +829,7 @@ return "unreachable"`,
       ["depth", 2],
       ["height", 2],
     ],
-    idea:
-      "Almost every tree question is the same three lines: handle the empty node, solve the left, solve the right, combine the two. Trust the recursion — assume your function already works for the smaller children, and only work out what the current node does with their answers.",
+    idea: "Almost every tree question is the same three lines: handle the empty node, solve the left, solve the right, combine the two. Trust the recursion — assume your function already works for the smaller children, and only work out what the current node does with their answers.",
     steps: [
       "Write the base case for an empty node FIRST. It stops the recursion, and it is where most bugs live.",
       "Assume the function already works for the left and right children. What do you do with their two answers?",
@@ -795,7 +858,13 @@ return "unreachable"`,
       "Are you carrying information down the tree, or bringing answers back up?",
       "Does the ordering of a BST let you ignore half the tree at each step?",
     ],
-    drills: ["Maximum depth of a binary tree", "Same tree", "Level order traversal", "Validate a BST", "Lowest common ancestor"],
+    drills: [
+      "Maximum depth of a binary tree",
+      "Same tree",
+      "Level order traversal",
+      "Validate a BST",
+      "Lowest common ancestor",
+    ],
     prerequisites: ["dfs"],
   },
   {
@@ -806,7 +875,8 @@ return "unreachable"`,
     level: "Intermediate",
     tagline: "Build answers piece by piece; undo when stuck.",
     /** the same idea with no jargon at all */
-    plain: "Build an answer one choice at a time. When a choice leads nowhere, undo it and try another.",
+    plain:
+      "Build an answer one choice at a time. When a choice leads nowhere, undo it and try another.",
     analogy:
       "Solving a maze with chalk: choose a path, mark it, and if you reach a dead end, erase your marks and try the next turn.",
     signals: [
@@ -831,8 +901,7 @@ return "unreachable"`,
       ["return all", 2],
       ["generate", 1.5],
     ],
-    idea:
-      "Draw the decision tree: at each step you CHOOSE an option, EXPLORE deeper, then UN-CHOOSE. Prune branches that already break the rules.",
+    idea: "Draw the decision tree: at each step you CHOOSE an option, EXPLORE deeper, then UN-CHOOSE. Prune branches that already break the rules.",
     steps: [
       "Define the state you're building (current path / partial answer).",
       "Define when the state is complete → save a COPY.",
@@ -862,7 +931,13 @@ return "unreachable"`,
       "What exactly are you tracking as the 'partial answer'?",
       "When should a branch be abandoned early?",
     ],
-    drills: ["Subsets", "Permutations", "Combination Sum", "Generate Parentheses", "N-Queens"],
+    drills: [
+      "Subsets",
+      "Permutations",
+      "Combination Sum",
+      "Generate Parentheses",
+      "N-Queens",
+    ],
     prerequisites: ["dfs"],
   },
   {
@@ -872,7 +947,8 @@ return "unreachable"`,
     color: "slate",
     level: "Intermediate",
     tagline: "Sort by start time, then sweep left to right.",
-    plain: "Each item is a range with a beginning and an end. Sort them by when they start, then walk through and join up the ones that touch.",
+    plain:
+      "Each item is a range with a beginning and an end. Sort them by when they start, then walk through and join up the ones that touch.",
     analogy:
       "A day of back-to-back meetings. Sorting them by start time turns 'does anything clash?' into one walk down the list, comparing each meeting's start against the previous one's end.",
     signals: [
@@ -892,8 +968,7 @@ return "unreachable"`,
       ["schedule", 2],
       ["booking", 1.5],
     ],
-    idea:
-      "Sort by start. After that, an overlap can only ever happen between neighbours, so a single pass is enough. Two ranges overlap when the next one starts before the current one ends.",
+    idea: "Sort by start. After that, an overlap can only ever happen between neighbours, so a single pass is enough. Two ranges overlap when the next one starts before the current one ends.",
     steps: [
       "Sort the intervals by their start value, and draw them as bars on a line.",
       "Walk left to right, keeping the interval you are currently building.",
@@ -922,7 +997,13 @@ return merged`,
       "If they do overlap, which end do you keep, and why must it be the larger one?",
       "For 'how many at once', do you need the pairs kept together, or would sorting the ends separately tell you more?",
     ],
-    drills: ["Merge intervals", "Insert interval", "Non-overlapping intervals", "Meeting rooms", "Minimum number of arrows"],
+    drills: [
+      "Merge intervals",
+      "Insert interval",
+      "Non-overlapping intervals",
+      "Meeting rooms",
+      "Minimum number of arrows",
+    ],
     prerequisites: ["sorting"],
   },
   {
@@ -931,9 +1012,11 @@ return merged`,
     emoji: "🧱",
     color: "violet",
     level: "Advanced",
-    tagline: "Solve small versions first, remember them, build up to the big one.",
+    tagline:
+      "Solve small versions first, remember them, build up to the big one.",
     /** the same idea with no jargon at all */
-    plain: "Solve the small versions once, write them down, and reuse them to build the big answer.",
+    plain:
+      "Solve the small versions once, write them down, and reuse them to build the big answer.",
     analogy:
       "Climbing stairs: the number of ways to reach step 10 is built from the ways to reach steps 9 and 8. You write each result in a notebook so you never recompute it.",
     signals: [
@@ -963,8 +1046,7 @@ return merged`,
       ["can you reach", 1],
       ["partition equal", 2],
     ],
-    idea:
-      "DP = recursion + memory. If an answer is built from answers to smaller versions of the SAME question, store each small answer once.",
+    idea: "DP = recursion + memory. If an answer is built from answers to smaller versions of the SAME question, store each small answer once.",
     steps: [
       "Write the brute-force recursion first (choices + base cases).",
       "Identify the STATE: which few numbers fully describe a sub-problem? (index, remaining capacity…)",
@@ -996,7 +1078,14 @@ function solve(state):
       "How does the answer for a state depend on smaller states? Write it as a formula.",
       "What are the smallest/base states, and what are their answers?",
     ],
-    drills: ["Climbing Stairs", "House Robber", "Coin Change", "Longest Increasing Subsequence", "0/1 Knapsack", "Edit Distance"],
+    drills: [
+      "Climbing Stairs",
+      "House Robber",
+      "Coin Change",
+      "Longest Increasing Subsequence",
+      "0/1 Knapsack",
+      "Edit Distance",
+    ],
     prerequisites: ["dfs", "backtracking"],
   },
   {
@@ -1005,9 +1094,11 @@ function solve(state):
     emoji: "🍫",
     color: "pink",
     level: "Intermediate",
-    tagline: "Make the locally best choice each time — when you can prove it's safe.",
+    tagline:
+      "Make the locally best choice each time — when you can prove it's safe.",
     /** the same idea with no jargon at all */
-    plain: "Always take the best-looking option right now, and trust that it works out.",
+    plain:
+      "Always take the best-looking option right now, and trust that it works out.",
     analogy:
       "Making change with the fewest coins: always take the biggest coin that fits. Easy and fast — but only works when the situation is shaped right.",
     signals: [
@@ -1032,8 +1123,7 @@ function solve(state):
       ["largest possible", 1],
       ["non-overlapping", 3],
     ],
-    idea:
-      "Find a rule that picks the best option NOW and never needs to be reconsidered. Then prove it with an 'exchange argument' or try to break it with a counter-example.",
+    idea: "Find a rule that picks the best option NOW and never needs to be reconsidered. Then prove it with an 'exchange argument' or try to break it with a counter-example.",
     steps: [
       "Guess a greedy rule (biggest first? earliest end? smallest cost?).",
       "Try hard to break it with a small counter-example.",
@@ -1060,7 +1150,13 @@ return chosen (or its size / total)`,
       "What would you sort by to make the rule easy to follow?",
       "Does choosing something now ever block a better combination later?",
     ],
-    drills: ["Jump Game", "Assign Cookies", "Non-overlapping Intervals", "Gas Station", "Best Time to Buy and Sell Stock II"],
+    drills: [
+      "Jump Game",
+      "Assign Cookies",
+      "Non-overlapping Intervals",
+      "Gas Station",
+      "Best Time to Buy and Sell Stock II",
+    ],
   },
   {
     id: "heap",
@@ -1070,7 +1166,8 @@ return chosen (or its size / total)`,
     level: "Intermediate",
     tagline: "Always know the smallest or largest item in O(log n).",
     /** the same idea with no jargon at all */
-    plain: "A pile that always hands you its smallest (or biggest) item instantly.",
+    plain:
+      "A pile that always hands you its smallest (or biggest) item instantly.",
     analogy:
       "A hospital emergency room: the most urgent patient is always seen next, no matter when they arrived.",
     signals: [
@@ -1095,8 +1192,7 @@ return chosen (or its size / total)`,
       ["task scheduler", 2],
       ["k-th", 2],
     ],
-    idea:
-      "A heap is a bucket that hands you its smallest (or largest) item instantly. To keep the top K largest, use a MIN-heap of size K and kick out the smallest.",
+    idea: "A heap is a bucket that hands you its smallest (or largest) item instantly. To keep the top K largest, use a MIN-heap of size K and kick out the smallest.",
     steps: [
       "Decide: do you need the min or the max repeatedly?",
       "Push items in; the heap keeps order automatically.",
@@ -1122,7 +1218,12 @@ for each item in data:
       "For top-K LARGEST, which kind of heap do you keep — and what do you evict?",
       "What would you store as the item: a number, or a (priority, data) pair?",
     ],
-    drills: ["Kth Largest Element in an Array", "Top K Frequent Elements", "Merge K Sorted Lists", "Find Median from Data Stream"],
+    drills: [
+      "Kth Largest Element in an Array",
+      "Top K Frequent Elements",
+      "Merge K Sorted Lists",
+      "Find Median from Data Stream",
+    ],
   },
   {
     id: "union-find",
@@ -1132,7 +1233,8 @@ for each item in data:
     level: "Advanced",
     tagline: "Track which items belong to the same group, super quickly.",
     /** the same idea with no jargon at all */
-    plain: "Track which items belong to the same group, and merge groups as new links arrive.",
+    plain:
+      "Track which items belong to the same group, and merge groups as new links arrive.",
     analogy:
       "Friend circles at a party: when two people become friends, their two entire circles merge into one.",
     signals: [
@@ -1155,8 +1257,7 @@ for each item in data:
       ["network", 1],
       ["group", 0.5],
     ],
-    idea:
-      "Each group has a 'leader'. find(x) walks to x's leader; union(a, b) makes one leader report to the other. Path compression keeps it near O(1).",
+    idea: "Each group has a 'leader'. find(x) walks to x's leader; union(a, b) makes one leader report to the other. Path compression keeps it near O(1).",
     steps: [
       "Start with every item as its own leader: parent[i] = i.",
       "find(x): follow parents to the leader (compress the path while returning).",
@@ -1184,7 +1285,12 @@ function union(a, b):
       "How could every group be represented by one single leader?",
       "What does it mean if both items already share a leader when you try to connect them?",
     ],
-    drills: ["Number of Provinces", "Redundant Connection", "Accounts Merge", "Graph Valid Tree"],
+    drills: [
+      "Number of Provinces",
+      "Redundant Connection",
+      "Accounts Merge",
+      "Graph Valid Tree",
+    ],
     prerequisites: ["dfs"],
   },
   {
@@ -1195,7 +1301,8 @@ function union(a, b):
     level: "Advanced",
     tagline: "BFS's big brother for roads with different lengths.",
     /** the same idea with no jargon at all */
-    plain: "Explore like BFS, but always continue from the cheapest route found so far.",
+    plain:
+      "Explore like BFS, but always continue from the cheapest route found so far.",
     analogy:
       "A GPS: always extend the route that is currently the cheapest, and the first time you pop a place from the list you've found its cheapest route.",
     signals: [
@@ -1214,8 +1321,7 @@ function union(a, b):
       ["edge weight", 3],
       ["flights", 1.5],
     ],
-    idea:
-      "Like BFS, but replace the queue with a min-heap ordered by total distance so far. Always expand the closest unfinished node.",
+    idea: "Like BFS, but replace the queue with a min-heap ordered by total distance so far. Always expand the closest unfinished node.",
     steps: [
       "dist[start] = 0, everything else = infinity.",
       "Push (0, start) into a min-heap.",
@@ -1245,9 +1351,15 @@ while heap is not empty:
       "When do you know a node's distance is final?",
       "Are any weights negative?",
     ],
-    drills: ["Network Delay Time", "Cheapest Flights Within K Stops", "Path With Minimum Effort"],
+    drills: [
+      "Network Delay Time",
+      "Cheapest Flights Within K Stops",
+      "Path With Minimum Effort",
+    ],
     prerequisites: ["bfs", "heap"],
   },
 ];
 
-export const PATTERN_MAP: Record<string, Pattern> = Object.fromEntries(PATTERNS.map((p) => [p.id, p]));
+export const PATTERN_MAP: Record<string, Pattern> = Object.fromEntries(
+  PATTERNS.map((p) => [p.id, p]),
+);

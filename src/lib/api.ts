@@ -16,7 +16,12 @@ export interface ThinkingStep {
 
 export interface CoachPlan {
   summary: string;
-  pattern: { id: string; name: string; confidence: "high" | "medium" | "low"; why: string };
+  pattern: {
+    id: string;
+    name: string;
+    confidence: "high" | "medium" | "low";
+    why: string;
+  };
   alternatives?: { id: string; name: string; why_not: string }[];
   thinking_steps: ThinkingStep[];
   questions: string[];
@@ -24,7 +29,6 @@ export interface CoachPlan {
   complexity: { time: string; space: string };
   prereqs?: string[];
   degraded?: boolean;
-  demo_note?: string;
 }
 
 export interface SolutionResult {
@@ -41,24 +45,42 @@ export interface SolutionResult {
 
 export interface Health {
   ok: boolean;
-  mode: "gemini" | "demo";
+  mode: "demo";
   model: string | null;
   message: string;
 }
 
 const TIMEOUT_MS = 75_000;
 
-class ApiError extends Error {}
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public status?: number,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 
-async function post<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
+async function post<T>(
+  path: string,
+  body: unknown,
+  signal?: AbortSignal,
+): Promise<T> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  signal?.addEventListener("abort", () => ctrl.abort());
+  const onAbort = () => ctrl.abort();
+  if (signal?.aborted) ctrl.abort();
+  signal?.addEventListener("abort", onAbort, { once: true });
 
   try {
     const res = await fetch(path, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      credentials: "same-origin",
+      headers: {
+        "content-type": "application/json",
+        ...authHeaders(),
+      },
       body: JSON.stringify(body),
       signal: ctrl.signal,
     });
@@ -72,11 +94,14 @@ async function post<T>(path: string, body: unknown, signal?: AbortSignal): Promi
       } catch {
         /* keep the default */
       }
-      throw new ApiError(detail);
+      if (res.status === 401)
+        window.dispatchEvent(new Event("algocoach:session-expired"));
+      throw new ApiError(detail, res.status);
     }
     return (await res.json()) as T;
   } finally {
     clearTimeout(timer);
+    signal?.removeEventListener("abort", onAbort);
   }
 }
 
@@ -115,8 +140,14 @@ function buildBody(problem: string, analysis: Analysis | null) {
   return {
     problem,
     detected_n: analysis?.detectedN ?? null,
-    candidates: (analysis?.candidates ?? []).map((c) => briefPattern(c.pattern, c.matched)),
-    kinds: (analysis?.kinds ?? []).map((k) => ({ label: k.label, emoji: k.emoji, hint: k.hint })),
+    candidates: (analysis?.candidates ?? []).map((c) =>
+      briefPattern(c.pattern, c.matched),
+    ),
+    kinds: (analysis?.kinds ?? []).map((k) => ({
+      label: k.label,
+      emoji: k.emoji,
+      hint: k.hint,
+    })),
   };
 }
 
@@ -125,7 +156,11 @@ export async function getCoaching(
   analysis: Analysis | null,
   signal?: AbortSignal,
 ): Promise<{ mode: string; plan: CoachPlan }> {
-  return post<{ mode: string; plan: CoachPlan }>("/api/coach", buildBody(problem, analysis), signal);
+  return post<{ mode: string; plan: CoachPlan }>(
+    "/api/coach",
+    buildBody(problem, analysis),
+    signal,
+  );
 }
 
 export async function getSolution(
@@ -134,16 +169,19 @@ export async function getSolution(
   attempt: string,
   language: string,
 ): Promise<SolutionResult> {
-  return post<SolutionResult>("/api/solve", { ...buildBody(problem, analysis), attempt, language });
+  return post<SolutionResult>("/api/solve", {
+    ...buildBody(problem, analysis),
+    attempt,
+    language,
+  });
 }
 
 export { ApiError };
 
 /* ------------------------------------------------------------------ accounts
  *
- * Everything here is optional. The app is fully usable signed out, and every
- * call below fails soft: a learner must never see an error because tracking or
- * sync was unavailable.
+ * A verified Google cookie is required. Account scope is held in this tab
+ * only, to prevent a stale tab from syncing into another browser account.
  */
 
 export interface AccountUser {
@@ -176,65 +214,76 @@ export interface ProgressState {
   shaky: string[];
 }
 
-const TOKEN_KEY = "algocoach-token";
-
-export function getToken(): string | null {
-  try {
-    return localStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
+let activeAccount: number | null = null;
+export function setActiveAccount(userId: number | null) {
+  activeAccount = userId;
 }
-
-export function setToken(token: string | null) {
-  try {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    else localStorage.removeItem(TOKEN_KEY);
-  } catch {
-    /* private mode — session simply won't persist */
-  }
-}
-
 function authHeaders(): Record<string, string> {
-  const t = getToken();
-  return t ? { authorization: `Bearer ${t}` } : {};
+  return {
+    "x-algocoach-request": "1",
+    ...(activeAccount === null
+      ? {}
+      : { "x-algocoach-account": String(activeAccount) }),
+  };
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(path, {
-    ...init,
-    headers: {
-      "content-type": "application/json",
-      ...authHeaders(),
-      ...(init.headers ?? {}),
-    },
-  });
-  if (!res.ok) {
-    let detail = `Request failed (${res.status})`;
-    try {
-      const data = await res.json();
-      if (typeof data?.detail === "string") detail = data.detail;
-    } catch {
-      /* keep the default */
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 15_000);
+  try {
+    const res = await fetch(path, {
+      signal: ctrl.signal,
+      credentials: "same-origin",
+      ...init,
+      headers: {
+        "content-type": "application/json",
+        ...authHeaders(),
+        ...(init.headers ?? {}),
+      },
+    });
+    if (!res.ok) {
+      let detail = `Request failed (${res.status})`;
+      try {
+        const data = await res.json();
+        if (typeof data?.detail === "string") detail = data.detail;
+      } catch {
+        /* keep the default */
+      }
+      if (res.status === 401)
+        window.dispatchEvent(new Event("algocoach:session-expired"));
+      throw new ApiError(detail, res.status);
     }
-    throw new ApiError(detail);
+    return (await res.json()) as T;
+  } catch (e) {
+    if (e instanceof Error && e.name === "AbortError")
+      throw new ApiError(
+        "The connection timed out. Your local progress is safe. Please try again.",
+      );
+    throw e;
+  } finally {
+    clearTimeout(timer);
   }
-  return (await res.json()) as T;
 }
 
-export function signUp(body: {
-  email: string;
-  password: string;
-  display_name?: string;
-  learned: string[];
-  solved: string[];
-  shaky: string[];
-}): Promise<{ token: string; user: AccountUser }> {
-  return request("/api/auth/signup", { method: "POST", body: JSON.stringify(body) });
+export interface AuthConfig {
+  provider: "google";
+  configured: boolean;
+  coach_mode: "offline";
 }
-
-export function signIn(body: { email: string; password: string }): Promise<{ token: string; user: AccountUser }> {
-  return request("/api/auth/login", { method: "POST", body: JSON.stringify(body) });
+export function getAuthConfig(): Promise<AuthConfig> {
+  return request("/api/auth/config");
+}
+export function googleSignIn() {
+  window.location.assign(
+    "/api/auth/google/start?next=" +
+      encodeURIComponent(window.location.hash || "#today"),
+  );
+}
+export function signOut(expectedUserId: number): Promise<{ ok: boolean }> {
+  return request("/api/auth/logout", {
+    method: "POST",
+    headers: { "x-algocoach-account": String(expectedUserId) },
+  });
 }
 
 export function getMe(): Promise<MeResponse> {
@@ -242,7 +291,10 @@ export function getMe(): Promise<MeResponse> {
 }
 
 export function putProgress(progress: ProgressState): Promise<ProgressState> {
-  return request("/api/progress", { method: "PUT", body: JSON.stringify(progress) });
+  return request("/api/progress", {
+    method: "PUT",
+    body: JSON.stringify(progress),
+  });
 }
 
 /**
@@ -252,20 +304,46 @@ export function putProgress(progress: ProgressState): Promise<ProgressState> {
  * lose a data point, not a lesson. `keepalive` lets the final event of a
  * session still land while the tab is closing.
  */
-export function logEvent(kind: string, detail: Record<string, unknown> = {}): void {
-  if (!getToken()) return; // nothing to attribute it to
+export function logEvent(
+  kind: string,
+  detail: Record<string, unknown> = {},
+): void {
   try {
     void fetch("/api/events", {
       method: "POST",
+      credentials: "same-origin",
       headers: { "content-type": "application/json", ...authHeaders() },
       body: JSON.stringify({ kind, detail }),
       keepalive: true,
-    }).catch(() => {});
+    })
+      .then((res) => {
+        if (res.status === 401)
+          window.dispatchEvent(new Event("algocoach:session-expired"));
+      })
+      .catch(() => {});
   } catch {
     /* ignore */
   }
 }
 
-export function sendFeedback(message: string, context: Record<string, unknown> = {}): Promise<{ status: string }> {
-  return request("/api/feedback", { method: "POST", body: JSON.stringify({ message, context }) });
+export function sendFeedback(
+  message: string,
+  context: Record<string, unknown> = {},
+): Promise<{ status: string }> {
+  return request("/api/feedback", {
+    method: "POST",
+    body: JSON.stringify({ message, context }),
+  });
+}
+
+export function getLearning(): Promise<import("./learning").LearningState> {
+  return request("/api/learning");
+}
+export function putLearning(
+  state: import("./learning").LearningState,
+): Promise<import("./learning").LearningState> {
+  return request("/api/learning", {
+    method: "PUT",
+    body: JSON.stringify({ lessons: state }),
+  });
 }

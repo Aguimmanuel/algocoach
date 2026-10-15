@@ -1,169 +1,111 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   getMe,
-  getToken,
   logEvent,
   putProgress,
-  setToken as persistToken,
-  signIn as apiSignIn,
-  signUp as apiSignUp,
-  type AccountUser,
+  putLearning,
+  signOut as apiSignOut,
   type MeResponse,
   type ProgressState,
-  type StreakInfo,
-  type TodayInfo,
 } from "../lib/api";
+import { archiveLocalAccount } from "../lib/accountStorage";
 
-/**
- * The account, and the bridge between local progress and the server.
- *
- * Three rules, all to keep a signed-out learner from ever noticing this exists:
- *
- *  1. Nothing loads or blocks on the network. Progress renders from localStorage
- *     immediately; the server catches up in the background.
- *  2. Signing in MERGES. Whatever was on the device is kept, then pushed up.
- *     Nobody loses their streak by creating an account.
- *  3. Every failure is silent. Sync is a convenience, never a dependency.
+/** SessionBoundary verifies Google identity and selects the local profile before
+ * this hook mounts. No passwords, Google tokens or app JWTs live in JavaScript.
  */
-export function useAccount(localProgress: ProgressState) {
-  const [user, setUser] = useState<AccountUser | null>(null);
-  const [streak, setStreak] = useState<StreakInfo>({ current: 0, longest: 0 });
-  const [today, setToday] = useState<TodayInfo>({ count: 0, goal: 3, met: false });
-  const [checking, setChecking] = useState(() => !!getToken());
+export function useAccount(
+  localProgress: ProgressState,
+  initialMe: MeResponse,
+  onSignedOut: () => void,
+) {
+  const [user, setUser] = useState(initialMe.user);
+  const [streak, setStreak] = useState(initialMe.streak);
+  const [today, setToday] = useState(initialMe.today);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Keep the latest local progress reachable from callbacks without making
-  // every function depend on it (which would re-create them on every tick).
   const localRef = useRef(localProgress);
   localRef.current = localProgress;
-
   const remember = (me: MeResponse) => {
     setUser(me.user);
     setStreak(me.streak);
     setToday(me.today);
   };
 
-  /** Restore a session on load, if a token is present. */
   useEffect(() => {
-    if (!getToken()) return;
-    let alive = true;
-    getMe()
-      .then((me) => {
-        if (!alive) return;
-        remember(me);
-        // The server is the source of truth once signed in, so pull its progress
-        // into the local store on next local write rather than clobbering now.
-      })
-      .catch(() => {
-        // Expired or invalid token — drop it quietly and carry on signed out.
-        persistToken(null);
-      })
-      .finally(() => alive && setChecking(false));
-    return () => {
-      alive = false;
-    };
+    const merged = { ...localRef.current };
+    for (const field of ["learned", "solved", "shaky"] as const) {
+      const key = `algocoach-${field}`;
+      const value = [
+        ...new Set([...localRef.current[field], ...initialMe.progress[field]]),
+      ];
+      merged[field] = value;
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        window.dispatchEvent(
+          new CustomEvent(`algocoach:${key}`, { detail: value }),
+        );
+      } catch {
+        /* session still works without storage */
+      }
+    }
+    void putProgress(merged).catch(() => {});
   }, []);
 
-  const signUp = useCallback(
-    async (email: string, password: string, displayName: string) => {
-      setBusy(true);
-      setError(null);
-      try {
-        // Carry the device's progress into the new account.
-        const { token, user: u } = await apiSignUp({
-          email,
-          password,
-          display_name: displayName,
-          learned: localRef.current.learned,
-          solved: localRef.current.solved,
-          shaky: localRef.current.shaky,
-        });
-        persistToken(token);
-        setUser(u);
-        const me = await getMe();
-        remember(me);
-        return true;
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not create that account.");
-        return false;
-      } finally {
-        setBusy(false);
-        setChecking(false);
-      }
-    },
-    [],
-  );
-
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signOut = useCallback(async () => {
     setBusy(true);
     setError(null);
     try {
-      const { token, user: u } = await apiSignIn({ email, password });
-      persistToken(token);
-      setUser(u);
-      const me = await getMe();
-      remember(me);
-      return true;
+      // Best-effort final save before ending the authenticated session.
+      const saves: Promise<unknown>[] = [putProgress(localRef.current)];
+      try {
+        const learning = JSON.parse(
+          localStorage.getItem("algocoach-learning") || "{}",
+        );
+        saves.push(putLearning(learning));
+      } catch {
+        /* no stored lesson data */
+      }
+      await Promise.allSettled(saves);
+      await apiSignOut(user.id);
+      try {
+        archiveLocalAccount(undefined, user.id);
+      } catch {
+        /* boundary will fail closed if another account cannot be isolated */
+      }
+      onSignedOut();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not sign you in.");
-      return false;
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Could not sign out. Please try again.",
+      );
     } finally {
       setBusy(false);
-      setChecking(false);
     }
-  }, []);
+  }, [onSignedOut]);
 
-  const signOut = useCallback(() => {
-    persistToken(null);
-    setUser(null);
-    setStreak({ current: 0, longest: 0 });
-    // Local progress is deliberately left alone — signing out must not erase
-    // anything the learner did.
-  }, []);
-
-  /** Push progress after it changes, coalesced so a burst is one request. */
-  const pushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const firstRun = useRef(true);
-
   useEffect(() => {
-    if (!user) return;
-    // Skip the run immediately after sign-in: that state already came from the
-    // server, and echoing it straight back would log phantom activity events.
     if (firstRun.current) {
       firstRun.current = false;
       return;
     }
-    if (pushTimer.current) clearTimeout(pushTimer.current);
-    pushTimer.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       putProgress(localProgress)
         .then(() => getMe().then(remember))
-        .catch(() => {
-          /* offline: the local copy is still correct */
-        });
+        .catch(() => {});
     }, 1200);
-    return () => {
-      if (pushTimer.current) clearTimeout(pushTimer.current);
-    };
-  }, [user, localProgress]);
-
-  // Reset the guard when the account changes, so a second sign-in also skips.
-  useEffect(() => {
-    if (!user) firstRun.current = true;
-  }, [user]);
+    return () => clearTimeout(timer);
+  }, [user.id, localProgress]);
 
   return {
     user,
     streak,
     today,
-    checking,
     busy,
     error,
-    signUp,
-    signIn,
     signOut,
     clearError: () => setError(null),
-    /** record an activity event for the signed-in learner */
     track: logEvent,
   };
 }

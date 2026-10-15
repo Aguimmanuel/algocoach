@@ -31,7 +31,8 @@ export const SPEED_TABLE: SpeedRow[] = [
     bigO: "O(log n)",
     plainName: "Halving",
     meaning: "Every step throws away half of what's left.",
-    analogy: "Guessing a number from 1–100. 100 becomes 50, then 25, then 13… about 7 guesses.",
+    analogy:
+      "Guessing a number from 1–100. 100 becomes 50, then 25, then 13… about 7 guesses.",
     shape: "Cut the search space in half each loop.",
     verdict: "great",
   },
@@ -62,7 +63,8 @@ export const SPEED_TABLE: SpeedRow[] = [
   {
     bigO: "O(2ⁿ)",
     plainName: "Every combination",
-    meaning: "Every item either is or isn't included — twice as much work per extra item.",
+    meaning:
+      "Every item either is or isn't included — twice as much work per extra item.",
     analogy: "Every on/off setting of n light switches.",
     shape: "Recursion that branches into two at each step.",
     verdict: "too slow",
@@ -71,35 +73,56 @@ export const SPEED_TABLE: SpeedRow[] = [
     bigO: "O(n!)",
     plainName: "Every arrangement",
     meaning: "Every possible ordering of everything.",
-    analogy: "Every way to seat 10 guests at a table — more than 3 million orderings.",
+    analogy:
+      "Every way to seat 10 guests at a table — more than 3 million orderings.",
     shape: "Recursion that tries each remaining choice in turn.",
     verdict: "too slow",
   },
 ];
 
-export const VERDICT_STYLE: Record<SpeedRow["verdict"], { label: string; className: string }> = {
-  great: { label: "Scales forever", className: "bg-primary text-primary-foreground" },
+export const VERDICT_STYLE: Record<
+  SpeedRow["verdict"],
+  { label: string; className: string }
+> = {
+  great: {
+    label: "Scales forever",
+    className: "bg-primary text-primary-foreground",
+  },
   fine: { label: "Fine in practice", className: "bg-border text-foreground" },
-  careful: { label: "Only for small n", className: "bg-muted text-muted-foreground" },
-  "too slow": { label: "Very small n only", className: "bg-muted text-muted-foreground" },
+  careful: {
+    label: "Only for small n",
+    className: "bg-muted text-muted-foreground",
+  },
+  "too slow": {
+    label: "Very small n only",
+    className: "bg-muted text-muted-foreground",
+  },
 };
 
 /** The three-step habit that makes constraints useful. */
-export const CONSTRAINT_STEPS: { step: string; detail: string; example: string }[] = [
+export const CONSTRAINT_STEPS: {
+  step: string;
+  detail: string;
+  example: string;
+}[] = [
   {
     step: "Find n",
-    detail: "n is how many items the problem gives you. Look in the last line of the question.",
+    detail:
+      "n is how many items the problem gives you. Look in the last line of the question.",
     example: '"1 ≤ n ≤ 10⁵" → n can be 100,000. That number is 10⁵.',
   },
   {
     step: "Work out your budget",
-    detail: "A computer does about 10⁸ simple steps per second. Divide your budget by n.",
+    detail:
+      "A computer does about 10⁸ simple steps per second. Divide your budget by n.",
     example: "10⁵ items → about 1,000 steps per item available. That's plenty.",
   },
   {
     step: "Pick an approach that fits",
-    detail: "If a loop inside a loop would be too slow, the answer must avoid it.",
-    example: "n = 10⁵ → O(n²) means 10¹⁰ steps ≈ 100 seconds. Too slow. Aim for O(n log n).",
+    detail:
+      "If a loop inside a loop would be too slow, the answer must avoid it.",
+    example:
+      "n = 10⁵ → O(n²) means 10¹⁰ steps ≈ 100 seconds. Too slow. Aim for O(n log n).",
   },
 ];
 
@@ -117,20 +140,23 @@ export const LEARNING_PATH: PathStep[] = [
     title: "Read a problem like a programmer",
     detail:
       "Before any algorithm: write down the exact input, the exact output, and solve one tiny example by hand. Most people who feel stuck are stuck here, not on the algorithm.",
-    check: "You can state the input and output in one sentence each, without looking at the question.",
+    check:
+      "You can state the input and output in one sentence each, without looking at the question.",
   },
   {
     patternId: "brute",
     title: "Learn to write brute force on purpose",
     detail:
       "Try every possibility. It's slow, but it's correct, and it always gets you unstuck. It also shows you exactly which work is being repeated — which is where the real answer hides.",
-    check: "You can write the slow version of a problem without freezing, and say what its cost is.",
+    check:
+      "You can write the slow version of a problem without freezing, and say what its cost is.",
   },
   {
     title: "Learn to read Big-O",
     detail:
       "One loop is O(n). A loop inside a loop is O(n²). Halving is O(log n). That's 90% of what you need to start.",
-    check: "You can look at someone's loop structure and say roughly how fast it is.",
+    check:
+      "You can look at someone's loop structure and say roughly how fast it is.",
   },
   {
     patternId: "hashmap",
@@ -158,7 +184,8 @@ export const LEARNING_PATH: PathStep[] = [
     title: "Binary search: throw away half",
     detail:
       "Only works on sorted data, but it's the difference between 100,000 checks and 17. Also works on answers, not just arrays.",
-    check: "You can write it without an off-by-one panic, and say why it's O(log n).",
+    check:
+      "You can write it without an off-by-one panic, and say why it's O(log n).",
   },
   {
     patternId: "prefix-sum",
@@ -172,28 +199,32 @@ export const LEARNING_PATH: PathStep[] = [
     title: "Sort first, then look at neighbours",
     detail:
       "Sorting is cheap (O(n log n)) and it puts whatever you're looking for right next to its answer. A huge share of problems become obvious after sorting.",
-    check: '"Would sorting make this easy?" becomes one of your first questions.',
+    check:
+      '"Would sorting make this easy?" becomes one of your first questions.',
   },
   {
     patternId: "linked-list",
     title: "Linked lists: boxes that hold hands",
     detail:
       "You cannot jump to an index, but slipping something into the middle costs one move instead of shifting everything. The handling of pointers is the whole skill, and it is the reason the LRU cache is a classic interview question.",
-    check: "You can reverse a list on paper, drawing the arrows, without losing the rest of the chain.",
+    check:
+      "You can reverse a list on paper, drawing the arrows, without losing the rest of the chain.",
   },
   {
     patternId: "stack",
     title: "Stacks: handle unfinished business",
     detail:
       "Last in, first out. Perfect for matching brackets, and for 'what's the next bigger item?' problems.",
-    check: "You ask 'what do I need to remember until later?' and reach for a stack.",
+    check:
+      "You ask 'what do I need to remember until later?' and reach for a stack.",
   },
   {
     patternId: "bfs",
     title: "BFS: explore outward in rings",
     detail:
       "Walk a grid or graph one step at a time, layer by layer. Because you explore in rings, the first time you reach something is the shortest way there.",
-    check: "You can explain why BFS finds the shortest path when all steps cost the same.",
+    check:
+      "You can explain why BFS finds the shortest path when all steps cost the same.",
   },
   {
     patternId: "dfs",
@@ -207,14 +238,16 @@ export const LEARNING_PATH: PathStep[] = [
     title: "Trees: solve one node, trust the rest",
     detail:
       "Your first real recursion. Almost every tree question is the same three lines — empty case, solve the left, solve the right, combine. Once this clicks, recursion stops being scary.",
-    check: "You write the empty-node base case first, automatically, before anything else.",
+    check:
+      "You write the empty-node base case first, automatically, before anything else.",
   },
   {
     patternId: "intervals",
     title: "Intervals: sort, then sweep",
     detail:
       "A pair of numbers becomes a range on a line. Sorting by start time turns a tangle of overlaps into one walk down the list. The same move solves meeting rooms, bookings and scheduling.",
-    check: "You ask 'would sorting by the start make this a neighbour comparison?' before anything else.",
+    check:
+      "You ask 'would sorting by the start make this a neighbour comparison?' before anything else.",
   },
   {
     patternId: "greedy",

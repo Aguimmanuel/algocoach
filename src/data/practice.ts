@@ -53,7 +53,10 @@ export const PRACTICE: Record<string, Problem[]> = {
   ],
   "sliding-window": [
     { name: "Maximum Average Subarray I", difficulty: "Easy" },
-    { name: "Longest Substring Without Repeating Characters", difficulty: "Medium" },
+    {
+      name: "Longest Substring Without Repeating Characters",
+      difficulty: "Medium",
+    },
     { name: "Longest Repeating Character Replacement", difficulty: "Medium" },
     { name: "Permutation in String", difficulty: "Medium" },
     { name: "Minimum Window Substring", difficulty: "Hard" },
@@ -156,10 +159,16 @@ export const PRACTICE: Record<string, Problem[]> = {
     { name: "Find Median from Data Stream", difficulty: "Hard" },
   ],
   "union-find": [
-    { name: "Number of Connected Components in an Undirected Graph", difficulty: "Medium" },
+    {
+      name: "Number of Connected Components in an Undirected Graph",
+      difficulty: "Medium",
+    },
     { name: "Redundant Connection", difficulty: "Medium" },
     { name: "Accounts Merge", difficulty: "Medium" },
-    { name: "Most Stones Removed with Same Row or Column", difficulty: "Medium" },
+    {
+      name: "Most Stones Removed with Same Row or Column",
+      difficulty: "Medium",
+    },
   ],
   dijkstra: [
     { name: "Network Delay Time", difficulty: "Medium" },

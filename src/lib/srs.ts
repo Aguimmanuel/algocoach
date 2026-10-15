@@ -102,7 +102,7 @@ export function review(card: Card, correct: boolean): Card {
       interval: FIRST_INTERVAL,
       ease: round2(Math.max(MIN_EASE, card.ease - 0.2)),
       due: addDays(now, FIRST_INTERVAL),
-      reps: card.reps + 1,
+      reps: 0,
     };
   }
 

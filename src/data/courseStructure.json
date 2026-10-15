@@ -1,0 +1,398 @@
+[
+  {
+    "id": "foundations",
+    "title": "Think Like an Engineer",
+    "tagline": "Read problems the way experienced engineers do.",
+    "emoji": "\ud83e\udded",
+    "color": "#0f766e",
+    "level": "Start here",
+    "lessonsCount": 4,
+    "hours": "1.5h",
+    "description": "Before patterns, you need the reading skill: constraints, complexity budgets, brute-force baselines and tiny test cases. This short course installs that operating system.",
+    "outcomes": [
+      "Decode any constraints block into a complexity budget",
+      "Always start from a correct brute force",
+      "Test with tiny cases you can run by hand",
+      "Recognise the five-step solving routine"
+    ],
+    "units": [
+      {
+        "id": "f-u1",
+        "title": "Unit 1 \u00b7 The engineer's lens",
+        "blurb": "Constraints, complexity and the brute-force habit.",
+        "lessons": [
+          {
+            "id": "what-is-algorithm",
+            "title": "What even is an algorithm?",
+            "subtitle": "A recipe with a cost attached.",
+            "minutes": 8,
+            "xp": 10,
+            "widget": "brute"
+          },
+          {
+            "id": "big-o-intuition",
+            "title": "Big-O without the maths",
+            "subtitle": "Growth rates as pictures, not proofs.",
+            "minutes": 10,
+            "xp": 12,
+            "widget": "complexity"
+          },
+          {
+            "id": "brute-first",
+            "title": "Brute force first",
+            "subtitle": "The slow idea that unlocks the fast one.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "brute",
+            "widget": "brute"
+          },
+          {
+            "id": "reading-problems",
+            "title": "Reading a problem like a coach",
+            "subtitle": "Five steps, every time.",
+            "minutes": 10,
+            "xp": 12,
+            "widget": "coach-mini"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "arrays",
+    "title": "Array Patterns",
+    "tagline": "The six moves that solve most array problems.",
+    "emoji": "\ud83e\uddf0",
+    "color": "#7c3aed",
+    "level": "Beginner",
+    "lessonsCount": 6,
+    "hours": "3h",
+    "description": "Hash maps, two pointers, sliding windows, binary search, prefix sums and sorting. Master these and LeetCode Easy stops being scary.",
+    "outcomes": [
+      "Kill inner search loops with hash maps",
+      "Use order with two pointers",
+      "Slide windows over contiguous blocks",
+      "Binary-search the answer itself"
+    ],
+    "units": [
+      {
+        "id": "a-u1",
+        "title": "Unit 1 \u00b7 Lookups & order",
+        "blurb": "Hash maps, sorting and two pointers.",
+        "lessons": [
+          {
+            "id": "hashmap-lesson",
+            "title": "Hash maps: never search twice",
+            "subtitle": "Trade memory for instant lookups.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "hashmap",
+            "widget": "hashmap"
+          },
+          {
+            "id": "two-pointers-lesson",
+            "title": "Two pointers: walk from both ends",
+            "subtitle": "Sorted data means you can prove options useless.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "two-pointers",
+            "widget": "two-pointers"
+          },
+          {
+            "id": "sorting-lesson",
+            "title": "Sort first, think after",
+            "subtitle": "Order turns chaos into neighbours.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "sorting",
+            "widget": "sorting"
+          }
+        ]
+      },
+      {
+        "id": "a-u2",
+        "title": "Unit 2 \u00b7 Windows, answers & sums",
+        "blurb": "Sliding windows, binary search, prefix sums.",
+        "lessons": [
+          {
+            "id": "sliding-window-lesson",
+            "title": "Sliding window: the rubber band",
+            "subtitle": "Grow right, shrink left, never revisit.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "sliding-window",
+            "widget": "sliding-window"
+          },
+          {
+            "id": "binary-search-lesson",
+            "title": "Binary search: guess the answer",
+            "subtitle": "Halve the possibilities every step.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "binary-search",
+            "widget": "binary-search"
+          },
+          {
+            "id": "prefix-sum-lesson",
+            "title": "Prefix sums: pay once, query forever",
+            "subtitle": "Running totals make ranges O(1).",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "prefix-sum",
+            "widget": "prefix-sum"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "structures",
+    "title": "Stacks, Lists & Heaps",
+    "tagline": "The structures interviews love.",
+    "emoji": "\ud83e\udd5e",
+    "color": "#ea580c",
+    "level": "Intermediate",
+    "lessonsCount": 4,
+    "hours": "2.5h",
+    "description": "Stacks for nesting, linked lists for rewiring, intervals for schedules, heaps for top-K. Hands-on with every pointer move.",
+    "outcomes": [
+      "Match brackets and next-greater with stacks",
+      "Rewire linked lists without losing nodes",
+      "Merge anything with intervals",
+      "Keep top-K with heaps"
+    ],
+    "units": [
+      {
+        "id": "s-u1",
+        "title": "Unit 1 \u00b7 Waiting rooms & chains",
+        "blurb": "Stacks, linked lists, intervals, heaps.",
+        "lessons": [
+          {
+            "id": "stack-lesson",
+            "title": "Stacks: the waiting room",
+            "subtitle": "Last in, first out \u2014 for nesting.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "stack",
+            "widget": "stack"
+          },
+          {
+            "id": "linked-list-lesson",
+            "title": "Linked lists: re-point, don't move",
+            "subtitle": "Change arrows, never shift data.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "linked-list",
+            "widget": "linked-list"
+          },
+          {
+            "id": "intervals-lesson",
+            "title": "Intervals: sort, then sweep",
+            "subtitle": "Meetings, merges and overlaps.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "intervals",
+            "widget": "intervals"
+          },
+          {
+            "id": "heap-lesson",
+            "title": "Heaps: always the best next",
+            "subtitle": "Top-K without sorting everything.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "heap",
+            "widget": "heap"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "graphs",
+    "title": "Trees & Graphs",
+    "tagline": "Search smart: BFS rings, DFS depths, Dijkstra costs.",
+    "emoji": "\ud83c\udf0a",
+    "color": "#0284c7",
+    "level": "Intermediate",
+    "lessonsCount": 5,
+    "hours": "3.5h",
+    "description": "Flood fills to shortest paths: DFS depth, BFS rings, tree recursion, union-find groups and Dijkstra weights.",
+    "outcomes": [
+      "Flood islands with DFS",
+      "Find shortest paths with BFS",
+      "Recurse on trees cleanly",
+      "Handle weights with Dijkstra"
+    ],
+    "units": [
+      {
+        "id": "g-u1",
+        "title": "Unit 1 \u00b7 Depth vs breadth",
+        "blurb": "DFS, BFS and trees.",
+        "lessons": [
+          {
+            "id": "dfs-lesson",
+            "title": "DFS: go deep, then back up",
+            "subtitle": "Trust recursion on children.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "dfs",
+            "widget": "dfs"
+          },
+          {
+            "id": "bfs-lesson",
+            "title": "BFS: rings of shortest",
+            "subtitle": "First arrival is the shortest.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "bfs",
+            "widget": "bfs"
+          },
+          {
+            "id": "trees-lesson",
+            "title": "Trees: one node + trust",
+            "subtitle": "Base case, recurse, combine.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "trees",
+            "widget": "trees"
+          }
+        ]
+      },
+      {
+        "id": "g-u2",
+        "title": "Unit 2 \u00b7 Groups & weights",
+        "blurb": "Union-find and Dijkstra.",
+        "lessons": [
+          {
+            "id": "union-find-lesson",
+            "title": "Union-Find: circles of friends",
+            "subtitle": "Track which group each item belongs to.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "union-find",
+            "widget": "union-find"
+          },
+          {
+            "id": "dijkstra-lesson",
+            "title": "Dijkstra: BFS with prices",
+            "subtitle": "Always extend the cheapest route.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "dijkstra",
+            "widget": "dijkstra"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "recursion-dp",
+    "title": "Recursion to DP",
+    "tagline": "From listing everything to remembering everything.",
+    "emoji": "\ud83e\uddf1",
+    "color": "#7c3aed",
+    "level": "Advanced",
+    "lessonsCount": 3,
+    "hours": "3h",
+    "description": "Backtracking lists every answer; greedy bets on one rule; DP remembers subproblems. The peak of interview prep.",
+    "outcomes": [
+      "List all arrangements with backtracking",
+      "Test greedy rules with counter-examples",
+      "Turn recursion into DP with memoisation"
+    ],
+    "units": [
+      {
+        "id": "d-u1",
+        "title": "Unit 1 \u00b7 Choose, bet, remember",
+        "blurb": "Backtracking, greedy, DP.",
+        "lessons": [
+          {
+            "id": "backtracking-lesson",
+            "title": "Backtracking: choose, explore, undo",
+            "subtitle": "List every valid arrangement.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "backtracking",
+            "widget": "backtracking"
+          },
+          {
+            "id": "greedy-lesson",
+            "title": "Greedy: bet on the obvious rule",
+            "subtitle": "Fast \u2014 when you can prove it.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "greedy",
+            "widget": "greedy"
+          },
+          {
+            "id": "dp-lesson",
+            "title": "DP: recursion with a notebook",
+            "subtitle": "Solve small, remember, build up.",
+            "minutes": 12,
+            "xp": 14,
+            "patternId": "dp",
+            "widget": "dp"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pixel-pusher",
+    "title": "Pixel Pusher: Functions with Images",
+    "tagline": "Learn functions by transforming a generated scene. See the numbers behind the picture.",
+    "emoji": "\ud83c\udfa8",
+    "color": "#db2777",
+    "level": "All levels",
+    "lessonsCount": 4,
+    "hours": "2h",
+    "description": "Pixels are tuples, filters are functions. Write tiny functions that transform a generated scene \u2014 then compose, debug and reuse them. No setup: every lesson runs live image filters in your browser.",
+    "outcomes": [
+      "Write functions that map pixels \u2192 pixels",
+      "Use tuples and return values fluently",
+      "Compose and debug multi-function pipelines",
+      "Trace errors through image code"
+    ],
+    "units": [
+      {
+        "id": "p-u1",
+        "title": "Unit 1 \u00b7 Pixels are data",
+        "blurb": "Functions, return values, tuples.",
+        "lessons": [
+          {
+            "id": "filtering-images",
+            "title": "Filtering images",
+            "subtitle": "One function, every pixel.",
+            "minutes": 12,
+            "xp": 14,
+            "widget": "pixel-filter"
+          },
+          {
+            "id": "inverting-colors",
+            "title": "Inverting & adjusting",
+            "subtitle": "Arithmetic on light.",
+            "minutes": 10,
+            "xp": 12,
+            "widget": "pixel-filter"
+          },
+          {
+            "id": "composing-functions",
+            "title": "Composing functions",
+            "subtitle": "Pipelines: small functions, big effects.",
+            "minutes": 12,
+            "xp": 14,
+            "widget": "pixel-compose"
+          },
+          {
+            "id": "debugging-images",
+            "title": "Debugging with images",
+            "subtitle": "When the picture looks wrong, read the pixels.",
+            "minutes": 10,
+            "xp": 12,
+            "widget": "pixel-debug"
+          }
+        ]
+      }
+    ]
+  }
+]

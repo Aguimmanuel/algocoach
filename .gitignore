@@ -17,10 +17,27 @@ env/
 
 # secrets — never commit an API key
 .env
-.env.local
+.env.*
+!.env.example
 
 # editors / os
 .DS_Store
 .vscode/
 .idea/
 *.log
+
+# Test artifacts
+playwright-report/
+test-results/
+tests/*.png
+
+# Generated screenshots
+tests/artifacts/
+
+# Downloaded credentials and SQLite sidecars
+client_secret*.json
+credentials*.json
+service-account*.json
+*.sqlite
+*-wal
+*-shm

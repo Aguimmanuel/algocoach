@@ -1,37 +1,31 @@
-# Render blueprint — https://render.com/docs/blueprint-spec
-#
-# Deploy: Render dashboard → New → Blueprint → pick this repo.
-# Render reads this file and creates the web service. You still type the
-# secrets in yourself; they are never stored here.
-
+# One Render Docker Web Service + an external Neon PostgreSQL database.
+# New → Blueprint after pushing the updated source. Deployment guide is in the separate instructions ZIP.
+# No secrets or AI credentials are committed here.
 services:
   - type: web
     name: algocoach
     runtime: docker
     dockerfilePath: ./Dockerfile
-    plan: starter # 'free' works, but sleeps after 15 min idle and loses the first request to a cold start
-    region: frankfurt # closest to Nigeria of Render's regions; change if your users are elsewhere
+    plan: starter
+    region: frankfurt # Choose a region near your Neon database/users.
     healthCheckPath: /api/health
-    autoDeploy: true # deploy on every push to the connected branch
+    autoDeploy: true
     envVars:
-      # ----------------------------------------------------------- database
-      # Paste the full URI from Aiven, including ?sslmode=require.
-      # Aiven hands you a `postgres://` URL; db.py rewrites it to the driver
-      # SQLAlchemy 2 expects, so paste it exactly as given.
+      # Full pooled Neon URL; preserve TLS/channel_binding parameters.
       - key: DATABASE_URL
         sync: false
-
-      # -------------------------------------------------------------- auth
-      # Signs session tokens. Generate one with:
-      #   python3 -c "import secrets; print(secrets.token_urlsafe(48))"
-      # If this is missing, sessions are invalidated on every deploy.
+      # Generate once with secrets.token_urlsafe(48); keep across deploys.
       - key: SECRET_KEY
         sync: false
-
-      # ---------------------------------------------------------- AI coach
-      # Optional. Without it the app runs the offline coach, which still works.
-      # https://aistudio.google.com/apikey
-      - key: GEMINI_API_KEY
+      # Google Auth Platform → Clients → Web application.
+      - key: GOOGLE_CLIENT_ID
         sync: false
-      - key: GEMINI_MODEL
-        value: gemini-2.5-flash
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      # Exact registered HTTPS callback, no trailing slash:
+      # https://YOUR-SERVICE.onrender.com/api/auth/google/callback
+      - key: GOOGLE_REDIRECT_URI
+        sync: false
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+# Coaching is offline-model-only. Do not add GEMINI_API_KEY/GEMINI_MODEL.
